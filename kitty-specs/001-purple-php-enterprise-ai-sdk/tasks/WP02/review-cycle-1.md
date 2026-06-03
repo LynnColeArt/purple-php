@@ -7,7 +7,7 @@ reviewed_at: '2026-06-03T14:12:16Z'
 reviewer_agent: unknown
 verdict: rejected
 wp_id: WP02
-review_artifact_override_at: "2026-06-03T14:16:29Z"
+review_artifact_override_at: "2026-06-03T14:17:08Z"
 review_artifact_override_actor: "operator"
 review_artifact_override_wp_id: "WP02"
 review_artifact_override_reason: "Review passed after cycle-1 fix: rejected artifact review-cycle-1.md was addressed by f56891b; composer check passed with 33 tests and 91 assertions; invalid JSON retry probe recovered on attempt 2."
