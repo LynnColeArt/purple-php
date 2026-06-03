@@ -6,34 +6,50 @@ Purple PHP is an enterprise AI modernization SDK for existing PHP applications.
 
 It is designed for teams with significant sunk cost in PHP-based CMS, ecommerce, admin, support, catalog, and workflow systems. The goal is to add secure, auditable AI behavior without rewriting the application estate.
 
-## Product Shape
+## Current Shape
 
 Purple PHP is Composer-first. Native runtime, sidecar, and PHP extension support may become important deployment modes later, but the developer-facing center of gravity is PHP.
 
-The long-horizon product has three capability layers:
+The current SDK includes:
 
-1. Smart functions: typed, auditable AI calls for narrow repeatable tasks.
-2. Chatbots: stateful assistants embedded into existing application surfaces.
-3. Looping agents: goal-driven runners that use tools under policy, audit, and approval controls.
+* Smart functions: typed, auditable AI calls for narrow repeatable tasks.
+* Chat sessions: stateful assistant flows built on the same provider, policy, and audit contracts.
+* Tool contracts: named tools with input/output schemas and side-effect levels.
+* Looping agents: goal-driven runners that can call tools under limits, hooks, policy, audit, and approvals.
+* Runtime hooks: extension points around provider requests, tool calls, and agent lifecycle events.
+* CLI support: a `purple` command for demos, diagnostics, provider checks, and audit inspection.
+* Enterprise workflow ports: CMS-agnostic content, catalog, order, support, approval, and audit adapters.
 
-## First Milestone
+The first milestone was smart functions. The repository now carries the broader proof package so the early public API can be evaluated as a connected SDK, not only as isolated examples.
 
-The first shippable milestone is smart functions.
+## Quick Start
 
-MVP 1 should prove:
+```bash
+composer install
+php examples/smart-functions/catalog-summary.php
+php examples/chat/fake-chat.php
+php examples/agents/catalog-agent.php
+php bin/purple demo smart-function
+```
 
-* provider abstraction
-* secure environment secret resolution
-* typed inputs and structured outputs
-* prompt templates
-* schema validation
-* retry and error handling
-* basic policy checks
-* audit logging
-* fake provider support for tests
-* OpenAI provider support
+When installed as a Composer dependency, the CLI is exposed as:
 
-Chatbots, looping agents, runtime hooks, the CLI, native runtime, and domain adapters remain part of the roadmap, but they are deliberately outside the first milestone.
+```bash
+vendor/bin/purple diagnostics
+vendor/bin/purple audit inspect var/audit/catalog.jsonl
+```
+
+## Provider Security
+
+Provider credentials are resolved through `SecretResolver` implementations instead of being passed around as normal strings in application code. `EnvironmentSecretResolver` reads named environment variables, and `SecretValue` redacts itself when stringified.
+
+The OpenAI provider defaults to `OPENAI_API_KEY`:
+
+```php
+$provider = new OpenAIProvider(new EnvironmentSecretResolver());
+```
+
+Tests and local examples can use `FakeProvider` to avoid external provider calls.
 
 ## Enterprise Principles
 
@@ -52,9 +68,16 @@ The SDK should be:
 
 Policy is enforcement. Hooks are extension points.
 
+## Validation
+
+```bash
+composer check
+```
+
+The check script runs PHPUnit, PHPStan, and php-cs-fixer in dry-run mode.
+
 ## Planning Artifacts
 
 The current project outline lives in [outline.md](outline.md).
 
 The Spec Kitty mission package lives in [kitty-specs/001-purple-php-enterprise-ai-sdk](kitty-specs/001-purple-php-enterprise-ai-sdk/spec.md).
-

@@ -3,6 +3,9 @@
   "description": "Enterprise AI modernization SDK for PHP applications.",
   "type": "library",
   "license": "MIT",
+  "bin": [
+    "bin/purple"
+  ],
   "require": {
     "php": "^8.2"
   },
