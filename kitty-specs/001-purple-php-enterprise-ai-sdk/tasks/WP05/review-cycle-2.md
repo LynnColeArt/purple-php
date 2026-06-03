@@ -7,7 +7,7 @@ reviewed_at: '2026-06-03T15:36:16Z'
 reviewer_agent: unknown
 verdict: rejected
 wp_id: WP05
-review_artifact_override_at: "2026-06-03T15:40:11Z"
+review_artifact_override_at: "2026-06-03T15:40:40Z"
 review_artifact_override_actor: "operator"
 review_artifact_override_wp_id: "WP05"
 review_artifact_override_reason: "Review passed after cycle-2 fix: rejected artifact review-cycle-2.md was addressed by 9965210; approval request and external audit recording are now exercised by live tests and the executable domain example; composer check passed with 57 tests and 194 assertions; example output includes approval and audit_export."
