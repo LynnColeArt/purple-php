@@ -29,3 +29,8 @@ activated_directives:
 - 038-structured-prompt-boundary
 - 039-lynn-cole-engineering-culture
 - 040-recurring-bug-structural-intervention
+mission_type_activations:
+- software-dev
+- documentation
+- research
+- plan
