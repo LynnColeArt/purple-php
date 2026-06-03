@@ -26,10 +26,30 @@ The first milestone was smart functions. The repository now carries the broader 
 
 ```bash
 composer install
+php examples/smart-functions/sdk-quickstart.php
 php examples/smart-functions/catalog-summary.php
 php examples/chat/fake-chat.php
 php examples/agents/catalog-agent.php
 php bin/purple demo smart-function
+```
+
+The `Sdk` entry point bundles a provider, model, policy, audit log, and schema validator for common setup:
+
+```php
+use Purple\Sdk;
+use Purple\Testing\FakeProvider;
+
+$sdk = new Sdk(
+    provider: FakeProvider::replying('{"summary":"Ready for catalog review."}'),
+    providerName: 'fake',
+    model: 'fake-model',
+);
+
+$summary = $sdk->smartFunction(
+    name: 'catalog.summary',
+    prompt: 'Summarize {{ title }} as JSON.',
+    outputSchema: '{"type":"object","required":["summary"],"properties":{"summary":{"type":"string"}}}',
+)->run(['title' => 'Merino travel cardigan']);
 ```
 
 When installed as a Composer dependency, the CLI is exposed as:

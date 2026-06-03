@@ -12,6 +12,7 @@ dist/
 
 .worktrees/
 notes/
+var/audit/
 
 *.log
 *.tmp
