@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+
+vendor/
+composer.lock
+
+.phpunit.cache/
+coverage/
+build/
+dist/
+
+.worktrees/
+
+*.log
+*.tmp
+*.cache
