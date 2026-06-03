@@ -7,6 +7,10 @@ reviewed_at: '2026-06-03T15:22:39Z'
 reviewer_agent: unknown
 verdict: rejected
 wp_id: WP04
+review_artifact_override_at: "2026-06-03T15:25:44Z"
+review_artifact_override_actor: "operator"
+review_artifact_override_wp_id: "WP04"
+review_artifact_override_reason: "Review passed after cycle-1 fix: rejected artifact review-cycle-1.md was addressed by a43348f; tool policy now evaluates final hook-modified input before approval/callback execution; composer check passed with 52 tests and 166 assertions."
 ---
 
 # WP04 Review Feedback
