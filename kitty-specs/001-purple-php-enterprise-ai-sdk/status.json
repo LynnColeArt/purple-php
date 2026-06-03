@@ -1,7 +1,7 @@
 {
-  "event_count": 22,
-  "last_event_id": "01KT6XGQSR3T34421N7F528G8P",
-  "materialized_at": "2026-06-03T14:17:08.152644+00:00",
+  "event_count": 24,
+  "last_event_id": "01KT6XHWTSS65SWE8T5VHZC9PE",
+  "materialized_at": "2026-06-03T14:17:46.073490+00:00",
   "mission_number": "1",
   "mission_slug": "001-purple-php-enterprise-ai-sdk",
   "mission_type": "software-dev",
@@ -12,9 +12,9 @@
     "claimed": 0,
     "done": 0,
     "for_review": 0,
-    "in_progress": 0,
+    "in_progress": 1,
     "in_review": 0,
-    "planned": 3
+    "planned": 2
   },
   "work_packages": {
     "WP01": {
@@ -32,11 +32,11 @@
       "last_transition_at": "2026-06-03T14:17:08.152644+00:00"
     },
     "WP03": {
-      "actor": "finalize-tasks",
+      "actor": "codex",
       "force_count": 1,
-      "lane": "planned",
-      "last_event_id": "01KT5FW2GGCR74ATTPNEG95Q9E",
-      "last_transition_at": "2026-06-03T00:59:25.072948+00:00"
+      "lane": "in_progress",
+      "last_event_id": "01KT6XHWTSS65SWE8T5VHZC9PE",
+      "last_transition_at": "2026-06-03T14:17:46.073490+00:00"
     },
     "WP04": {
       "actor": "finalize-tasks",
