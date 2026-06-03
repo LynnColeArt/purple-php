@@ -1,0 +1,103 @@
+work_packages:
+  - id: WP01
+    title: "SDK Substrate and Core Contracts"
+    dependencies: []
+    owned_files:
+      - "composer.json"
+      - "phpunit.xml.dist"
+      - "phpstan.neon"
+      - ".php-cs-fixer.php"
+      - "src/Contracts/**"
+      - "src/Testing/FakeProvider.php"
+      - "tests/Contracts/**"
+      - "tests/Testing/**"
+      - "examples/.gitkeep"
+    requirement_refs: ["FR-001", "FR-002", "FR-003", "FR-005", "FR-006", "FR-007"]
+    subtasks: ["T001", "T002", "T003", "T004", "T005"]
+    prompt_file: "tasks/WP01.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP02
+    title: "Smart-Functions MVP Vertical Slice"
+    dependencies: ["WP01"]
+    owned_files:
+      - "src/SmartFunction/**"
+      - "src/Provider/OpenAI/**"
+      - "src/Security/EnvironmentSecretResolver.php"
+      - "src/Audit/FileAuditLog.php"
+      - "src/Policy/BasicPolicyEngine.php"
+      - "src/Prompt/**"
+      - "src/Schema/**"
+      - "tests/SmartFunction/**"
+      - "tests/Provider/OpenAI/**"
+      - "tests/Security/**"
+      - "tests/Audit/**"
+      - "tests/Policy/**"
+      - "tests/Prompt/**"
+      - "tests/Schema/**"
+      - "examples/smart-functions/**"
+    requirement_refs: ["FR-002", "FR-003", "FR-004", "FR-005", "FR-006", "FR-007"]
+    subtasks: ["T001", "T002", "T003", "T004", "T005", "T006"]
+    prompt_file: "tasks/WP02.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP03
+    title: "Chat, Tool Contracts, and CLI"
+    dependencies: ["WP01", "WP02"]
+    owned_files:
+      - "src/Chat/**"
+      - "src/Tool/**"
+      - "src/Cli/**"
+      - "bin/purple"
+      - "tests/Chat/**"
+      - "tests/Tool/**"
+      - "tests/Cli/**"
+      - "examples/chat/**"
+      - "examples/tools/**"
+    requirement_refs: ["FR-008", "FR-009", "FR-011"]
+    subtasks: ["T001", "T002", "T003", "T004", "T005"]
+    prompt_file: "tasks/WP03.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP04
+    title: "Looping Agents, Approvals, and Runtime Hooks"
+    dependencies: ["WP02", "WP03"]
+    owned_files:
+      - "src/Agent/**"
+      - "src/Hooks/**"
+      - "src/Approval/**"
+      - "tests/Agent/**"
+      - "tests/Hooks/**"
+      - "tests/Approval/**"
+      - "examples/agents/**"
+      - "examples/hooks/**"
+    requirement_refs: ["FR-005", "FR-006", "FR-009", "FR-010"]
+    subtasks: ["T001", "T002", "T003", "T004", "T005", "T006"]
+    prompt_file: "tasks/WP04.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP05
+    title: "Enterprise Domain Ports and Deployment Readiness"
+    dependencies: ["WP03", "WP04"]
+    owned_files:
+      - "src/Domain/**"
+      - "src/Deployment/**"
+      - "docs/enterprise/**"
+      - "tests/Domain/**"
+      - "tests/Deployment/**"
+      - "examples/domain/**"
+    requirement_refs: ["FR-012", "FR-013"]
+    subtasks: ["T001", "T002", "T003", "T004", "T005"]
+    prompt_file: "tasks/WP05.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""

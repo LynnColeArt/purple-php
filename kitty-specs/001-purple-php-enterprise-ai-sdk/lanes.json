@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "mission_slug": "001-purple-php-enterprise-ai-sdk",
+  "mission_id": "001-purple-php-enterprise-ai-sdk",
+  "mission_branch": "kitty/mission-001-purple-php-enterprise-ai-sdk",
+  "target_branch": "main",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01"
+      ],
+      "write_scope": [
+        ".php-cs-fixer.php",
+        "composer.json",
+        "examples/.gitkeep",
+        "phpstan.neon",
+        "phpunit.xml.dist",
+        "src/Contracts/**",
+        "src/Testing/FakeProvider.php",
+        "tests/Contracts/**",
+        "tests/Testing/**"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "artifact-rendering"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-b",
+      "wp_ids": [
+        "WP02"
+      ],
+      "write_scope": [
+        "examples/smart-functions/**",
+        "src/Audit/FileAuditLog.php",
+        "src/Policy/BasicPolicyEngine.php",
+        "src/Prompt/**",
+        "src/Provider/OpenAI/**",
+        "src/Schema/**",
+        "src/Security/EnvironmentSecretResolver.php",
+        "src/SmartFunction/**",
+        "tests/Audit/**",
+        "tests/Policy/**",
+        "tests/Prompt/**",
+        "tests/Provider/OpenAI/**",
+        "tests/Schema/**",
+        "tests/Security/**",
+        "tests/SmartFunction/**"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "artifact-rendering"
+      ],
+      "depends_on_lanes": [
+        "lane-a"
+      ],
+      "parallel_group": 1
+    },
+    {
+      "lane_id": "lane-c",
+      "wp_ids": [
+        "WP03"
+      ],
+      "write_scope": [
+        "bin/purple",
+        "examples/chat/**",
+        "examples/tools/**",
+        "src/Chat/**",
+        "src/Cli/**",
+        "src/Tool/**",
+        "tests/Chat/**",
+        "tests/Cli/**",
+        "tests/Tool/**"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-a",
+        "lane-b"
+      ],
+      "parallel_group": 2
+    },
+    {
+      "lane_id": "lane-d",
+      "wp_ids": [
+        "WP04"
+      ],
+      "write_scope": [
+        "examples/agents/**",
+        "examples/hooks/**",
+        "src/Agent/**",
+        "src/Approval/**",
+        "src/Hooks/**",
+        "tests/Agent/**",
+        "tests/Approval/**",
+        "tests/Hooks/**"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-b",
+        "lane-c"
+      ],
+      "parallel_group": 3
+    },
+    {
+      "lane_id": "lane-e",
+      "wp_ids": [
+        "WP05"
+      ],
+      "write_scope": [
+        "docs/enterprise/**",
+        "examples/domain/**",
+        "src/Deployment/**",
+        "src/Domain/**",
+        "tests/Deployment/**",
+        "tests/Domain/**"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-c",
+        "lane-d"
+      ],
+      "parallel_group": 4
+    }
+  ],
+  "computed_at": "2026-06-03T00:59:25.102887+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": []
+}

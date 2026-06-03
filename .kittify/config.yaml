@@ -1,0 +1,11 @@
+project:
+  uuid: e161ba47-8bd9-4644-9f8d-3f0294c4a78e
+  slug: purple-php
+  node_id: 752e6076aa27
+  build_id: 1aa35d9a-a265-4c0d-a4bc-100716488216
+vcs:
+  type: git
+agents:
+  available:
+  - codex
+  auto_commit: true

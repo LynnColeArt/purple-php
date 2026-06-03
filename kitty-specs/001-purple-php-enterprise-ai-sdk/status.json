@@ -1,0 +1,56 @@
+{
+  "event_count": 5,
+  "last_event_id": "01KT5FW2H4VBEFSSVA1TDEGBKX",
+  "materialized_at": "2026-06-03T00:59:25.092316+00:00",
+  "mission_number": "1",
+  "mission_slug": "001-purple-php-enterprise-ai-sdk",
+  "mission_type": "software-dev",
+  "summary": {
+    "approved": 0,
+    "blocked": 0,
+    "canceled": 0,
+    "claimed": 0,
+    "done": 0,
+    "for_review": 0,
+    "in_progress": 0,
+    "in_review": 0,
+    "planned": 5
+  },
+  "work_packages": {
+    "WP01": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KT5FW2F1TEN6XTJKC10QCSP6",
+      "last_transition_at": "2026-06-03T00:59:25.025527+00:00"
+    },
+    "WP02": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KT5FW2G7VC5B0Q2G0969WHZC",
+      "last_transition_at": "2026-06-03T00:59:25.063629+00:00"
+    },
+    "WP03": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KT5FW2GGCR74ATTPNEG95Q9E",
+      "last_transition_at": "2026-06-03T00:59:25.072948+00:00"
+    },
+    "WP04": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KT5FW2GSCK0S6T3X02TSMTV7",
+      "last_transition_at": "2026-06-03T00:59:25.081852+00:00"
+    },
+    "WP05": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KT5FW2H4VBEFSSVA1TDEGBKX",
+      "last_transition_at": "2026-06-03T00:59:25.092316+00:00"
+    }
+  }
+}

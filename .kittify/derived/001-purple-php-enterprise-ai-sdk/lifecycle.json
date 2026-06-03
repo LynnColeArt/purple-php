@@ -1,0 +1,21 @@
+{
+  "abandoned_after_days": 30,
+  "active_wp_count": 0,
+  "age_days": 0,
+  "blocked_wp_count": 0,
+  "completion_pct": 0.0,
+  "event_count": 0,
+  "has_event_log": false,
+  "last_activity_at": "2026-06-03T00:35:29+00:00",
+  "last_transition_at": null,
+  "mission_number": null,
+  "mission_slug": "001-purple-php-enterprise-ai-sdk",
+  "mission_type": "software-dev",
+  "reason": "Mission is recoverable history and not active enough for the default surface.",
+  "review_wp_count": 0,
+  "stale_after_days": 14,
+  "state": "recoverable",
+  "surface_state": null,
+  "terminal_wp_count": 0,
+  "total_wps": 0
+}

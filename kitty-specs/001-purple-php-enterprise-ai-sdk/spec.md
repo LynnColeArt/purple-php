@@ -24,55 +24,55 @@ Target users are enterprises, agencies, and platform teams with significant sunk
 
 ## Functional Requirements
 
-FR1: Composer-first SDK
+FR-001: Composer-first SDK
 
 The project must expose a developer-facing PHP SDK installable and usable through Composer. The first public package should make smart functions feel natural to PHP developers.
 
-FR2: Provider abstraction
+FR-002: Provider abstraction
 
 The SDK must define provider contracts that can support OpenAI first and later Anthropic, Azure, Bedrock, local providers, and brokered/sidecar provider access.
 
-FR3: Secure secret handling
+FR-003: Secure secret handling
 
 Provider credentials must not be passed around as raw strings in normal application code. The SDK must provide secret resolver interfaces and an environment secret implementation for the first milestone.
 
-FR4: Smart functions
+FR-004: Smart functions
 
 The SDK must support single-purpose AI calls with typed inputs, prompt templates, structured outputs, schema validation, retry/error handling, cost metadata, and audit records.
 
-FR5: Policy and budget checks
+FR-005: Policy and budget checks
 
 Policy must be part of the execution path. Even the first smart-function milestone must have basic checks for allowed providers, allowed models, and budget/run limits.
 
-FR6: Audit trail
+FR-006: Audit trail
 
 Provider calls, smart-function runs, policy decisions, failures, cost data, and output validation events must be auditable. File-based or SQLite audit storage is acceptable for the first milestone.
 
-FR7: Testing support
+FR-007: Testing support
 
 The SDK must include a fake provider and test utilities so behavior can be proven without hitting external providers.
 
-FR8: Chatbot support
+FR-008: Chatbot support
 
 Later phases must support stateful chat sessions with history, streaming, optional tools, role-aware behavior, policy controls, and audit trails.
 
-FR9: Tool and looping agent support
+FR-009: Tool and looping agent support
 
 Later phases must support typed PHP tools, side-effect levels, approval requirements, agent loops, budgets, step limits, replayable tool logs, and failure recovery.
 
-FR10: Hooks
+FR-010: Hooks
 
 Later phases must support typed runtime hooks around provider requests, tool calls, approvals, run steps, policy violations, and failures. Command/file hooks may exist for sidecar or native runtime environments, but core enterprise hooks should not depend on shell execution.
 
-FR11: CLI
+FR-011: CLI
 
 Later phases must include a `purple` CLI for local runs, demos, diagnostics, provider checks, and audit inspection.
 
-FR12: Domain abstractions
+FR-012: Domain abstractions
 
 The product should remain CMS-agnostic and ecommerce-aware. Domain ports should represent workflows such as searching content, drafting revisions, looking up orders, updating catalog drafts, and requesting approval rather than tying the core to one CMS.
 
-FR13: Deployment modes
+FR-013: Deployment modes
 
 The long-horizon product should support pure Composer mode, sidecar mode, and native extension mode. Pure Composer mode is the adoption baseline.
 
@@ -97,4 +97,3 @@ AC5: Basic policy checks are enforced before provider execution.
 AC6: Tests cover the fake provider, smart-function runner, schema validation, policy denial, audit logging, and secret redaction behavior.
 
 AC7: The public API makes the long-term path to chat, tools, agents, hooks, and CLI visible without forcing them into MVP 1.
-
