@@ -57,10 +57,55 @@ final class PurpleCliTest extends TestCase
 
         $this->assertSame(0, $providerExit);
         $this->assertSame('fake', $providerPayload['provider']);
+        $this->assertSame('fake-model', $providerPayload['model']);
         $this->assertSame('ok', $providerPayload['status']);
+        $this->assertFalse($providerPayload['secret_required']);
         $this->assertSame(0, $diagnosticsExit);
         $this->assertTrue($diagnosticsPayload['composer_mode']);
         $this->assertFalse($diagnosticsPayload['native_runtime_required']);
+    }
+
+    public function testOpenAIProviderCheckReportsMissingSecret(): void
+    {
+        putenv('PURPLE_CLI_MISSING_OPENAI_KEY');
+        $cli = new PurpleCli();
+        $output = '';
+
+        $exit = $cli->run(['purple', 'provider', 'check', 'openai', 'PURPLE_CLI_MISSING_OPENAI_KEY'], static function (string $chunk) use (&$output): void {
+            $output .= $chunk;
+        });
+        $payload = $this->decodeObject($output);
+
+        $this->assertSame(1, $exit);
+        $this->assertSame('openai', $payload['provider']);
+        $this->assertSame('missing_secret', $payload['status']);
+        $this->assertTrue($payload['secret_required']);
+        $this->assertSame('PURPLE_CLI_MISSING_OPENAI_KEY', $payload['secret_name']);
+        $this->assertFalse($payload['secret_configured']);
+    }
+
+    public function testOpenAIProviderCheckDoesNotExposeConfiguredSecret(): void
+    {
+        putenv('PURPLE_CLI_OPENAI_KEY=sk-purple-cli-secret');
+        $cli = new PurpleCli();
+        $output = '';
+
+        try {
+            $exit = $cli->run(['purple', 'provider', 'check', 'openai', 'PURPLE_CLI_OPENAI_KEY'], static function (string $chunk) use (&$output): void {
+                $output .= $chunk;
+            });
+            $payload = $this->decodeObject($output);
+
+            $this->assertSame(0, $exit);
+            $this->assertSame('openai', $payload['provider']);
+            $this->assertSame('ok', $payload['status']);
+            $this->assertTrue($payload['secret_required']);
+            $this->assertSame('PURPLE_CLI_OPENAI_KEY', $payload['secret_name']);
+            $this->assertTrue($payload['secret_configured']);
+            $this->assertStringNotContainsString('sk-purple-cli-secret', $output);
+        } finally {
+            putenv('PURPLE_CLI_OPENAI_KEY');
+        }
     }
 
     /**

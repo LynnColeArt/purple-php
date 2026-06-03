@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Purple\Cli;
 
 use Purple\Audit\FileAuditLog;
+use Purple\ProviderProfile;
 use Purple\Policy\BasicPolicyEngine;
 use Purple\Prompt\StringPromptTemplate;
 use Purple\Schema\JsonSchemaValidator;
+use Purple\Security\EnvironmentSecretResolver;
 use Purple\SmartFunction\SmartFunctionDefinition;
 use Purple\Testing\FakeProvider;
+use InvalidArgumentException;
 use Throwable;
 
 final readonly class PurpleCli
@@ -51,6 +54,7 @@ final readonly class PurpleCli
             '  demo smart-function [audit-path]',
             '  audit inspect <audit-path>',
             '  provider check fake',
+            '  provider check openai [secret-name]',
             '  diagnostics',
             '',
         ]));
@@ -112,13 +116,64 @@ final readonly class PurpleCli
      */
     private function provider(array $args, callable $write): int
     {
-        if (($args[0] ?? '') !== 'check' || ($args[1] ?? '') !== 'fake') {
-            return $this->error('Usage: purple provider check fake', $write);
+        if (($args[0] ?? '') !== 'check' || ! isset($args[1])) {
+            return $this->error('Usage: purple provider check <fake|openai> [secret-name]', $write);
+        }
+
+        return match ($args[1]) {
+            'fake' => $this->checkFakeProvider($write),
+            'openai' => $this->checkOpenAIProvider($args[2] ?? 'OPENAI_API_KEY', $write),
+            default => $this->error('Usage: purple provider check <fake|openai> [secret-name]', $write),
+        };
+    }
+
+    /**
+     * @param callable(string): void $write
+     */
+    private function checkFakeProvider(callable $write): int
+    {
+        $profile = ProviderProfile::fake();
+
+        $this->writeJson([
+            'provider' => $profile->providerName,
+            'model' => $profile->model,
+            'status' => 'ok',
+            'secret_required' => false,
+        ], $write);
+
+        return 0;
+    }
+
+    /**
+     * @param callable(string): void $write
+     */
+    private function checkOpenAIProvider(string $secretName, callable $write): int
+    {
+        $profile = ProviderProfile::openAI(secretName: $secretName);
+
+        try {
+            (new EnvironmentSecretResolver())->resolve($secretName);
+        } catch (InvalidArgumentException $exception) {
+            $this->writeJson([
+                'provider' => $profile->providerName,
+                'model' => $profile->model,
+                'status' => 'missing_secret',
+                'secret_required' => true,
+                'secret_name' => $secretName,
+                'secret_configured' => false,
+                'message' => $exception->getMessage(),
+            ], $write);
+
+            return 1;
         }
 
         $this->writeJson([
-            'provider' => 'fake',
+            'provider' => $profile->providerName,
+            'model' => $profile->model,
             'status' => 'ok',
+            'secret_required' => true,
+            'secret_name' => $secretName,
+            'secret_configured' => true,
         ], $write);
 
         return 0;

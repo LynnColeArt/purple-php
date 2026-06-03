@@ -9,6 +9,9 @@ use Purple\Audit\FileAuditLog;
 use Purple\Chat\ChatHistory;
 use Purple\Chat\ChatMessage;
 use Purple\Contracts\Provider\ProviderResponse;
+use Purple\Contracts\Security\SecretResolver;
+use Purple\Contracts\Security\SecretValue;
+use Purple\ProviderProfile;
 use Purple\Sdk;
 use Purple\Testing\FakeProvider;
 use Purple\Tests\Testing\TestCase;
@@ -47,6 +50,69 @@ JSON;
 
         $audit = implode("\n", file($auditPath, FILE_IGNORE_NEW_LINES) ?: []);
         $this->assertStringContainsString('smart_function.completed', $audit);
+    }
+
+    public function testCreatesFakeSdkFromProviderProfile(): void
+    {
+        $provider = FakeProvider::replying('{"summary":"Factory summary."}');
+        $sdk = Sdk::fake(
+            profile: ProviderProfile::fake(),
+            provider: $provider,
+        );
+
+        $function = $sdk->smartFunction(
+            name: 'catalog.summary',
+            prompt: 'Summarize {{ title }} as JSON.',
+            outputSchema: self::SUMMARY_SCHEMA,
+        );
+
+        $this->assertSame(['summary' => 'Factory summary.'], $function->run(['title' => 'Merino cardigan']));
+        $this->assertCount(1, $provider->requests());
+    }
+
+    public function testCreatesOpenAISdkFromProviderProfile(): void
+    {
+        $capturedHeaders = [];
+        $sdk = Sdk::openAI(
+            profile: ProviderProfile::openAI(model: 'gpt-test', secretName: 'PURPLE_OPENAI_KEY'),
+            secrets: new class () implements SecretResolver {
+                public function resolve(string $name): SecretValue
+                {
+                    return SecretValue::fromString('sk-purple-test');
+                }
+            },
+            auditLog: new FileAuditLog(sys_get_temp_dir() . '/purple-sdk-openai-' . bin2hex(random_bytes(4)) . '.jsonl'),
+            transport: function (string $method, string $url, array $headers, array $payload) use (&$capturedHeaders): array {
+                $capturedHeaders = $headers;
+
+                return [
+                    'choices' => [
+                        [
+                            'message' => [
+                                'content' => '{"summary":"OpenAI factory summary."}',
+                            ],
+                        ],
+                    ],
+                ];
+            },
+        );
+
+        $function = $sdk->smartFunction(
+            name: 'catalog.summary',
+            prompt: 'Summarize {{ title }} as JSON.',
+            outputSchema: self::SUMMARY_SCHEMA,
+        );
+
+        $this->assertSame(['summary' => 'OpenAI factory summary.'], $function->run(['title' => 'Merino cardigan']));
+        $this->assertSame('Bearer sk-purple-test', $capturedHeaders['Authorization'] ?? null);
+    }
+
+    public function testOpenAIFactoryRejectsWrongProviderProfile(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('OpenAI SDK factory requires provider profile "openai"');
+
+        Sdk::openAI(profile: ProviderProfile::fake());
     }
 
     public function testCreatesChatSessionWithCommonDefaults(): void

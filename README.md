@@ -52,21 +52,37 @@ $summary = $sdk->smartFunction(
 )->run(['title' => 'Merino travel cardigan']);
 ```
 
+For named provider setup, use `ProviderProfile` factories:
+
+```php
+use Purple\ProviderProfile;
+use Purple\Sdk;
+
+$sdk = Sdk::openAI(
+    profile: ProviderProfile::openAI(
+        model: 'gpt-4.1-mini',
+        secretName: 'OPENAI_API_KEY',
+    ),
+);
+```
+
 When installed as a Composer dependency, the CLI is exposed as:
 
 ```bash
 vendor/bin/purple diagnostics
 vendor/bin/purple audit inspect var/audit/catalog.jsonl
+vendor/bin/purple provider check openai
 ```
 
 ## Provider Security
 
 Provider credentials are resolved through `SecretResolver` implementations instead of being passed around as normal strings in application code. `EnvironmentSecretResolver` reads named environment variables, and `SecretValue` redacts itself when stringified.
 
-The OpenAI provider defaults to `OPENAI_API_KEY`:
+The OpenAI profile defaults to `OPENAI_API_KEY`, and `.env.example` documents the expected local setup without including secret values.
 
-```php
-$provider = new OpenAIProvider(new EnvironmentSecretResolver());
+```bash
+cp .env.example .env
+vendor/bin/purple provider check openai
 ```
 
 Tests and local examples can use `FakeProvider` to avoid external provider calls.

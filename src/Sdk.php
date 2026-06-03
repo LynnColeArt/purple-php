@@ -12,10 +12,14 @@ use Purple\Contracts\Audit\AuditLog;
 use Purple\Contracts\Policy\PolicyEngine;
 use Purple\Contracts\Provider\Provider;
 use Purple\Contracts\Schema\SchemaValidator;
+use Purple\Contracts\Security\SecretResolver;
 use Purple\Policy\BasicPolicyEngine;
 use Purple\Prompt\StringPromptTemplate;
+use Purple\Provider\OpenAI\OpenAIProvider;
 use Purple\Schema\JsonSchemaValidator;
+use Purple\Security\EnvironmentSecretResolver;
 use Purple\SmartFunction\SmartFunctionDefinition;
+use Purple\Testing\FakeProvider;
 
 final readonly class Sdk
 {
@@ -36,12 +40,79 @@ final readonly class Sdk
         $this->assertNonEmpty($this->providerName, 'Provider name');
         $this->assertNonEmpty($this->model, 'Model');
 
-        $this->auditLog = $auditLog ?? new FileAuditLog($this->defaultAuditPath());
+        $this->auditLog = $auditLog ?? new FileAuditLog(self::defaultAuditPath());
         $this->policy = $policy ?? new BasicPolicyEngine(
             allowedProviders: [$this->providerName],
             allowedModels: [$this->model],
         );
         $this->validator = $validator ?? new JsonSchemaValidator();
+    }
+
+    public static function fromProvider(
+        Provider $provider,
+        ProviderProfile $profile,
+        ?AuditLog $auditLog = null,
+        ?PolicyEngine $policy = null,
+        ?SchemaValidator $validator = null,
+    ): self {
+        return new self(
+            provider: $provider,
+            providerName: $profile->providerName,
+            model: $profile->model,
+            auditLog: $auditLog ?? new FileAuditLog($profile->auditPath ?? self::defaultAuditPath()),
+            policy: $policy ?? $profile->policy(),
+            validator: $validator,
+        );
+    }
+
+    public static function fake(
+        ?ProviderProfile $profile = null,
+        ?FakeProvider $provider = null,
+        ?AuditLog $auditLog = null,
+        ?PolicyEngine $policy = null,
+        ?SchemaValidator $validator = null,
+    ): self {
+        $profile ??= ProviderProfile::fake();
+        self::assertProfileProvider($profile, 'fake', 'Fake');
+
+        return self::fromProvider(
+            provider: $provider ?? new FakeProvider(),
+            profile: $profile,
+            auditLog: $auditLog,
+            policy: $policy,
+            validator: $validator,
+        );
+    }
+
+    /**
+     * @param null|callable(string, string, array<string, string>, array<string, mixed>): array<string, mixed> $transport
+     */
+    public static function openAI(
+        ?ProviderProfile $profile = null,
+        ?SecretResolver $secrets = null,
+        ?AuditLog $auditLog = null,
+        ?PolicyEngine $policy = null,
+        ?SchemaValidator $validator = null,
+        ?callable $transport = null,
+    ): self {
+        $profile ??= ProviderProfile::openAI();
+        self::assertProfileProvider($profile, 'openai', 'OpenAI');
+
+        if ($profile->secretName === null) {
+            throw new InvalidArgumentException('OpenAI provider profile must define a secret name.');
+        }
+
+        return self::fromProvider(
+            provider: new OpenAIProvider(
+                secrets: $secrets ?? new EnvironmentSecretResolver(),
+                secretName: $profile->secretName,
+                transport: $transport,
+            ),
+            profile: $profile,
+            auditLog: $auditLog,
+            policy: $policy,
+            validator: $validator,
+        );
     }
 
     public function smartFunction(
@@ -84,7 +155,19 @@ final readonly class Sdk
         }
     }
 
-    private function defaultAuditPath(): string
+    private static function assertProfileProvider(ProviderProfile $profile, string $providerName, string $factoryLabel): void
+    {
+        if ($profile->providerName !== $providerName) {
+            throw new InvalidArgumentException(sprintf(
+                '%s SDK factory requires provider profile "%s"; received "%s".',
+                $factoryLabel,
+                $providerName,
+                $profile->providerName,
+            ));
+        }
+    }
+
+    private static function defaultAuditPath(): string
     {
         $basePath = getcwd();
 
