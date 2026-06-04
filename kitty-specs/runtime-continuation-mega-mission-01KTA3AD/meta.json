@@ -13,6 +13,7 @@
   "accepted_at": "2026-06-04T22:06:35.460869+00:00",
   "accepted_by": "codex",
   "accepted_from_commit": "ec9a76f58d8615bca52563097be31fc788b30cc2",
+  "baseline_merge_commit": "77e8ff13cbbb437c0988711e15712ed5bd4d51c1",
   "coordination_branch": "kitty/mission-runtime-continuation-mega-mission-01KTA3AD",
   "created_at": "2026-06-04T19:56:15.765940+00:00",
   "friendly_name": "runtime continuation mega mission",
