@@ -41,33 +41,15 @@ Secondary users:
 
 ## Functional Requirements
 
-FR-001: Native acceptance boundary
-
-The mission must define the first native extension acceptance test as a contract-level artifact that does not require a compiled extension for Composer-mode validation. The boundary must state what a compatible native bridge must accept, return, reject, and measure.
-
-FR-002: Native bridge compatibility fixture
-
-The mission must add a PHP-level fixture or test that can be reused by a future native implementation to prove compatibility with `NativeRuntime`, `NativeRuntimeResult`, and `RuntimeMetrics`.
-
-FR-003: Sidecar durable resume contract
-
-The mission must define a sidecar transport contract for durable run resume requests and responses. The contract must use the existing versioned sidecar envelope shape and must identify the durable run ID, requested action, resume metadata, and outcome.
-
-FR-004: Durable resume example or test
-
-The mission must demonstrate durable resume behavior without requiring an actual sidecar process. The demonstration may use an injectable transport, fake sidecar, or local protocol round trip.
-
-FR-005: Enterprise adapter split decision
-
-The mission must decide which enterprise adapter package should be split first. The decision must describe ownership boundaries, package name, files likely to move later, and why the split should or should not happen immediately.
-
-FR-006: Composer baseline guardrail
-
-The mission must preserve Composer mode as the stable baseline. Tests and docs must show that native extension and sidecar runtime support remain optional.
-
-FR-007: Roadmap and docs alignment
-
-The mission must update roadmap or enterprise docs so Phase 5.1 is represented as runtime continuation work rather than a reversal of the optional-native strategy.
+| ID | Requirement | Status |
+| --- | --- | --- |
+| FR-001 | Define the first native extension acceptance test as a contract-level artifact that does not require a compiled extension for Composer-mode validation. The boundary must state what a compatible native bridge must accept, return, reject, and measure. | Planned |
+| FR-002 | Add a PHP-level fixture or test that can be reused by a future native implementation to prove compatibility with `NativeRuntime`, `NativeRuntimeResult`, and `RuntimeMetrics`. | Planned |
+| FR-003 | Define a sidecar transport contract for durable run resume requests and responses. The contract must use the existing versioned sidecar envelope shape and identify the durable run ID, requested action, resume metadata, and outcome. | Planned |
+| FR-004 | Demonstrate durable resume behavior without requiring an actual sidecar process. The demonstration may use an injectable transport, fake sidecar, or local protocol round trip. | Planned |
+| FR-005 | Decide which enterprise adapter package should be split first. The decision must describe ownership boundaries, package name, files likely to move later, and why the split should or should not happen immediately. | Planned |
+| FR-006 | Preserve Composer mode as the stable baseline. Tests and docs must show that native extension and sidecar runtime support remain optional. | Planned |
+| FR-007 | Update roadmap or enterprise docs so Phase 5.1 is represented as runtime continuation work rather than a reversal of the optional-native strategy. | Planned |
 
 ## Non-Goals
 
