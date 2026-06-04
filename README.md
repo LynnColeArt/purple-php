@@ -24,7 +24,7 @@ The current SDK includes:
 
 The first milestone was smart functions. Phases 2, 3, 4, and 5 are now represented in the Composer-first SDK as chat, CLI, tools, looping agents, approvals, runtime hooks, retry behavior, run state, replayable tool logs, enterprise policy, secret adapters, cloud provider adapters, sidecar brokerage, observability export, and optional native/runtime readiness contracts.
 
-Phase 5.1 continues that runtime work as Composer-safe contracts: native acceptance, sidecar resume, and package-split decisions stay testable through PHP fixtures, fake providers, injectable transports, and ignored local runtime paths. A normal Composer install still does not require a native extension, a sidecar process, cloud SDK dependencies, or live network services.
+Phase 5.1 makes that runtime work executable as Composer-safe contracts: native acceptance, sidecar resume, and package-split decisions stay testable through PHP fixtures, fake providers, injectable transports, and ignored local runtime paths. A normal Composer install still does not require a native extension, a sidecar process, cloud SDK dependencies, or live network services.
 
 ## Quick Start
 
@@ -127,4 +127,7 @@ The check script runs PHPUnit, PHPStan, and php-cs-fixer in dry-run mode.
 
 The current project outline lives in [outline.md](outline.md).
 
-The Spec Kitty mission package lives in [kitty-specs/001-purple-php-enterprise-ai-sdk](kitty-specs/001-purple-php-enterprise-ai-sdk/spec.md).
+Spec Kitty mission packages:
+
+* Enterprise SDK foundation: [kitty-specs/001-purple-php-enterprise-ai-sdk](kitty-specs/001-purple-php-enterprise-ai-sdk/spec.md)
+* Runtime continuation Phase 5.1: [kitty-specs/runtime-continuation-mega-mission-01KTA3AD](kitty-specs/runtime-continuation-mega-mission-01KTA3AD/spec.md)

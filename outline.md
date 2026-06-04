@@ -623,9 +623,9 @@ MVP 1 should deliberately defer:
 
 ## 13. Enterprise Roadmap
 
-Current status as of 2026-06-04: Phases 1, 2, 3, 4, and 5 are implemented in the Composer-first SDK and covered by the local validation suite. Phase 5 is represented as optional native/runtime readiness contracts; Composer mode remains the stable adoption baseline.
+Current status as of 2026-06-04: Phases 1, 2, 3, 4, 5, and 5.1 are implemented in the Composer-first SDK and covered by the local validation suite. Phase 5 is represented as optional native/runtime readiness contracts; Composer mode remains the stable adoption baseline.
 
-Phase 5.1 extends the runtime-continuation path without reversing that boundary. Native acceptance, sidecar resume, package-split planning, and baseline guardrails should be executable through Composer-safe tests, fake providers, injectable transports, and ignored local runtime state.
+Phase 5.1 extends the runtime-continuation path without reversing that boundary. Native acceptance, sidecar resume, package-split planning, and baseline guardrails are executable through Composer-safe tests, fake providers, injectable transports, and ignored local runtime state.
 
 ### Phase 1: SDK Foundation (Complete)
 
@@ -682,6 +682,15 @@ Phase 5.1 extends the runtime-continuation path without reversing that boundary.
 * On-prem/native readiness story
 * Composer mode preserved as the stable baseline
 
+### Phase 5.1: Runtime Continuation Contracts (Complete)
+
+* Native extension acceptance boundary
+* PHP-level native compatibility fixtures
+* Sidecar durable-run resume contract
+* Fake/injectable sidecar resume example
+* Enterprise adapter split decision: `purple-php/provider-bedrock` first, extraction deferred
+* Composer baseline guardrails for optional-native and optional-sidecar validation
+
 ## 14. Design Principles
 
 Purple PHP should be:
@@ -702,15 +711,14 @@ The product should treat legacy PHP estates as terrain, not trash.
 
 ## 15. Immediate Next Steps
 
-Active mission: `kitty-specs/runtime-continuation-mega-mission-01KTA3AD/`
+Completed mission: `kitty-specs/runtime-continuation-mega-mission-01KTA3AD/`
 
-This Phase 5.1 mega-mission packages the next runtime-continuation work into four reviewable work packages:
+Phase 5.1 is complete and recorded through the mission issue matrix, mission review report, and retrospective record.
 
-1. Native extension acceptance boundary.
-2. Sidecar durable-run resume contract.
-3. Enterprise adapter split decision.
-4. Composer baseline guardrails.
+Recommended next mission: split the Bedrock provider into the first optional enterprise adapter package, `purple-php/provider-bedrock`, while keeping core SDK provider contracts and Composer-first validation in this repository.
 
-Composer mode remains the stable adoption baseline while native and sidecar runtime work stays optional.
+Candidate follow-up missions:
 
-WP04 closes this slice by proving the default SDK path still validates without native extensions, sidecar services, cloud SDK packages, or live network services.
+1. Bedrock provider package split with Composer path-repository validation, package metadata, and dependency isolation.
+2. Sidecar runtime service prototype that speaks the durable-resume contract.
+3. Native extension compatibility prototype that runs the native acceptance suite.
