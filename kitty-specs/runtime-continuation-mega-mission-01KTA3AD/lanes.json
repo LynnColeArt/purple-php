@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "mission_slug": "runtime-continuation-mega-mission-01KTA3AD",
+  "mission_id": "01KTA3ADGNGGN36PW7VDK7HGVV",
+  "mission_branch": "kitty/mission-runtime-continuation-mega-mission-01KTA3AD",
+  "target_branch": "main",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01"
+      ],
+      "write_scope": [
+        "docs/enterprise/native-runtime-acceptance.md",
+        "src/Contracts/Runtime/NativeRuntime.php",
+        "src/Runtime/NativeRuntimeResult.php",
+        "src/Runtime/PhpExtensionBridge.php",
+        "src/Runtime/RuntimeException.php",
+        "src/Runtime/RuntimeMetrics.php",
+        "tests/Runtime/NativeAcceptance/**",
+        "tests/Runtime/NativeRuntimeReadinessTest.php",
+        "tests/Runtime/PhpExtensionBridgeTest.php"
+      ],
+      "predicted_surfaces": [],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-b",
+      "wp_ids": [
+        "WP02"
+      ],
+      "write_scope": [
+        "docs/enterprise/sidecar-durable-resume.md",
+        "examples/runtime/durable-sidecar-resume.php",
+        "src/Contracts/Runtime/DurableRunStore.php",
+        "src/Contracts/Runtime/SidecarTransport.php",
+        "src/Runtime/Durable/**",
+        "src/Runtime/Sidecar/**",
+        "tests/Runtime/Durable/**",
+        "tests/Runtime/Sidecar/**"
+      ],
+      "predicted_surfaces": [],
+      "depends_on_lanes": [
+        "lane-a"
+      ],
+      "parallel_group": 1
+    },
+    {
+      "lane_id": "lane-c",
+      "wp_ids": [
+        "WP03"
+      ],
+      "write_scope": [
+        "docs/architecture/001-enterprise-adapter-split.md"
+      ],
+      "predicted_surfaces": [],
+      "depends_on_lanes": [
+        "lane-a",
+        "lane-b"
+      ],
+      "parallel_group": 2
+    },
+    {
+      "lane_id": "lane-d",
+      "wp_ids": [
+        "WP04"
+      ],
+      "write_scope": [
+        ".gitignore",
+        "README.md",
+        "composer.json",
+        "docs/enterprise/README.md",
+        "examples/runtime/durable-sidecar-handoff.php",
+        "outline.md",
+        "src/Deployment/DeploymentReadiness.php",
+        "src/Sdk.php",
+        "tests/Deployment/DeploymentReadinessTest.php",
+        "tests/SdkTest.php"
+      ],
+      "predicted_surfaces": [],
+      "depends_on_lanes": [
+        "lane-a",
+        "lane-b",
+        "lane-c"
+      ],
+      "parallel_group": 3
+    }
+  ],
+  "computed_at": "2026-06-04T20:02:27.474984+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": []
+}

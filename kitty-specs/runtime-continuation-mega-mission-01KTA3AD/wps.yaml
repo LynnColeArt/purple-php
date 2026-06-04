@@ -1,0 +1,73 @@
+work_packages:
+  - id: WP01
+    title: "Native Acceptance Boundary"
+    dependencies: []
+    owned_files:
+      - "src/Contracts/Runtime/NativeRuntime.php"
+      - "src/Runtime/PhpExtensionBridge.php"
+      - "src/Runtime/NativeRuntimeResult.php"
+      - "src/Runtime/RuntimeMetrics.php"
+      - "src/Runtime/RuntimeException.php"
+      - "tests/Runtime/PhpExtensionBridgeTest.php"
+      - "tests/Runtime/NativeRuntimeReadinessTest.php"
+      - "tests/Runtime/NativeAcceptance/**"
+      - "docs/enterprise/native-runtime-acceptance.md"
+    requirement_refs: ["FR-001", "FR-002", "FR-006"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP01-native-acceptance-boundary.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP02
+    title: "Sidecar Durable Resume Contract"
+    dependencies: ["WP01"]
+    owned_files:
+      - "src/Contracts/Runtime/SidecarTransport.php"
+      - "src/Contracts/Runtime/DurableRunStore.php"
+      - "src/Runtime/Sidecar/**"
+      - "src/Runtime/Durable/**"
+      - "tests/Runtime/Sidecar/**"
+      - "tests/Runtime/Durable/**"
+      - "examples/runtime/durable-sidecar-resume.php"
+      - "docs/enterprise/sidecar-durable-resume.md"
+    requirement_refs: ["FR-003", "FR-004", "FR-006", "FR-007"]
+    subtasks: ["T001", "T002", "T003", "T004", "T005"]
+    prompt_file: "tasks/WP02-sidecar-durable-resume-contract.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP03
+    title: "Enterprise Adapter Split Decision"
+    dependencies: ["WP01", "WP02"]
+    owned_files:
+      - "docs/architecture/001-enterprise-adapter-split.md"
+    requirement_refs: ["FR-005", "FR-007"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP03-enterprise-adapter-split-decision.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP04
+    title: "Composer Baseline Guardrails"
+    dependencies: ["WP01", "WP02", "WP03"]
+    owned_files:
+      - ".gitignore"
+      - "composer.json"
+      - "README.md"
+      - "outline.md"
+      - "docs/enterprise/README.md"
+      - "src/Deployment/DeploymentReadiness.php"
+      - "src/Sdk.php"
+      - "tests/Deployment/DeploymentReadinessTest.php"
+      - "tests/SdkTest.php"
+      - "examples/runtime/durable-sidecar-handoff.php"
+    requirement_refs: ["FR-001", "FR-003", "FR-006", "FR-007"]
+    subtasks: ["T001", "T002", "T003", "T004", "T005"]
+    prompt_file: "tasks/WP04-composer-baseline-guardrails.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""

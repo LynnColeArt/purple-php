@@ -48,4 +48,5 @@ var/runtime/
 .kittify/merge-state.json
 .kittify/missions/__pycache__/
 .kittify/runtime/
+.kittify/sync-state.json
 .kittify/workspaces/

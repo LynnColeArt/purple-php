@@ -1,0 +1,92 @@
+{
+  "mission_slug": "runtime-continuation-mega-mission-01KTA3AD",
+  "mission_number": "",
+  "mission_type": "software-dev",
+  "overall_verdict": "pending",
+  "criteria": [
+    {
+      "criterion_id": "FR-001",
+      "description": "Native acceptance boundary defines compatible operation, payload, status, metrics, and failure behavior without requiring a compiled extension.",
+      "proof_type": "automated_test",
+      "evidence": null,
+      "pass_fail": "pending",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "Expected evidence: native acceptance fixture and bridge tests pass under Composer mode."
+    },
+    {
+      "criterion_id": "FR-002",
+      "description": "PHP-level compatibility fixture can be reused by a future native implementation.",
+      "proof_type": "automated_test",
+      "evidence": null,
+      "pass_fail": "pending",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "Expected evidence: fixture accepts an injected invoker rather than hard-coding PhpExtensionBridge internals."
+    },
+    {
+      "criterion_id": "FR-003",
+      "description": "Sidecar durable resume request and response contract is defined with versioned sidecar envelopes.",
+      "proof_type": "automated_test",
+      "evidence": null,
+      "pass_fail": "pending",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "Expected evidence: request/response tests assert envelope type, run ID, action, status, and metadata."
+    },
+    {
+      "criterion_id": "FR-004",
+      "description": "Durable resume behavior is demonstrated without running a sidecar process.",
+      "proof_type": "example_run",
+      "evidence": null,
+      "pass_fail": "pending",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "Expected evidence: fake or injectable transport example runs locally."
+    },
+    {
+      "criterion_id": "FR-005",
+      "description": "Enterprise adapter split decision records first package candidate, ownership boundary, likely future file movement, and timing rationale.",
+      "proof_type": "documentation_review",
+      "evidence": null,
+      "pass_fail": "pending",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "Expected evidence: ADR exists at docs/architecture/001-enterprise-adapter-split.md."
+    },
+    {
+      "criterion_id": "FR-006",
+      "description": "Composer mode remains the stable baseline and validates without native extension or running sidecar.",
+      "proof_type": "automated_test",
+      "evidence": null,
+      "pass_fail": "pending",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "Expected evidence: composer check passes and deployment readiness keeps native runtime optional."
+    },
+    {
+      "criterion_id": "FR-007",
+      "description": "Roadmap and enterprise docs represent Phase 5.1 as runtime continuation work while preserving optional-native strategy.",
+      "proof_type": "documentation_review",
+      "evidence": null,
+      "pass_fail": "pending",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "Expected evidence: README, outline, and enterprise docs align on Composer-first wording."
+    }
+  ],
+  "negative_invariants": [
+    {
+      "id": "NI-001",
+      "description": "No test, example, or default SDK path may require a compiled native extension."
+    },
+    {
+      "id": "NI-002",
+      "description": "No test, example, or default SDK path may require a running sidecar service."
+    },
+    {
+      "id": "NI-003",
+      "description": "This mission must not physically split Composer packages."
+    }
+  ]
+}
