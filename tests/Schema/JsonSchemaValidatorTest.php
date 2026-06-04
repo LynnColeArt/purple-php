@@ -30,6 +30,13 @@ JSON;
         $this->assertTrue($result->valid);
     }
 
+    public function testAcceptsEmptyObjectSchema(): void
+    {
+        $result = (new JsonSchemaValidator())->validate(['anything' => true], '{}');
+
+        $this->assertTrue($result->valid);
+    }
+
     public function testReportsMissingAndInvalidProperties(): void
     {
         $result = (new JsonSchemaValidator())->validate([

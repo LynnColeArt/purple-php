@@ -13,14 +13,16 @@ Purple PHP is Composer-first. Native runtime, sidecar, and PHP extension support
 The current SDK includes:
 
 * Smart functions: typed, auditable AI calls for narrow repeatable tasks.
-* Chat sessions: stateful assistant flows built on the same provider, policy, and audit contracts.
-* Tool contracts: named tools with input/output schemas and side-effect levels.
-* Looping agents: goal-driven runners that can call tools under limits, hooks, policy, audit, and approvals.
+* Chat sessions: stateful assistant flows with role-aware history and chunkable responses.
+* Tool contracts: named, schema-validated tools with input/output schemas and side-effect levels.
+* Looping agents: goal-driven runners that can call tools under limits, hooks, policy, audit, retries, replay logs, and approvals.
 * Runtime hooks: extension points around provider requests, tool calls, and agent lifecycle events.
 * CLI support: a `purple` command for demos, diagnostics, provider checks, and audit inspection.
 * Enterprise workflow ports: CMS-agnostic content, catalog, order, support, approval, and audit adapters.
+* Enterprise hardening: tenant/data-residency policy metadata, advanced policy rules, PII redaction, contextual/Vault/cloud secret lookup, Azure/Bedrock/sidecar providers, and SIEM/observability export.
+* Optional runtime readiness: native bridge contracts, sidecar envelopes, sandboxed tool execution, durable run storage, runtime metrics, and on-prem deployment metadata.
 
-The first milestone was smart functions. The repository now carries the broader proof package so the early public API can be evaluated as a connected SDK, not only as isolated examples.
+The first milestone was smart functions. Phases 2, 3, 4, and 5 are now represented in the Composer-first SDK as chat, CLI, tools, looping agents, approvals, runtime hooks, retry behavior, run state, replayable tool logs, enterprise policy, secret adapters, cloud provider adapters, sidecar brokerage, observability export, and optional native/runtime readiness contracts.
 
 ## Quick Start
 
@@ -30,7 +32,10 @@ php examples/smart-functions/sdk-quickstart.php
 php examples/smart-functions/catalog-summary.php
 php examples/chat/fake-chat.php
 php examples/agents/catalog-agent.php
+php examples/runtime/durable-sidecar-handoff.php
 php bin/purple demo smart-function
+php bin/purple demo chat
+php bin/purple demo agent
 ```
 
 The `Sdk` entry point bundles a provider, model, policy, audit log, and schema validator for common setup:
@@ -71,6 +76,8 @@ When installed as a Composer dependency, the CLI is exposed as:
 ```bash
 vendor/bin/purple diagnostics
 vendor/bin/purple audit inspect var/audit/catalog.jsonl
+vendor/bin/purple demo chat
+vendor/bin/purple demo agent
 vendor/bin/purple provider check openai
 ```
 

@@ -12,10 +12,14 @@ use Purple\Contracts\Audit\AuditLog;
 use Purple\Contracts\Policy\PolicyEngine;
 use Purple\Contracts\Provider\Provider;
 use Purple\Contracts\Schema\SchemaValidator;
+use Purple\Contracts\Security\DataRedactor;
 use Purple\Contracts\Security\SecretResolver;
 use Purple\Policy\BasicPolicyEngine;
 use Purple\Prompt\StringPromptTemplate;
+use Purple\Provider\Azure\AzureOpenAIProvider;
+use Purple\Provider\Bedrock\BedrockProvider;
 use Purple\Provider\OpenAI\OpenAIProvider;
+use Purple\Provider\Sidecar\SidecarProvider;
 use Purple\Schema\JsonSchemaValidator;
 use Purple\Security\EnvironmentSecretResolver;
 use Purple\SmartFunction\SmartFunctionDefinition;
@@ -115,11 +119,107 @@ final readonly class Sdk
         );
     }
 
+    /**
+     * @param null|callable(string, string, array<string, string>, array<string, mixed>): array<string, mixed> $transport
+     */
+    public static function azureOpenAI(
+        string $resource,
+        ?ProviderProfile $profile = null,
+        ?SecretResolver $secrets = null,
+        ?AuditLog $auditLog = null,
+        ?PolicyEngine $policy = null,
+        ?SchemaValidator $validator = null,
+        ?callable $transport = null,
+        string $apiVersion = '2024-02-15-preview',
+    ): self {
+        $profile ??= ProviderProfile::azureOpenAI();
+        self::assertProfileProvider($profile, 'azure_openai', 'Azure OpenAI');
+
+        if ($profile->secretName === null) {
+            throw new InvalidArgumentException('Azure OpenAI provider profile must define a secret name.');
+        }
+
+        return self::fromProvider(
+            provider: new AzureOpenAIProvider(
+                secrets: $secrets ?? new EnvironmentSecretResolver(),
+                resource: $resource,
+                deployment: $profile->model,
+                secretName: $profile->secretName,
+                apiVersion: $apiVersion,
+                transport: $transport,
+            ),
+            profile: $profile,
+            auditLog: $auditLog,
+            policy: $policy,
+            validator: $validator,
+        );
+    }
+
+    /**
+     * @param null|callable(string, string, array<string, string>, array<string, mixed>): array<string, mixed> $transport
+     */
+    public static function bedrock(
+        ?ProviderProfile $profile = null,
+        ?AuditLog $auditLog = null,
+        ?PolicyEngine $policy = null,
+        ?SchemaValidator $validator = null,
+        ?callable $transport = null,
+        string $region = 'us-east-1',
+    ): self {
+        $profile ??= ProviderProfile::bedrock();
+        self::assertProfileProvider($profile, 'bedrock', 'Bedrock');
+
+        return self::fromProvider(
+            provider: new BedrockProvider(
+                region: $region,
+                transport: $transport,
+            ),
+            profile: $profile,
+            auditLog: $auditLog,
+            policy: $policy,
+            validator: $validator,
+        );
+    }
+
+    /**
+     * @param null|callable(string, string, array<string, string>, array<string, mixed>): array<string, mixed> $transport
+     */
+    public static function sidecar(
+        string $endpoint,
+        ?ProviderProfile $profile = null,
+        ?SecretResolver $secrets = null,
+        ?AuditLog $auditLog = null,
+        ?PolicyEngine $policy = null,
+        ?SchemaValidator $validator = null,
+        ?callable $transport = null,
+    ): self {
+        $profile ??= ProviderProfile::sidecar();
+        self::assertProfileProvider($profile, 'sidecar', 'Sidecar');
+
+        return self::fromProvider(
+            provider: new SidecarProvider(
+                endpoint: $endpoint,
+                secrets: $profile->secretName === null ? null : ($secrets ?? new EnvironmentSecretResolver()),
+                secretName: $profile->secretName ?? 'PURPLE_SIDECAR_TOKEN',
+                transport: $transport,
+            ),
+            profile: $profile,
+            auditLog: $auditLog,
+            policy: $policy,
+            validator: $validator,
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function smartFunction(
         string $name,
         string $prompt,
         string $outputSchema,
         int $maxRetries = 0,
+        array $metadata = [],
+        ?DataRedactor $redactor = null,
     ): SmartFunctionDefinition {
         return new SmartFunctionDefinition(
             name: $name,
@@ -132,10 +232,15 @@ final readonly class Sdk
             policy: $this->policy,
             auditLog: $this->auditLog,
             maxRetries: $maxRetries,
+            metadata: $metadata,
+            redactor: $redactor,
         );
     }
 
-    public function chatSession(string $name, ?ChatHistory $history = null): ChatSession
+    /**
+     * @param array<string, mixed> $metadata
+     */
+    public function chatSession(string $name, ?ChatHistory $history = null, array $metadata = [], ?DataRedactor $redactor = null): ChatSession
     {
         return new ChatSession(
             name: $name,
@@ -145,6 +250,8 @@ final readonly class Sdk
             policy: $this->policy,
             auditLog: $this->auditLog,
             history: $history,
+            metadata: $metadata,
+            redactor: $redactor,
         );
     }
 

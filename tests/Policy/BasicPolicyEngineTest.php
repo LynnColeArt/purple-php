@@ -41,4 +41,51 @@ final class BasicPolicyEngineTest extends TestCase
         $this->assertFalse($decision->allowed);
         $this->assertSame('Run budget has been exhausted.', $decision->reason);
     }
+
+    public function testDeniesDisallowedEnterpriseMetadata(): void
+    {
+        $policy = new BasicPolicyEngine(
+            allowedTenantIds: ['tenant-a'],
+            allowedProviderRoutes: ['private-model'],
+            allowedDataResidencyRegions: ['us'],
+        );
+
+        $tenantDecision = $policy->decide(new PolicyRequest(
+            operation: 'chat.send',
+            provider: 'fake',
+            model: 'fake-model',
+            metadata: [
+                'tenant_id' => 'tenant-b',
+                'provider_route' => 'private-model',
+                'data_residency_region' => 'us',
+            ],
+        ));
+        $routeDecision = $policy->decide(new PolicyRequest(
+            operation: 'chat.send',
+            provider: 'fake',
+            model: 'fake-model',
+            metadata: [
+                'tenant_id' => 'tenant-a',
+                'provider_route' => 'public-model',
+                'data_residency_region' => 'us',
+            ],
+        ));
+        $residencyDecision = $policy->decide(new PolicyRequest(
+            operation: 'chat.send',
+            provider: 'fake',
+            model: 'fake-model',
+            metadata: [
+                'tenant_id' => 'tenant-a',
+                'provider_route' => 'private-model',
+                'data_residency_region' => 'eu',
+            ],
+        ));
+
+        $this->assertFalse($tenantDecision->allowed);
+        $this->assertSame('Tenant is not allowed by policy.', $tenantDecision->reason);
+        $this->assertFalse($routeDecision->allowed);
+        $this->assertSame('Provider route is not allowed by policy.', $routeDecision->reason);
+        $this->assertFalse($residencyDecision->allowed);
+        $this->assertSame('Data residency region is not allowed by policy.', $residencyDecision->reason);
+    }
 }

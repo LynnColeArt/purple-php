@@ -164,6 +164,43 @@ final class AgentHookBehaviorTest extends TestCase
         $this->assertFalse($called);
     }
 
+    public function testAfterToolHookCanStopRunWithReplayLog(): void
+    {
+        $provider = new FakeProvider([
+            new ProviderResponse('{"action":"tool","tool":"catalog.lookup","input":{"sku":"SKU-1"}}'),
+        ]);
+        $runner = new AgentRunner(
+            name: 'catalog.agent',
+            providerName: 'fake',
+            model: 'fake-model',
+            provider: $provider,
+            policy: new BasicPolicyEngine(allowedProviders: ['fake', 'catalog.lookup'], allowedModels: ['fake-model', 'read']),
+            auditLog: new FileAuditLog(sys_get_temp_dir() . '/purple-agent-after-tool-hook-' . bin2hex(random_bytes(4)) . '.jsonl'),
+            tools: new AgentToolRegistry([
+                new AgentTool($this->tool(), static fn (): array => ['title' => 'Merino cardigan']),
+            ]),
+            hooks: new HookDispatcher([
+                new class () implements RuntimeHook {
+                    public function handle(HookEvent $event): HookResult
+                    {
+                        if ($event->type !== 'after_tool_call') {
+                            return HookResult::allow();
+                        }
+
+                        return HookResult::block('Stop after tool inspection.');
+                    }
+                },
+            ]),
+        );
+
+        $result = $runner->run('Look up SKU-1.');
+
+        $this->assertSame(AgentRunStatus::Failed, $result->status);
+        $this->assertSame('Stop after tool inspection.', $result->reason);
+        $this->assertCount(1, $result->toolLog);
+        $this->assertSame('completed', $result->toolLog[0]->status);
+    }
+
     private function tool(): ToolDefinition
     {
         return new ToolDefinition(

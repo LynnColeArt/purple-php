@@ -36,6 +36,22 @@ final class ProviderProfileTest extends TestCase
         $this->assertSame('PURPLE_OPENAI_KEY', $profile->secretName);
     }
 
+    public function testCreatesEnterpriseProviderProfiles(): void
+    {
+        $azure = ProviderProfile::azureOpenAI(deployment: 'azure-deployment', secretName: 'AZURE_KEY');
+        $bedrock = ProviderProfile::bedrock(model: 'anthropic.model');
+        $sidecar = ProviderProfile::sidecar(model: 'brokered-model', secretName: 'SIDECAR_TOKEN');
+
+        $this->assertSame('azure_openai', $azure->providerName);
+        $this->assertSame('azure-deployment', $azure->model);
+        $this->assertSame('AZURE_KEY', $azure->secretName);
+        $this->assertSame('bedrock', $bedrock->providerName);
+        $this->assertSame('anthropic.model', $bedrock->model);
+        $this->assertNull($bedrock->secretName);
+        $this->assertSame('sidecar', $sidecar->providerName);
+        $this->assertSame('SIDECAR_TOKEN', $sidecar->secretName);
+    }
+
     public function testRejectsBlankSecretName(): void
     {
         $this->expectException(InvalidArgumentException::class);

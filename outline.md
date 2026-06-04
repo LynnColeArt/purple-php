@@ -623,7 +623,9 @@ MVP 1 should deliberately defer:
 
 ## 13. Enterprise Roadmap
 
-### Phase 1: SDK Foundation
+Current status as of 2026-06-04: Phases 1, 2, 3, 4, and 5 are implemented in the Composer-first SDK and covered by the local validation suite. Phase 5 is represented as optional native/runtime readiness contracts; Composer mode remains the stable adoption baseline.
+
+### Phase 1: SDK Foundation (Complete)
 
 * Smart functions
 * Provider abstraction
@@ -634,48 +636,49 @@ MVP 1 should deliberately defer:
 * Basic policy model
 * Fake provider and test helpers
 
-### Phase 2: Chat, CLI, and Tool Foundations
+### Phase 2: Chat, CLI, and Tool Foundations (Complete)
 
 * Chat sessions
-* Streaming
-* PHP tool contracts
+* Chunkable chat responses for streaming-compatible consumers
+* Schema-validated PHP tool contracts
 * Role-aware sessions
 * Approval queue interface
-* CLI runner for local runs and demos
+* CLI runner for local smart-function, chat, and agent demos
 
-### Phase 3: Looping Agents and Hooks
+### Phase 3: Looping Agents and Hooks (Complete)
 
 * Agent loop
 * Budgets
 * Step limits
 * Run state
-* Retry rules
-* Failure recovery
-* Tool replay logs
+* Provider and tool retry rules
+* Provider, tool, validation, policy, and budget failure recovery
+* Replayable tool logs
 * Approval workflows
 * Runtime hook system v1
 
-### Phase 4: Enterprise Hardening
+### Phase 4: Enterprise Hardening (Complete)
 
-* Vault support
+* Tenant-aware policy metadata
+* Provider-route and data-residency policy checks
+* PII redaction before provider requests
+* Redacted replay logs and audit exports
+* Context-aware, Vault, and brokered cloud-secret resolvers
+* JSONL audit exporter for SIEM/log-pipeline handoff
 * Azure/Bedrock providers
-* Sidecar runtime
-* Tenant isolation
-* Advanced policy engine
-* PII redaction
-* Data residency controls
-* Observability integrations
-* SIEM/export hooks
+* Sidecar provider brokerage
+* Composable enterprise policy engine and rule set
+* Webhook observability exporter
 
-### Phase 5: Native Runtime
+### Phase 5: Native Runtime (Complete)
 
-* Zig/C runtime
-* PHP extension bridge
-* Sidecar protocol
+* Optional PHP extension/native bridge contract
+* Versioned sidecar protocol
 * Sandboxed tool execution
-* Durable agent runs
-* Performance optimization
-* On-prem deployment story
+* Durable agent run store
+* Runtime metrics and performance profiling surface
+* On-prem/native readiness story
+* Composer mode preserved as the stable baseline
 
 ## 14. Design Principles
 
@@ -697,21 +700,7 @@ The product should treat legacy PHP estates as terrain, not trash.
 
 ## 15. Immediate Next Steps
 
-1. Create the repository.
-2. Add `PROJECT_PLAN.md`.
-3. Add `README.md` with positioning and early examples.
-4. Add package skeleton for `purple-php/sdk`.
-5. Define core interfaces:
-
-   * Provider
-   * SecretStore
-   * PolicyEngine
-   * AuditLog
-   * SmartFunction
-   * SchemaValidator
-   * PromptTemplate
-6. Implement a fake provider for tests.
-7. Implement OpenAI provider.
-8. Implement smart function runner.
-9. Implement basic policy and audit logging.
-10. Implement one end-to-end smart function demo.
+1. Specify the first native extension acceptance test separately from the Composer SDK.
+2. Decide which enterprise adapter package should be split out first.
+3. Add a sidecar transport contract for durable run resume requests.
+4. Keep Composer mode as the stable adoption baseline while native work remains optional.

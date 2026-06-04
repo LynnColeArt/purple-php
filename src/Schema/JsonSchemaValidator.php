@@ -13,12 +13,13 @@ final class JsonSchemaValidator implements SchemaValidator
     public function validate(mixed $value, string $schema): ValidationResult
     {
         try {
+            $object = json_decode($schema, false, 512, JSON_THROW_ON_ERROR);
             $decoded = json_decode($schema, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             return ValidationResult::fail(['Schema is not valid JSON: ' . $exception->getMessage()]);
         }
 
-        if (! is_array($decoded) || array_is_list($decoded)) {
+        if (! $object instanceof \stdClass || ! is_array($decoded)) {
             return ValidationResult::fail(['Schema must decode to an object.']);
         }
 

@@ -22,6 +22,7 @@ final class SmartFunctionRunner
             model: $function->model,
             metadata: [
                 'smart_function' => $function->name(),
+                ...$function->metadata,
             ],
         ));
 
@@ -31,6 +32,7 @@ final class SmartFunctionRunner
             'model' => $function->model,
             'allowed' => $policyDecision->allowed,
             'reason' => $policyDecision->reason,
+            ...$function->metadata,
         ]));
 
         if (! $policyDecision->allowed) {
@@ -39,17 +41,20 @@ final class SmartFunctionRunner
                 'provider' => $function->providerName,
                 'model' => $function->model,
                 'status' => 'policy_denied',
+                ...$function->metadata,
             ]));
 
             throw new PolicyDenied($policyDecision->reason ?? 'Policy denied smart function execution.');
         }
 
-        $prompt = $function->prompt->render($inputMap);
+        $promptInput = $function->redactor?->redact($inputMap) ?? $inputMap;
+        $prompt = $function->prompt->render($this->inputMap($promptInput));
 
         $function->auditLog->record(AuditEvent::now('smart_function.started', $runId, [
             'smart_function' => $function->name(),
             'provider' => $function->providerName,
             'model' => $function->model,
+            ...$function->metadata,
         ]));
 
         $lastValidation = null;
@@ -60,6 +65,7 @@ final class SmartFunctionRunner
                 'smart_function' => $function->name(),
                 'run_id' => $runId,
                 'attempt' => $attempt,
+                ...$function->metadata,
             ]));
             $lastContent = $response->content;
 
@@ -82,6 +88,7 @@ final class SmartFunctionRunner
                     'status' => 'completed',
                     'validation_status' => 'passed',
                     'attempts' => $attempt,
+                    ...$function->metadata,
                 ]));
 
                 return new SmartFunctionResult($output, $response->content, $lastValidation, $runId, $attempt);
@@ -97,6 +104,7 @@ final class SmartFunctionRunner
             'status' => 'validation_failed',
             'validation_status' => 'failed',
             'violations' => $failedValidation->violations,
+            ...$function->metadata,
         ]));
 
         throw new SchemaValidationFailed(sprintf(

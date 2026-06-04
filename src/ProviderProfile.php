@@ -18,6 +18,9 @@ final readonly class ProviderProfile
     /**
      * @param list<string> $allowedProviders
      * @param list<string> $allowedModels
+     * @param list<string> $allowedTenantIds
+     * @param list<string> $allowedProviderRoutes
+     * @param list<string> $allowedDataResidencyRegions
      */
     public function __construct(
         public string $providerName,
@@ -28,6 +31,9 @@ final readonly class ProviderProfile
         array $allowedModels = [],
         public ?int $maxRuns = null,
         public ?float $maxEstimatedCostUsd = null,
+        public array $allowedTenantIds = [],
+        public array $allowedProviderRoutes = [],
+        public array $allowedDataResidencyRegions = [],
     ) {
         $this->assertNonEmpty($this->providerName, 'Provider name');
         $this->assertNonEmpty($this->model, 'Model');
@@ -50,6 +56,9 @@ final readonly class ProviderProfile
         $this->allowedModels = $allowedModels === []
             ? [$this->model]
             : $this->validateStringList($allowedModels, 'Allowed models');
+        $this->validateStringList($this->allowedTenantIds, 'Allowed tenant IDs');
+        $this->validateStringList($this->allowedProviderRoutes, 'Allowed provider routes');
+        $this->validateStringList($this->allowedDataResidencyRegions, 'Allowed data residency regions');
     }
 
     public static function fake(string $model = 'fake-model', ?string $auditPath = null): self
@@ -74,6 +83,43 @@ final readonly class ProviderProfile
         );
     }
 
+    public static function azureOpenAI(
+        string $deployment = 'gpt-4.1-mini',
+        string $secretName = 'AZURE_OPENAI_API_KEY',
+        ?string $auditPath = null,
+    ): self {
+        return new self(
+            providerName: 'azure_openai',
+            model: $deployment,
+            secretName: $secretName,
+            auditPath: $auditPath,
+        );
+    }
+
+    public static function bedrock(
+        string $model = 'anthropic.claude-3-haiku-20240307-v1:0',
+        ?string $auditPath = null,
+    ): self {
+        return new self(
+            providerName: 'bedrock',
+            model: $model,
+            auditPath: $auditPath,
+        );
+    }
+
+    public static function sidecar(
+        string $model = 'brokered-model',
+        string $secretName = 'PURPLE_SIDECAR_TOKEN',
+        ?string $auditPath = null,
+    ): self {
+        return new self(
+            providerName: 'sidecar',
+            model: $model,
+            secretName: $secretName,
+            auditPath: $auditPath,
+        );
+    }
+
     public function policy(): BasicPolicyEngine
     {
         return new BasicPolicyEngine(
@@ -81,6 +127,9 @@ final readonly class ProviderProfile
             allowedModels: $this->allowedModels,
             maxRuns: $this->maxRuns,
             maxEstimatedCostUsd: $this->maxEstimatedCostUsd,
+            allowedTenantIds: $this->allowedTenantIds,
+            allowedProviderRoutes: $this->allowedProviderRoutes,
+            allowedDataResidencyRegions: $this->allowedDataResidencyRegions,
         );
     }
 

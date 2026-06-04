@@ -4,7 +4,17 @@ declare(strict_types=1);
 
 namespace Purple\Cli;
 
+use Purple\Agent\AgentLimits;
+use Purple\Agent\AgentRunner;
+use Purple\Agent\AgentTool;
+use Purple\Agent\AgentToolCallRecord;
+use Purple\Agent\AgentToolRegistry;
 use Purple\Audit\FileAuditLog;
+use Purple\Chat\ChatHistory;
+use Purple\Chat\ChatMessage;
+use Purple\Chat\ChatResponseChunk;
+use Purple\Chat\ChatSession;
+use Purple\Contracts\Provider\ProviderResponse;
 use Purple\ProviderProfile;
 use Purple\Policy\BasicPolicyEngine;
 use Purple\Prompt\StringPromptTemplate;
@@ -12,6 +22,8 @@ use Purple\Schema\JsonSchemaValidator;
 use Purple\Security\EnvironmentSecretResolver;
 use Purple\SmartFunction\SmartFunctionDefinition;
 use Purple\Testing\FakeProvider;
+use Purple\Tool\ToolDefinition;
+use Purple\Tool\ToolSideEffectLevel;
 use InvalidArgumentException;
 use Throwable;
 
@@ -52,6 +64,8 @@ final readonly class PurpleCli
             'Purple PHP CLI',
             'Commands:',
             '  demo smart-function [audit-path]',
+            '  demo chat [audit-path]',
+            '  demo agent [audit-path]',
             '  audit inspect <audit-path>',
             '  provider check fake',
             '  provider check openai [secret-name]',
@@ -68,11 +82,20 @@ final readonly class PurpleCli
      */
     private function demo(array $args, callable $write): int
     {
-        if (($args[0] ?? '') !== 'smart-function') {
-            return $this->error('Usage: purple demo smart-function [audit-path]', $write);
-        }
+        return match ($args[0] ?? '') {
+            'smart-function' => $this->demoSmartFunction($args[1] ?? null, $write),
+            'chat' => $this->demoChat($args[1] ?? null, $write),
+            'agent' => $this->demoAgent($args[1] ?? null, $write),
+            default => $this->error('Usage: purple demo <smart-function|chat|agent> [audit-path]', $write),
+        };
+    }
 
-        $auditPath = $args[1] ?? sys_get_temp_dir() . '/purple-cli-smart-function-demo.jsonl';
+    /**
+     * @param callable(string): void $write
+     */
+    private function demoSmartFunction(?string $auditPath, callable $write): int
+    {
+        $auditPath ??= sys_get_temp_dir() . '/purple-cli-smart-function-demo.jsonl';
         $function = new SmartFunctionDefinition(
             name: 'catalog.summary',
             providerName: 'fake',
@@ -89,6 +112,97 @@ final readonly class PurpleCli
         $this->writeJson([
             'demo' => 'smart-function',
             'output' => $output,
+            'audit_path' => $auditPath,
+        ], $write);
+
+        return 0;
+    }
+
+    /**
+     * @param callable(string): void $write
+     */
+    private function demoChat(?string $auditPath, callable $write): int
+    {
+        $auditPath ??= sys_get_temp_dir() . '/purple-cli-chat-demo.jsonl';
+        $session = new ChatSession(
+            name: 'support.chat',
+            providerName: 'fake',
+            model: 'fake-model',
+            provider: FakeProvider::replying('Try clearing the cart and re-applying the discount code.'),
+            policy: new BasicPolicyEngine(allowedProviders: ['fake'], allowedModels: ['fake-model']),
+            auditLog: new FileAuditLog($auditPath),
+            history: new ChatHistory([
+                ChatMessage::system('Answer as an ecommerce support assistant.'),
+            ]),
+        );
+        $response = $session->send('The discount code fails at checkout.');
+
+        $this->writeJson([
+            'demo' => 'chat',
+            'assistant' => $response->content,
+            'message_count' => $response->history->count(),
+            'chunks' => array_map(
+                static fn (ChatResponseChunk $chunk): array => [
+                    'index' => $chunk->index,
+                    'content' => $chunk->content,
+                    'final' => $chunk->final,
+                ],
+                iterator_to_array($response->chunks(24)),
+            ),
+            'audit_path' => $auditPath,
+        ], $write);
+
+        return 0;
+    }
+
+    /**
+     * @param callable(string): void $write
+     */
+    private function demoAgent(?string $auditPath, callable $write): int
+    {
+        $auditPath ??= sys_get_temp_dir() . '/purple-cli-agent-demo.jsonl';
+        $provider = new FakeProvider([
+            new ProviderResponse('{"action":"tool","tool":"catalog.lookup","input":{"sku":"SKU-1"}}'),
+            new ProviderResponse('{"action":"complete","answer":"SKU-1 is ready for the catalog brief."}'),
+        ]);
+        $tools = new AgentToolRegistry([
+            new AgentTool(
+                new ToolDefinition(
+                    name: 'catalog.lookup',
+                    description: 'Look up catalog metadata for a SKU.',
+                    inputSchema: '{"type":"object","required":["sku"],"properties":{"sku":{"type":"string"}}}',
+                    outputSchema: '{"type":"object","required":["title"],"properties":{"title":{"type":"string"}}}',
+                    sideEffectLevel: ToolSideEffectLevel::Read,
+                    maxRetries: 1,
+                ),
+                static fn (array $input): array => [
+                    'sku' => $input['sku'] ?? '',
+                    'title' => 'Merino travel cardigan',
+                ],
+            ),
+        ]);
+        $runner = new AgentRunner(
+            name: 'catalog.agent',
+            providerName: 'fake',
+            model: 'fake-model',
+            provider: $provider,
+            policy: new BasicPolicyEngine(allowedProviders: ['fake', 'catalog.lookup'], allowedModels: ['fake-model', 'read']),
+            auditLog: new FileAuditLog($auditPath),
+            tools: $tools,
+            limits: new AgentLimits(maxSteps: 3),
+        );
+        $result = $runner->run('Prepare a catalog brief for SKU-1.');
+
+        $this->writeJson([
+            'demo' => 'agent',
+            'status' => $result->status->value,
+            'answer' => $result->answer,
+            'steps' => $result->steps,
+            'tool_calls' => $result->toolCalls,
+            'tool_log' => array_map(
+                static fn (AgentToolCallRecord $record): array => $record->toArray(),
+                $result->toolLog,
+            ),
             'audit_path' => $auditPath,
         ], $write);
 

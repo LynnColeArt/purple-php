@@ -25,8 +25,30 @@ final readonly class ChatResponse
     /**
      * @return iterable<ChatResponseChunk>
      */
-    public function chunks(): iterable
+    public function chunks(?int $chunkSize = null): iterable
     {
-        yield new ChatResponseChunk(0, $this->content, true);
+        if ($chunkSize !== null && $chunkSize < 1) {
+            throw new ChatException('Chat response chunk size must be at least 1.');
+        }
+
+        $chunkSize ??= max(1, strlen($this->content));
+        $length = strlen($this->content);
+
+        if ($length === 0) {
+            yield new ChatResponseChunk(0, '', true);
+
+            return;
+        }
+
+        $index = 0;
+
+        for ($offset = 0; $offset < $length; $offset += $chunkSize) {
+            yield new ChatResponseChunk(
+                $index,
+                substr($this->content, $offset, $chunkSize),
+                $offset + $chunkSize >= $length,
+            );
+            $index++;
+        }
     }
 }

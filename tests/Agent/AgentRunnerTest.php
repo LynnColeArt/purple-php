@@ -11,8 +11,12 @@ use Purple\Agent\AgentTool;
 use Purple\Agent\AgentToolRegistry;
 use Purple\Approval\StaticApprovalProvider;
 use Purple\Audit\FileAuditLog;
+use Purple\Contracts\Provider\Provider;
+use Purple\Contracts\Provider\ProviderRequest;
 use Purple\Contracts\Provider\ProviderResponse;
+use Purple\Domain\EnterpriseContext;
 use Purple\Policy\BasicPolicyEngine;
+use Purple\Security\PiiRedactor;
 use Purple\Testing\FakeProvider;
 use Purple\Tests\Testing\TestCase;
 use Purple\Tool\ToolDefinition;
@@ -136,6 +140,202 @@ final class AgentRunnerTest extends TestCase
 
         $this->assertSame(AgentRunStatus::Completed, $result->status);
         $this->assertTrue($called);
+    }
+
+    public function testToolRetriesAreReplayableInRunResult(): void
+    {
+        $attempts = 0;
+        $provider = new FakeProvider([
+            new ProviderResponse('{"action":"tool","tool":"catalog.lookup","input":{"sku":"SKU-1"}}'),
+            new ProviderResponse('{"action":"complete","answer":"Recovered after retry."}'),
+        ]);
+        $tools = new AgentToolRegistry([
+            new AgentTool(
+                new ToolDefinition(
+                    name: 'catalog.lookup',
+                    description: 'Look up catalog metadata.',
+                    inputSchema: '{}',
+                    outputSchema: '{}',
+                    sideEffectLevel: ToolSideEffectLevel::Read,
+                    maxRetries: 1,
+                ),
+                static function () use (&$attempts): array {
+                    $attempts++;
+
+                    if ($attempts === 1) {
+                        throw new \RuntimeException('Temporary catalog outage.');
+                    }
+
+                    return ['title' => 'Merino cardigan'];
+                },
+            ),
+        ]);
+        $runner = new AgentRunner(
+            name: 'catalog.agent',
+            providerName: 'fake',
+            model: 'fake-model',
+            provider: $provider,
+            policy: new BasicPolicyEngine(allowedProviders: ['fake', 'catalog.lookup'], allowedModels: ['fake-model', 'read']),
+            auditLog: new FileAuditLog(sys_get_temp_dir() . '/purple-agent-tool-retry-' . bin2hex(random_bytes(4)) . '.jsonl'),
+            tools: $tools,
+        );
+
+        $result = $runner->run('Summarize SKU-1.');
+
+        $this->assertSame(AgentRunStatus::Completed, $result->status);
+        $this->assertSame(2, $result->toolCalls);
+        $this->assertCount(2, $result->toolLog);
+        $this->assertSame('failed', $result->toolLog[0]->status);
+        $this->assertSame(1, $result->toolLog[0]->attempt);
+        $this->assertSame('completed', $result->toolLog[1]->status);
+        $this->assertSame(2, $result->toolLog[1]->attempt);
+        $this->assertSame('completed', $result->state['status'] ?? null);
+        $stateToolLog = $result->state['tool_log'] ?? null;
+        $this->assertIsArray($stateToolLog);
+        $this->assertCount(2, $stateToolLog);
+    }
+
+    public function testToolOutputSchemaValidationCanRecoverWithRetry(): void
+    {
+        $attempts = 0;
+        $provider = new FakeProvider([
+            new ProviderResponse('{"action":"tool","tool":"catalog.lookup","input":{"sku":"SKU-1"}}'),
+            new ProviderResponse('{"action":"complete","answer":"Validated output."}'),
+        ]);
+        $tools = new AgentToolRegistry([
+            new AgentTool(
+                new ToolDefinition(
+                    name: 'catalog.lookup',
+                    description: 'Look up catalog metadata.',
+                    inputSchema: '{}',
+                    outputSchema: '{"type":"object","required":["title"],"properties":{"title":{"type":"string"}}}',
+                    sideEffectLevel: ToolSideEffectLevel::Read,
+                    maxRetries: 1,
+                ),
+                static function () use (&$attempts): array {
+                    $attempts++;
+
+                    return $attempts === 1 ? [] : ['title' => 'Merino cardigan'];
+                },
+            ),
+        ]);
+        $runner = new AgentRunner(
+            name: 'catalog.agent',
+            providerName: 'fake',
+            model: 'fake-model',
+            provider: $provider,
+            policy: new BasicPolicyEngine(allowedProviders: ['fake', 'catalog.lookup'], allowedModels: ['fake-model', 'read']),
+            auditLog: new FileAuditLog(sys_get_temp_dir() . '/purple-agent-tool-validation-' . bin2hex(random_bytes(4)) . '.jsonl'),
+            tools: $tools,
+        );
+
+        $result = $runner->run('Summarize SKU-1.');
+
+        $this->assertSame(AgentRunStatus::Completed, $result->status);
+        $this->assertSame('validation_failed', $result->toolLog[0]->status);
+        $this->assertSame('completed', $result->toolLog[1]->status);
+    }
+
+    public function testProviderFailuresUseRetryBudget(): void
+    {
+        $attempts = 0;
+        $provider = new class ($attempts) implements Provider {
+            /** @var list<ProviderRequest> */
+            private array $requests = [];
+
+            public function __construct(private int &$attempts)
+            {
+            }
+
+            public function complete(ProviderRequest $request): ProviderResponse
+            {
+                $this->requests[] = $request;
+                $this->attempts++;
+
+                if ($this->attempts === 1) {
+                    throw new \RuntimeException('Provider temporarily unavailable.');
+                }
+
+                return new ProviderResponse('{"action":"complete","answer":"Recovered provider."}');
+            }
+
+            /**
+             * @return list<ProviderRequest>
+             */
+            public function requests(): array
+            {
+                return $this->requests;
+            }
+        };
+        $runner = new AgentRunner(
+            name: 'catalog.agent',
+            providerName: 'fake',
+            model: 'fake-model',
+            provider: $provider,
+            policy: new BasicPolicyEngine(allowedProviders: ['fake'], allowedModels: ['fake-model']),
+            auditLog: new FileAuditLog(sys_get_temp_dir() . '/purple-agent-provider-retry-' . bin2hex(random_bytes(4)) . '.jsonl'),
+            tools: new AgentToolRegistry(),
+            limits: new AgentLimits(maxProviderRetries: 1),
+        );
+
+        $result = $runner->run('Answer once.');
+
+        $this->assertSame(AgentRunStatus::Completed, $result->status);
+        $this->assertSame('Recovered provider.', $result->answer);
+        $this->assertSame(2, $attempts);
+        $this->assertCount(2, $provider->requests());
+    }
+
+    public function testEnterpriseMetadataAndRedactionReachAgentProviderAndReplayLog(): void
+    {
+        $context = new EnterpriseContext('tenant-a', 'user-42', providerRoute: 'private-model', dataResidencyRegion: 'us');
+        $provider = new FakeProvider([
+            new ProviderResponse('{"action":"tool","tool":"catalog.lookup","input":{"sku":"SKU-1","email":"customer@example.com"}}'),
+            new ProviderResponse('{"action":"complete","answer":"Done."}'),
+        ]);
+        $runner = new AgentRunner(
+            name: 'catalog.agent',
+            providerName: 'fake',
+            model: 'fake-model',
+            provider: $provider,
+            policy: new BasicPolicyEngine(
+                allowedProviders: ['fake', 'catalog.lookup'],
+                allowedModels: ['fake-model', 'read'],
+                allowedTenantIds: ['tenant-a'],
+                allowedProviderRoutes: ['private-model'],
+                allowedDataResidencyRegions: ['us'],
+            ),
+            auditLog: new FileAuditLog(sys_get_temp_dir() . '/purple-agent-enterprise-' . bin2hex(random_bytes(4)) . '.jsonl'),
+            tools: new AgentToolRegistry([
+                new AgentTool(
+                    new ToolDefinition(
+                        name: 'catalog.lookup',
+                        description: 'Look up catalog metadata.',
+                        inputSchema: '{}',
+                        outputSchema: '{}',
+                        sideEffectLevel: ToolSideEffectLevel::Read,
+                    ),
+                    static fn (): array => [
+                        'contact' => 'customer@example.com',
+                    ],
+                ),
+            ]),
+            metadata: $context->policyMetadata(),
+            redactor: new PiiRedactor(),
+        );
+
+        $result = $runner->run('Find customer@example.com.');
+
+        $this->assertSame(AgentRunStatus::Completed, $result->status);
+        $this->assertSame('tenant-a', $provider->requests()[0]->metadata['tenant_id'] ?? null);
+        $this->assertStringContainsString('[redacted-email]', $provider->requests()[0]->messages[0]['content']);
+        $this->assertSame('[redacted-email]', $result->toolLog[0]->input['email'] ?? null);
+        $output = $result->toolLog[0]->output;
+        $this->assertIsArray($output);
+        $this->assertSame('[redacted-email]', $output['contact'] ?? null);
+        $metadata = $result->state['metadata'] ?? null;
+        $this->assertIsArray($metadata);
+        $this->assertSame('us', $metadata['data_residency_region'] ?? null);
     }
 
     public function testStepLimitStopsRunawayLoop(): void

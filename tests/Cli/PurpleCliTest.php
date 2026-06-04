@@ -39,6 +39,40 @@ final class PurpleCliTest extends TestCase
         $this->assertSame('smart_function.completed', $events[2]['type'] ?? null);
     }
 
+    public function testRunsChatAndAgentDemos(): void
+    {
+        $cli = new PurpleCli();
+        $chatAuditPath = sys_get_temp_dir() . '/purple-cli-chat-' . bin2hex(random_bytes(4)) . '.jsonl';
+        $agentAuditPath = sys_get_temp_dir() . '/purple-cli-agent-' . bin2hex(random_bytes(4)) . '.jsonl';
+        $chatOutput = '';
+        $agentOutput = '';
+
+        $chatExit = $cli->run(['purple', 'demo', 'chat', $chatAuditPath], static function (string $output) use (&$chatOutput): void {
+            $chatOutput .= $output;
+        });
+        $agentExit = $cli->run(['purple', 'demo', 'agent', $agentAuditPath], static function (string $output) use (&$agentOutput): void {
+            $agentOutput .= $output;
+        });
+
+        $chatPayload = $this->decodeObject($chatOutput);
+        $agentPayload = $this->decodeObject($agentOutput);
+
+        $this->assertSame(0, $chatExit);
+        $this->assertSame('chat', $chatPayload['demo']);
+        $this->assertSame(3, $chatPayload['message_count']);
+        $this->assertIsArray($chatPayload['chunks']);
+        $this->assertNotEmpty($chatPayload['chunks']);
+        $this->assertSame($chatAuditPath, $chatPayload['audit_path']);
+
+        $this->assertSame(0, $agentExit);
+        $this->assertSame('agent', $agentPayload['demo']);
+        $this->assertSame('completed', $agentPayload['status']);
+        $this->assertSame(1, $agentPayload['tool_calls']);
+        $this->assertIsArray($agentPayload['tool_log']);
+        $this->assertCount(1, $agentPayload['tool_log']);
+        $this->assertSame($agentAuditPath, $agentPayload['audit_path']);
+    }
+
     public function testChecksFakeProviderAndDiagnostics(): void
     {
         $cli = new PurpleCli();

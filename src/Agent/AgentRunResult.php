@@ -8,6 +8,10 @@ use Purple\Approval\ApprovalRequest;
 
 final readonly class AgentRunResult
 {
+    /**
+     * @param list<AgentToolCallRecord> $toolLog
+     * @param array<string, mixed> $state
+     */
     public function __construct(
         public AgentRunStatus $status,
         public string $runId,
@@ -16,6 +20,8 @@ final readonly class AgentRunResult
         public ?string $answer = null,
         public ?string $reason = null,
         public ?ApprovalRequest $approvalRequest = null,
+        public array $toolLog = [],
+        public array $state = [],
     ) {
     }
 }

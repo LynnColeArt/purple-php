@@ -34,6 +34,7 @@ final readonly class AuditExportRecord
             'data_sensitivity' => $this->context->dataSensitivity->value,
             'retention_days' => $this->context->retentionDays,
             'provider_route' => $this->context->providerRoute,
+            'data_residency_region' => $this->context->dataResidencyRegion,
             'occurred_at' => ($this->occurredAt ?? new DateTimeImmutable())->format(DATE_ATOM),
             'payload' => $this->payload,
         ];

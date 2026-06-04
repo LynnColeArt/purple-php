@@ -9,10 +9,14 @@ use Purple\Contracts\Policy\PolicyEngine;
 use Purple\Contracts\Prompt\PromptTemplate;
 use Purple\Contracts\Provider\Provider;
 use Purple\Contracts\Schema\SchemaValidator;
+use Purple\Contracts\Security\DataRedactor;
 use Purple\Contracts\SmartFunction\SmartFunction;
 
 final readonly class SmartFunctionDefinition implements SmartFunction
 {
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function __construct(
         private string $name,
         public string $providerName,
@@ -24,6 +28,8 @@ final readonly class SmartFunctionDefinition implements SmartFunction
         public PolicyEngine $policy,
         public AuditLog $auditLog,
         public int $maxRetries = 0,
+        public array $metadata = [],
+        public ?DataRedactor $redactor = null,
     ) {
         if (trim($this->name) === '') {
             throw new SmartFunctionException('Smart function name must not be empty.');

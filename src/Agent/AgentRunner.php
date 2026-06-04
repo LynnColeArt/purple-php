@@ -14,10 +14,13 @@ use Purple\Contracts\Policy\PolicyRequest;
 use Purple\Contracts\Provider\Provider;
 use Purple\Contracts\Provider\ProviderRequest;
 use Purple\Contracts\Provider\ProviderResponse;
+use Purple\Contracts\Schema\SchemaValidator;
+use Purple\Contracts\Security\DataRedactor;
 use Purple\Hooks\HookAction;
 use Purple\Hooks\HookDispatcher;
 use Purple\Hooks\HookEvent;
 use Purple\Hooks\HookResult;
+use Purple\Schema\JsonSchemaValidator;
 use Throwable;
 
 final class AgentRunner
@@ -25,6 +28,9 @@ final class AgentRunner
     private AgentLimits $limits;
     private HookDispatcher $hooks;
 
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function __construct(
         private readonly string $name,
         private readonly string $providerName,
@@ -34,6 +40,9 @@ final class AgentRunner
         private readonly AuditLog $auditLog,
         private readonly AgentToolRegistry $tools,
         private readonly ?ApprovalProvider $approvalProvider = null,
+        private readonly ?SchemaValidator $validator = null,
+        private readonly array $metadata = [],
+        private readonly ?DataRedactor $redactor = null,
         ?HookDispatcher $hooks = null,
         ?AgentLimits $limits = null,
     ) {
@@ -55,6 +64,7 @@ final class AgentRunner
         $startedAt = microtime(true);
         $steps = 0;
         $toolCalls = 0;
+        $toolLog = [];
         $messages = [
             [
                 'role' => 'user',
@@ -65,13 +75,14 @@ final class AgentRunner
         $this->audit('agent.started', $runId, [
             'agent' => $this->name,
             'goal' => $goal,
+            ...$this->metadata,
         ]);
 
         $beforeRun = $this->hooks->dispatch(new HookEvent('before_run', $runId, [
             'agent' => $this->name,
             'goal' => $goal,
         ]));
-        $hookOutcome = $this->terminalHookResult($beforeRun, $runId, $steps, $toolCalls);
+        $hookOutcome = $this->terminalHookResult($beforeRun, $runId, $steps, $toolCalls, $toolLog);
 
         if ($hookOutcome !== null) {
             return $hookOutcome;
@@ -83,7 +94,7 @@ final class AgentRunner
 
         for ($step = 1; $step <= $this->limits->maxSteps; $step++) {
             if ($this->timeBudgetExceeded($startedAt)) {
-                return $this->budgetExceeded($runId, $steps, $toolCalls, 'Agent time budget exceeded.');
+                return $this->budgetExceeded($runId, $steps, $toolCalls, 'Agent time budget exceeded.', $toolLog);
             }
 
             $steps = $step;
@@ -92,7 +103,7 @@ final class AgentRunner
                 'agent' => $this->name,
                 'step' => $step,
             ]));
-            $hookOutcome = $this->terminalHookResult($stepHook, $runId, $steps, $toolCalls);
+            $hookOutcome = $this->terminalHookResult($stepHook, $runId, $steps, $toolCalls, $toolLog);
 
             if ($hookOutcome !== null) {
                 return $hookOutcome;
@@ -101,19 +112,21 @@ final class AgentRunner
             $this->audit('agent.step.started', $runId, [
                 'agent' => $this->name,
                 'step' => $step,
+                ...$this->metadata,
             ]);
 
             $providerDecision = $this->decidePolicy('agent.provider_request', $this->providerName, $this->model, [
                 'agent' => $this->name,
                 'step' => $step,
+                ...$this->metadata,
             ]);
             $this->auditPolicyDecision('agent.policy_decided', $runId, $providerDecision, $this->providerName, $this->model);
 
             if (! $providerDecision->allowed) {
-                return $this->policyDenied($runId, $steps, $toolCalls, $providerDecision->reason ?? 'Provider policy denied.');
+                return $this->policyDenied($runId, $steps, $toolCalls, $providerDecision->reason ?? 'Provider policy denied.', $toolLog);
             }
 
-            $response = $this->providerResponse($runId, $step, $messages, $steps, $toolCalls);
+            $response = $this->providerResponse($runId, $step, $messages, $steps, $toolCalls, $toolLog);
 
             if ($response instanceof AgentRunResult) {
                 return $response;
@@ -122,7 +135,7 @@ final class AgentRunner
             try {
                 $instruction = AgentInstruction::fromProviderContent($response->content);
             } catch (AgentException $exception) {
-                return $this->failed($runId, $steps, $toolCalls, $exception->getMessage());
+                return $this->failed($runId, $steps, $toolCalls, $exception->getMessage(), $toolLog);
             }
 
             if ($instruction->action === 'complete') {
@@ -132,16 +145,25 @@ final class AgentRunner
                     'status' => 'completed',
                     'steps' => $steps,
                     'tool_calls' => $toolCalls,
+                    ...$this->metadata,
                 ]);
                 $this->hooks->dispatch(new HookEvent('after_run', $runId, [
                     'agent' => $this->name,
                     'status' => 'completed',
                 ]));
 
-                return new AgentRunResult(AgentRunStatus::Completed, $runId, $steps, $toolCalls, answer: $answer);
+                return new AgentRunResult(
+                    AgentRunStatus::Completed,
+                    $runId,
+                    $steps,
+                    $toolCalls,
+                    answer: $answer,
+                    toolLog: $toolLog,
+                    state: $this->state('completed', $steps, $toolCalls, $toolLog),
+                );
             }
 
-            $toolResult = $this->executeToolInstruction($runId, $instruction, $messages, $steps, $toolCalls);
+            $toolResult = $this->executeToolInstruction($runId, $instruction, $messages, $steps, $toolCalls, $toolLog);
 
             if ($toolResult instanceof AgentRunResult) {
                 return $toolResult;
@@ -149,21 +171,34 @@ final class AgentRunner
 
             $messages = $toolResult['messages'];
             $toolCalls = $toolResult['tool_calls'];
+            $toolLog = $toolResult['tool_log'];
 
-            $this->hooks->dispatch(new HookEvent('after_agent_step', $runId, [
+            $afterStep = $this->hooks->dispatch(new HookEvent('after_agent_step', $runId, [
                 'agent' => $this->name,
                 'step' => $step,
             ]));
+            $hookOutcome = $this->terminalHookResult($afterStep, $runId, $steps, $toolCalls, $toolLog);
+
+            if ($hookOutcome !== null) {
+                return $hookOutcome;
+            }
         }
 
-        return $this->budgetExceeded($runId, $steps, $toolCalls, 'Agent step budget exceeded.');
+        return $this->budgetExceeded($runId, $steps, $toolCalls, 'Agent step budget exceeded.', $toolLog);
     }
 
     /**
      * @param list<array{role: string, content: string}> $messages
+     * @param list<AgentToolCallRecord> $toolLog
      */
-    private function providerResponse(string $runId, int $step, array $messages, int $steps, int $toolCalls): ProviderResponse|AgentRunResult
-    {
+    private function providerResponse(
+        string $runId,
+        int $step,
+        array $messages,
+        int $steps,
+        int $toolCalls,
+        array $toolLog,
+    ): ProviderResponse|AgentRunResult {
         $attempt = 0;
 
         while (true) {
@@ -173,7 +208,7 @@ final class AgentRunner
                 'step' => $step,
                 'attempt' => $attempt,
             ]));
-            $hookOutcome = $this->terminalHookResult($beforeProvider, $runId, $steps, $toolCalls);
+            $hookOutcome = $this->terminalHookResult($beforeProvider, $runId, $steps, $toolCalls, $toolLog);
 
             if ($hookOutcome !== null) {
                 return $hookOutcome;
@@ -182,22 +217,43 @@ final class AgentRunner
             try {
                 $response = $this->provider->complete(new ProviderRequest(
                     model: $this->model,
-                    messages: $messages,
+                    messages: $this->redactedMessages($messages),
                     metadata: [
                         'agent' => $this->name,
                         'run_id' => $runId,
                         'step' => $step,
                         'attempt' => $attempt,
+                        ...$this->metadata,
                     ],
                 ));
             } catch (Throwable $exception) {
-                return $this->failed($runId, $steps, $toolCalls, 'Agent provider request failed: ' . $exception->getMessage());
+                $this->audit('agent.provider.failed', $runId, [
+                    'agent' => $this->name,
+                    'step' => $step,
+                    'attempt' => $attempt,
+                    'error' => $exception->getMessage(),
+                    ...$this->metadata,
+                ]);
+
+                if ($attempt <= $this->limits->maxProviderRetries) {
+                    $this->audit('agent.provider.retry', $runId, [
+                        'agent' => $this->name,
+                        'step' => $step,
+                        'attempt' => $attempt,
+                        ...$this->metadata,
+                    ]);
+
+                    continue;
+                }
+
+                return $this->failed($runId, $steps, $toolCalls, 'Agent provider request failed: ' . $exception->getMessage(), $toolLog);
             }
 
             $this->audit('agent.provider.completed', $runId, [
                 'agent' => $this->name,
                 'step' => $step,
                 'attempt' => $attempt,
+                ...$this->metadata,
             ]);
             $afterProvider = $this->hooks->dispatch(new HookEvent('after_provider_response', $runId, [
                 'agent' => $this->name,
@@ -205,7 +261,7 @@ final class AgentRunner
                 'attempt' => $attempt,
                 'content' => $response->content,
             ]));
-            $hookOutcome = $this->terminalHookResult($afterProvider, $runId, $steps, $toolCalls, allowRetry: true);
+            $hookOutcome = $this->terminalHookResult($afterProvider, $runId, $steps, $toolCalls, $toolLog, allowRetry: true);
 
             if ($hookOutcome instanceof AgentRunResult) {
                 return $hookOutcome;
@@ -228,7 +284,9 @@ final class AgentRunner
     /**
      * @param list<array{role: string, content: string}> $messages
      *
-     * @return array{messages: list<array{role: string, content: string}>, tool_calls: int}|AgentRunResult
+     * @param list<AgentToolCallRecord> $toolLog
+     *
+     * @return array{messages: list<array{role: string, content: string}>, tool_calls: int, tool_log: list<AgentToolCallRecord>}|AgentRunResult
      */
     private function executeToolInstruction(
         string $runId,
@@ -236,12 +294,14 @@ final class AgentRunner
         array $messages,
         int $steps,
         int $toolCalls,
+        array $toolLog,
     ): array|AgentRunResult {
         $toolName = $instruction->toolName ?? '';
         $tool = $this->tools->get($toolName);
+        $validator = $this->validator ?? new JsonSchemaValidator();
 
         if ($toolCalls >= $this->limits->maxToolCalls) {
-            return $this->budgetExceeded($runId, $steps, $toolCalls, 'Agent tool-call budget exceeded.');
+            return $this->budgetExceeded($runId, $steps, $toolCalls, 'Agent tool-call budget exceeded.', $toolLog);
         }
 
         $input = $instruction->input;
@@ -250,7 +310,7 @@ final class AgentRunner
             'tool' => $tool->definition->name,
             'input' => $input,
         ]));
-        $hookOutcome = $this->terminalHookResult($beforeTool, $runId, $steps, $toolCalls, approvalToolName: $tool->definition->name);
+        $hookOutcome = $this->terminalHookResult($beforeTool, $runId, $steps, $toolCalls, $toolLog, approvalToolName: $tool->definition->name);
 
         if ($hookOutcome instanceof AgentRunResult) {
             return $hookOutcome;
@@ -259,6 +319,18 @@ final class AgentRunner
         if (isset($beforeTool->modifications['input']) && is_array($beforeTool->modifications['input']) && ! array_is_list($beforeTool->modifications['input'])) {
             /** @var array<string, mixed> $input */
             $input = $beforeTool->modifications['input'];
+        }
+
+        $inputValidation = $validator->validate($input, $tool->definition->inputSchema);
+
+        if (! $inputValidation->valid) {
+            return $this->failed(
+                $runId,
+                $steps,
+                $toolCalls,
+                'Agent tool input failed schema validation: ' . implode('; ', $inputValidation->violations),
+                $toolLog,
+            );
         }
 
         $toolDecision = $this->decidePolicy(
@@ -270,6 +342,7 @@ final class AgentRunner
                 'tool' => $tool->definition->name,
                 'side_effect_level' => $tool->definition->sideEffectLevel->value,
                 'input' => $input,
+                ...$this->metadata,
             ],
         );
         $this->auditPolicyDecision(
@@ -281,39 +354,144 @@ final class AgentRunner
         );
 
         if (! $toolDecision->allowed) {
-            return $this->policyDenied($runId, $steps, $toolCalls, $toolDecision->reason ?? 'Tool policy denied.');
+            return $this->policyDenied($runId, $steps, $toolCalls, $toolDecision->reason ?? 'Tool policy denied.', $toolLog);
         }
 
-        $approval = $this->approvalIfNeeded($runId, $tool, $input, $steps, $toolCalls);
+        $approval = $this->approvalIfNeeded($runId, $tool, $input, $steps, $toolCalls, $toolLog);
 
         if ($approval instanceof AgentRunResult) {
             return $approval;
         }
 
-        $this->audit('agent.tool.started', $runId, [
-            'agent' => $this->name,
-            'tool' => $tool->definition->name,
-            'side_effect_level' => $tool->definition->sideEffectLevel->value,
-        ]);
+        $attempt = 0;
+        $maxAttempts = $tool->definition->maxRetries + 1;
+        $output = null;
 
-        try {
-            $output = $tool->invoke($input);
-        } catch (Throwable $exception) {
-            return $this->failed($runId, $steps, $toolCalls, 'Agent tool failed: ' . $exception->getMessage());
+        while ($attempt < $maxAttempts) {
+            if ($toolCalls >= $this->limits->maxToolCalls) {
+                return $this->budgetExceeded($runId, $steps, $toolCalls, 'Agent tool-call budget exceeded.', $toolLog);
+            }
+
+            $attempt++;
+            $this->audit('agent.tool.started', $runId, [
+                'agent' => $this->name,
+                'tool' => $tool->definition->name,
+                'side_effect_level' => $tool->definition->sideEffectLevel->value,
+                'attempt' => $attempt,
+                ...$this->metadata,
+            ]);
+
+            try {
+                $output = $tool->invoke($input);
+            } catch (Throwable $exception) {
+                $toolCalls++;
+                $toolLog[] = new AgentToolCallRecord(
+                    toolName: $tool->definition->name,
+                    input: $this->redactedArray($input),
+                    sideEffectLevel: $tool->definition->sideEffectLevel->value,
+                    attempt: $attempt,
+                    status: 'failed',
+                    error: $exception->getMessage(),
+                );
+                $this->audit('agent.tool.failed', $runId, [
+                    'agent' => $this->name,
+                    'tool' => $tool->definition->name,
+                    'side_effect_level' => $tool->definition->sideEffectLevel->value,
+                    'attempt' => $attempt,
+                    'tool_calls' => $toolCalls,
+                    'error' => $exception->getMessage(),
+                    ...$this->metadata,
+                ]);
+
+                if ($attempt < $maxAttempts) {
+                    $this->audit('agent.tool.retry', $runId, [
+                        'agent' => $this->name,
+                        'tool' => $tool->definition->name,
+                        'attempt' => $attempt,
+                        'reason' => $exception->getMessage(),
+                        ...$this->metadata,
+                    ]);
+
+                    continue;
+                }
+
+                return $this->failed($runId, $steps, $toolCalls, 'Agent tool failed: ' . $exception->getMessage(), $toolLog);
+            }
+
+            $toolCalls++;
+            $outputValidation = $validator->validate($output, $tool->definition->outputSchema);
+
+            if (! $outputValidation->valid) {
+                $toolLog[] = new AgentToolCallRecord(
+                    toolName: $tool->definition->name,
+                    input: $this->redactedArray($input),
+                    sideEffectLevel: $tool->definition->sideEffectLevel->value,
+                    attempt: $attempt,
+                    status: 'validation_failed',
+                    output: $this->redactedValue($output),
+                    error: implode('; ', $outputValidation->violations),
+                );
+                $this->audit('agent.tool.validation_failed', $runId, [
+                    'agent' => $this->name,
+                    'tool' => $tool->definition->name,
+                    'side_effect_level' => $tool->definition->sideEffectLevel->value,
+                    'attempt' => $attempt,
+                    'tool_calls' => $toolCalls,
+                    'violations' => $outputValidation->violations,
+                    ...$this->metadata,
+                ]);
+
+                if ($attempt < $maxAttempts) {
+                    $this->audit('agent.tool.retry', $runId, [
+                        'agent' => $this->name,
+                        'tool' => $tool->definition->name,
+                        'attempt' => $attempt,
+                        'reason' => 'Tool output failed schema validation.',
+                        ...$this->metadata,
+                    ]);
+
+                    continue;
+                }
+
+                return $this->failed(
+                    $runId,
+                    $steps,
+                    $toolCalls,
+                    'Agent tool output failed schema validation: ' . implode('; ', $outputValidation->violations),
+                    $toolLog,
+                );
+            }
+
+            $toolLog[] = new AgentToolCallRecord(
+                toolName: $tool->definition->name,
+                input: $this->redactedArray($input),
+                sideEffectLevel: $tool->definition->sideEffectLevel->value,
+                attempt: $attempt,
+                status: 'completed',
+                output: $this->redactedValue($output),
+            );
+            $this->audit('agent.tool.completed', $runId, [
+                'agent' => $this->name,
+                'tool' => $tool->definition->name,
+                'side_effect_level' => $tool->definition->sideEffectLevel->value,
+                'attempt' => $attempt,
+                'tool_calls' => $toolCalls,
+                ...$this->metadata,
+            ]);
+            $afterTool = $this->hooks->dispatch(new HookEvent('after_tool_call', $runId, [
+                'agent' => $this->name,
+                'tool' => $tool->definition->name,
+                'output' => $output,
+                'attempt' => $attempt,
+            ]));
+            $hookOutcome = $this->terminalHookResult($afterTool, $runId, $steps, $toolCalls, $toolLog, approvalToolName: $tool->definition->name);
+
+            if ($hookOutcome instanceof AgentRunResult) {
+                return $hookOutcome;
+            }
+
+            break;
         }
-
-        $toolCalls++;
-        $this->audit('agent.tool.completed', $runId, [
-            'agent' => $this->name,
-            'tool' => $tool->definition->name,
-            'side_effect_level' => $tool->definition->sideEffectLevel->value,
-            'tool_calls' => $toolCalls,
-        ]);
-        $this->hooks->dispatch(new HookEvent('after_tool_call', $runId, [
-            'agent' => $this->name,
-            'tool' => $tool->definition->name,
-            'output' => $output,
-        ]));
 
         $messages[] = [
             'role' => 'assistant',
@@ -334,14 +512,22 @@ final class AgentRunner
         return [
             'messages' => $messages,
             'tool_calls' => $toolCalls,
+            'tool_log' => $toolLog,
         ];
     }
 
     /**
      * @param array<string, mixed> $input
+     * @param list<AgentToolCallRecord> $toolLog
      */
-    private function approvalIfNeeded(string $runId, AgentTool $tool, array $input, int $steps, int $toolCalls): ?AgentRunResult
-    {
+    private function approvalIfNeeded(
+        string $runId,
+        AgentTool $tool,
+        array $input,
+        int $steps,
+        int $toolCalls,
+        array $toolLog,
+    ): ?AgentRunResult {
         if (! $tool->definition->approvalRequired) {
             return null;
         }
@@ -354,15 +540,23 @@ final class AgentRunner
             metadata: [
                 'input' => $input,
                 'side_effect_level' => $tool->definition->sideEffectLevel->value,
+                ...$this->metadata,
             ],
         );
-        $this->hooks->dispatch(new HookEvent('before_approval_request', $runId, [
+        $beforeApproval = $this->hooks->dispatch(new HookEvent('before_approval_request', $runId, [
             'tool' => $tool->definition->name,
         ]));
+        $hookOutcome = $this->terminalHookResult($beforeApproval, $runId, $steps, $toolCalls, $toolLog, approvalToolName: $tool->definition->name);
+
+        if ($hookOutcome instanceof AgentRunResult) {
+            return $hookOutcome;
+        }
+
         $this->audit('agent.approval.requested', $runId, [
             'agent' => $this->name,
             'tool' => $tool->definition->name,
             'approval_id' => $request->id,
+            ...$this->metadata,
         ]);
 
         if ($this->approvalProvider === null) {
@@ -373,6 +567,8 @@ final class AgentRunner
                 $toolCalls,
                 reason: 'Approval required before tool execution.',
                 approvalRequest: $request,
+                toolLog: $toolLog,
+                state: $this->state('approval_required', $steps, $toolCalls, $toolLog),
             );
         }
 
@@ -383,11 +579,17 @@ final class AgentRunner
             'approval_id' => $request->id,
             'approved' => $decision->approved,
             'reason' => $decision->reason,
+            ...$this->metadata,
         ]);
-        $this->hooks->dispatch(new HookEvent('after_approval_decision', $runId, [
+        $afterApproval = $this->hooks->dispatch(new HookEvent('after_approval_decision', $runId, [
             'tool' => $tool->definition->name,
             'approved' => $decision->approved,
         ]));
+        $hookOutcome = $this->terminalHookResult($afterApproval, $runId, $steps, $toolCalls, $toolLog, approvalToolName: $tool->definition->name);
+
+        if ($hookOutcome instanceof AgentRunResult) {
+            return $hookOutcome;
+        }
 
         if (! $decision->approved) {
             return new AgentRunResult(
@@ -397,6 +599,8 @@ final class AgentRunner
                 $toolCalls,
                 reason: $decision->reason ?? 'Approval denied.',
                 approvalRequest: $request,
+                toolLog: $toolLog,
+                state: $this->state('approval_required', $steps, $toolCalls, $toolLog),
             );
         }
 
@@ -424,14 +628,19 @@ final class AgentRunner
             'model' => $model,
             'allowed' => $decision->allowed,
             'reason' => $decision->reason,
+            ...$this->metadata,
         ]);
     }
 
+    /**
+     * @param list<AgentToolCallRecord> $toolLog
+     */
     private function terminalHookResult(
         HookResult $result,
         string $runId,
         int $steps,
         int $toolCalls,
+        array $toolLog,
         bool $allowRetry = false,
         ?string $approvalToolName = null,
     ): ?AgentRunResult {
@@ -456,17 +665,22 @@ final class AgentRunner
                 $toolCalls,
                 reason: $request->reason,
                 approvalRequest: $request,
+                toolLog: $toolLog,
+                state: $this->state('approval_required', $steps, $toolCalls, $toolLog),
             );
         }
 
         if ($result->action === HookAction::Block || $result->action === HookAction::Fail) {
-            return $this->failed($runId, $steps, $toolCalls, $result->message ?? 'Hook stopped the run.');
+            return $this->failed($runId, $steps, $toolCalls, $result->message ?? 'Hook stopped the run.', $toolLog);
         }
 
         return null;
     }
 
-    private function policyDenied(string $runId, int $steps, int $toolCalls, string $reason): AgentRunResult
+    /**
+     * @param list<AgentToolCallRecord> $toolLog
+     */
+    private function policyDenied(string $runId, int $steps, int $toolCalls, string $reason, array $toolLog): AgentRunResult
     {
         $this->hooks->dispatch(new HookEvent('policy_violation', $runId, [
             'agent' => $this->name,
@@ -476,12 +690,24 @@ final class AgentRunner
             'agent' => $this->name,
             'status' => 'policy_denied',
             'reason' => $reason,
+            ...$this->metadata,
         ]);
 
-        return new AgentRunResult(AgentRunStatus::PolicyDenied, $runId, $steps, $toolCalls, reason: $reason);
+        return new AgentRunResult(
+            AgentRunStatus::PolicyDenied,
+            $runId,
+            $steps,
+            $toolCalls,
+            reason: $reason,
+            toolLog: $toolLog,
+            state: $this->state('policy_denied', $steps, $toolCalls, $toolLog),
+        );
     }
 
-    private function budgetExceeded(string $runId, int $steps, int $toolCalls, string $reason): AgentRunResult
+    /**
+     * @param list<AgentToolCallRecord> $toolLog
+     */
+    private function budgetExceeded(string $runId, int $steps, int $toolCalls, string $reason, array $toolLog): AgentRunResult
     {
         $this->hooks->dispatch(new HookEvent('budget_exceeded', $runId, [
             'agent' => $this->name,
@@ -491,12 +717,24 @@ final class AgentRunner
             'agent' => $this->name,
             'status' => 'budget_exceeded',
             'reason' => $reason,
+            ...$this->metadata,
         ]);
 
-        return new AgentRunResult(AgentRunStatus::BudgetExceeded, $runId, $steps, $toolCalls, reason: $reason);
+        return new AgentRunResult(
+            AgentRunStatus::BudgetExceeded,
+            $runId,
+            $steps,
+            $toolCalls,
+            reason: $reason,
+            toolLog: $toolLog,
+            state: $this->state('budget_exceeded', $steps, $toolCalls, $toolLog),
+        );
     }
 
-    private function failed(string $runId, int $steps, int $toolCalls, string $reason): AgentRunResult
+    /**
+     * @param list<AgentToolCallRecord> $toolLog
+     */
+    private function failed(string $runId, int $steps, int $toolCalls, string $reason, array $toolLog): AgentRunResult
     {
         $this->hooks->dispatch(new HookEvent('run_failed', $runId, [
             'agent' => $this->name,
@@ -506,9 +744,101 @@ final class AgentRunner
             'agent' => $this->name,
             'status' => 'failed',
             'reason' => $reason,
+            ...$this->metadata,
         ]);
 
-        return new AgentRunResult(AgentRunStatus::Failed, $runId, $steps, $toolCalls, reason: $reason);
+        return new AgentRunResult(
+            AgentRunStatus::Failed,
+            $runId,
+            $steps,
+            $toolCalls,
+            reason: $reason,
+            toolLog: $toolLog,
+            state: $this->state('failed', $steps, $toolCalls, $toolLog),
+        );
+    }
+
+    /**
+     * @param list<AgentToolCallRecord> $toolLog
+     *
+     * @return array<string, mixed>
+     */
+    private function state(string $status, int $steps, int $toolCalls, array $toolLog): array
+    {
+        return [
+            'agent' => $this->name,
+            'provider' => $this->providerName,
+            'model' => $this->model,
+            'status' => $status,
+            'steps' => $steps,
+            'tool_calls' => $toolCalls,
+            'metadata' => $this->metadata,
+            'tool_log' => array_map(
+                static fn (AgentToolCallRecord $record): array => $record->toArray(),
+                $toolLog,
+            ),
+            'limits' => [
+                'max_steps' => $this->limits->maxSteps,
+                'max_tool_calls' => $this->limits->maxToolCalls,
+                'max_provider_retries' => $this->limits->maxProviderRetries,
+                'max_seconds' => $this->limits->maxSeconds,
+            ],
+        ];
+    }
+
+    /**
+     * @param list<array{role: string, content: string}> $messages
+     *
+     * @return list<array{role: string, content: string}>
+     */
+    private function redactedMessages(array $messages): array
+    {
+        if ($this->redactor === null) {
+            return $messages;
+        }
+
+        return array_map(
+            function (array $message): array {
+                $content = $this->redactor->redact($message['content']);
+
+                return [
+                    'role' => $message['role'],
+                    'content' => is_string($content) ? $content : $message['content'],
+                ];
+            },
+            $messages,
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $value
+     *
+     * @return array<string, mixed>
+     */
+    private function redactedArray(array $value): array
+    {
+        $redacted = $this->redactedValue($value);
+
+        if (! is_array($redacted) || array_is_list($redacted)) {
+            return $value;
+        }
+
+        $result = [];
+
+        foreach ($redacted as $key => $item) {
+            if (! is_string($key)) {
+                return $value;
+            }
+
+            $result[$key] = $item;
+        }
+
+        return $result;
+    }
+
+    private function redactedValue(mixed $value): mixed
+    {
+        return $this->redactor?->redact($value) ?? $value;
     }
 
     private function timeBudgetExceeded(float $startedAt): bool

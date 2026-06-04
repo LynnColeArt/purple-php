@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Purple\Tests\SmartFunction;
 
 use Purple\Audit\FileAuditLog;
+use Purple\Domain\EnterpriseContext;
 use Purple\Policy\BasicPolicyEngine;
 use Purple\Prompt\StringPromptTemplate;
 use Purple\Schema\JsonSchemaValidator;
+use Purple\Security\PiiRedactor;
 use Purple\SmartFunction\PolicyDenied;
 use Purple\SmartFunction\SchemaValidationFailed;
 use Purple\SmartFunction\SmartFunctionDefinition;
@@ -141,11 +143,47 @@ JSON;
         $this->assertStringContainsString('Provider output was not valid JSON', $audit);
     }
 
+    public function testEnterpriseMetadataAndRedactionReachProviderRequest(): void
+    {
+        $context = new EnterpriseContext('tenant-a', 'user-42', providerRoute: 'private-model', dataResidencyRegion: 'us');
+        $provider = FakeProvider::replying('{"summary":"Redacted output."}');
+        $function = $this->function(
+            $provider,
+            sys_get_temp_dir() . '/purple-enterprise-smart-' . bin2hex(random_bytes(4)) . '.jsonl',
+            new BasicPolicyEngine(
+                allowedProviders: ['fake'],
+                allowedModels: ['fake-model'],
+                allowedTenantIds: ['tenant-a'],
+                allowedProviderRoutes: ['private-model'],
+                allowedDataResidencyRegions: ['us'],
+            ),
+            metadata: $context->policyMetadata(),
+            redactor: new PiiRedactor(),
+        );
+
+        (new SmartFunctionRunner())->run($function, [
+            'title' => 'Email customer@example.com about order.',
+        ]);
+
+        $request = $provider->requests()[0];
+
+        $this->assertSame('tenant-a', $request->metadata['tenant_id'] ?? null);
+        $this->assertSame('private-model', $request->metadata['provider_route'] ?? null);
+        $this->assertSame('us', $request->metadata['data_residency_region'] ?? null);
+        $this->assertStringContainsString('[redacted-email]', $request->messages[0]['content']);
+        $this->assertStringNotContainsString('customer@example.com', $request->messages[0]['content']);
+    }
+
+    /**
+     * @param array<string, mixed> $metadata
+     */
     private function function(
         FakeProvider $provider,
         string $auditPath,
         ?BasicPolicyEngine $policy = null,
         int $maxRetries = 0,
+        array $metadata = [],
+        ?PiiRedactor $redactor = null,
     ): SmartFunctionDefinition {
         return new SmartFunctionDefinition(
             name: 'catalog.summary',
@@ -158,6 +196,8 @@ JSON;
             policy: $policy ?? new BasicPolicyEngine(allowedProviders: ['fake'], allowedModels: ['fake-model']),
             auditLog: new FileAuditLog($auditPath),
             maxRetries: $maxRetries,
+            metadata: $metadata,
+            redactor: $redactor,
         );
     }
 }

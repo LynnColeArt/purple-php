@@ -20,6 +20,12 @@ final class DeploymentReadinessTest extends TestCase
         $this->assertFalse($profiles[0]->nativeRuntimeRequired);
         $this->assertFalse($profiles[1]->nativeRuntimeRequired);
         $this->assertFalse($profiles[2]->nativeRuntimeRequired);
+        $this->assertContains('cloud_providers', $profiles[0]->capabilities);
+        $this->assertContains('secret_brokerage', $profiles[1]->capabilities);
+        $this->assertContains('sidecar_protocol', $profiles[1]->capabilities);
+        $this->assertContains('durable_agent_runs', $profiles[1]->capabilities);
+        $this->assertContains('php_extension_bridge', $profiles[2]->capabilities);
+        $this->assertContains('runtime_metrics', $profiles[2]->capabilities);
         $this->assertSame('composer', $descriptions[0]['mode']);
         $this->assertSame('sidecar', $descriptions[1]['mode']);
         $this->assertSame('native_extension', $descriptions[2]['mode']);

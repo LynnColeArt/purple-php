@@ -15,12 +15,18 @@ final class BasicPolicyEngine implements PolicyEngine
     /**
      * @param list<string> $allowedProviders
      * @param list<string> $allowedModels
+     * @param list<string> $allowedTenantIds
+     * @param list<string> $allowedProviderRoutes
+     * @param list<string> $allowedDataResidencyRegions
      */
     public function __construct(
         private readonly array $allowedProviders = [],
         private readonly array $allowedModels = [],
         private readonly ?int $maxRuns = null,
         private readonly ?float $maxEstimatedCostUsd = null,
+        private readonly array $allowedTenantIds = [],
+        private readonly array $allowedProviderRoutes = [],
+        private readonly array $allowedDataResidencyRegions = [],
     ) {
     }
 
@@ -38,6 +44,18 @@ final class BasicPolicyEngine implements PolicyEngine
             return PolicyDecision::deny('Run budget has been exhausted.');
         }
 
+        if (! $this->metadataValueAllowed($request->metadata['tenant_id'] ?? null, $this->allowedTenantIds)) {
+            return PolicyDecision::deny('Tenant is not allowed by policy.');
+        }
+
+        if (! $this->metadataValueAllowed($request->metadata['provider_route'] ?? null, $this->allowedProviderRoutes)) {
+            return PolicyDecision::deny('Provider route is not allowed by policy.');
+        }
+
+        if (! $this->metadataValueAllowed($request->metadata['data_residency_region'] ?? null, $this->allowedDataResidencyRegions)) {
+            return PolicyDecision::deny('Data residency region is not allowed by policy.');
+        }
+
         $estimatedCost = $request->metadata['estimated_cost_usd'] ?? null;
 
         if (
@@ -51,5 +69,17 @@ final class BasicPolicyEngine implements PolicyEngine
         $this->runs++;
 
         return PolicyDecision::allow('Policy checks passed.');
+    }
+
+    /**
+     * @param list<string> $allowedValues
+     */
+    private function metadataValueAllowed(mixed $value, array $allowedValues): bool
+    {
+        if ($allowedValues === []) {
+            return true;
+        }
+
+        return is_string($value) && in_array($value, $allowedValues, true);
     }
 }
