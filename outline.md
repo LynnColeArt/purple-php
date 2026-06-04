@@ -625,6 +625,8 @@ MVP 1 should deliberately defer:
 
 Current status as of 2026-06-04: Phases 1, 2, 3, 4, and 5 are implemented in the Composer-first SDK and covered by the local validation suite. Phase 5 is represented as optional native/runtime readiness contracts; Composer mode remains the stable adoption baseline.
 
+Phase 5.1 extends the runtime-continuation path without reversing that boundary. Native acceptance, sidecar resume, package-split planning, and baseline guardrails should be executable through Composer-safe tests, fake providers, injectable transports, and ignored local runtime state.
+
 ### Phase 1: SDK Foundation (Complete)
 
 * Smart functions
@@ -710,3 +712,5 @@ This Phase 5.1 mega-mission packages the next runtime-continuation work into fou
 4. Composer baseline guardrails.
 
 Composer mode remains the stable adoption baseline while native and sidecar runtime work stays optional.
+
+WP04 closes this slice by proving the default SDK path still validates without native extensions, sidecar services, cloud SDK packages, or live network services.

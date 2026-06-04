@@ -2,91 +2,103 @@
   "mission_slug": "runtime-continuation-mega-mission-01KTA3AD",
   "mission_number": "",
   "mission_type": "software-dev",
-  "overall_verdict": "pending",
+  "overall_verdict": "pass",
   "criteria": [
     {
       "criterion_id": "FR-001",
       "description": "Native acceptance boundary defines compatible operation, payload, status, metrics, and failure behavior without requiring a compiled extension.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
+      "evidence": "WP01 approved with reviewed lane-a commit d90ac31. Evidence: tests/Runtime/NativeAcceptance/NativeRuntimeAcceptanceTest.php, tests/Runtime/NativeAcceptance/NativeRuntimeContractAssertions.php, docs/enterprise/native-runtime-acceptance.md; composer check passed in lane-a.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-04T21:59:08Z",
       "notes": "Expected evidence: native acceptance fixture and bridge tests pass under Composer mode."
     },
     {
       "criterion_id": "FR-002",
       "description": "PHP-level compatibility fixture can be reused by a future native implementation.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
+      "evidence": "WP01 approved with reviewed lane-a commit d90ac31. Native acceptance assertions are reusable against injected compatible invokers and do not require a compiled extension; composer check passed in lane-a.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-04T21:59:08Z",
       "notes": "Expected evidence: fixture accepts an injected invoker rather than hard-coding PhpExtensionBridge internals."
     },
     {
       "criterion_id": "FR-003",
       "description": "Sidecar durable resume request and response contract is defined with versioned sidecar envelopes.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
+      "evidence": "WP02 approved with reviewed lane-b commit fc09d5e. Evidence: SidecarResumeRequest, SidecarResumeResponse, SidecarResumeClient, SidecarTransport, and sidecar tests; composer check passed in lane-b.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-04T21:59:08Z",
       "notes": "Expected evidence: request/response tests assert envelope type, run ID, action, status, and metadata."
     },
     {
       "criterion_id": "FR-004",
       "description": "Durable resume behavior is demonstrated without running a sidecar process.",
       "proof_type": "example_run",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
+      "evidence": "WP02 approved with reviewed lane-b commit fc09d5e. Evidence: php examples/runtime/durable-sidecar-resume.php passed and focused tests/Runtime/Sidecar passed without a running sidecar process.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-04T21:59:08Z",
       "notes": "Expected evidence: fake or injectable transport example runs locally."
     },
     {
       "criterion_id": "FR-005",
       "description": "Enterprise adapter split decision records first package candidate, ownership boundary, likely future file movement, and timing rationale.",
       "proof_type": "documentation_review",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
+      "evidence": "WP03 approved with reviewed lane-c commit 9341198. Evidence: docs/architecture/001-enterprise-adapter-split.md chooses purple-php/provider-bedrock, records ownership, future file movement, and deferred extraction rationale.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-04T21:59:08Z",
       "notes": "Expected evidence: ADR exists at docs/architecture/001-enterprise-adapter-split.md."
     },
     {
       "criterion_id": "FR-006",
       "description": "Composer mode remains the stable baseline and validates without native extension or running sidecar.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
+      "evidence": "WP04 approved with reviewed lane-d commit 1920c81. Evidence: composer check passed, deployment readiness and SDK baseline tests pass, and sidecar/native requirements remain optional.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-04T21:59:08Z",
       "notes": "Expected evidence: composer check passes and deployment readiness keeps native runtime optional."
     },
     {
       "criterion_id": "FR-007",
       "description": "Roadmap and enterprise docs represent Phase 5.1 as runtime continuation work while preserving optional-native strategy.",
       "proof_type": "documentation_review",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
+      "evidence": "WP03 and WP04 approved with reviewed commits 9341198 and 1920c81. Evidence: ADR plus README, outline, and docs/enterprise/README.md preserve Composer-first and optional-native language.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-04T21:59:08Z",
       "notes": "Expected evidence: README, outline, and enterprise docs align on Composer-first wording."
     }
   ],
   "negative_invariants": [
     {
-      "id": "NI-001",
-      "description": "No test, example, or default SDK path may require a compiled native extension."
+      "invariant_id": "NI-001",
+      "description": "No test, example, or default SDK path may require a compiled native extension.",
+      "verification_method": "custom_command",
+      "verification_command": "composer check",
+      "result": "confirmed_absent",
+      "evidence": "Command exited 0: PHPUnit 11.5.55 by Sebastian Bergmann and contributors.\n\nRuntime:       PHP 8.3.6\nConfiguration: /home/lynn/projects/php-agent/phpunit.xml.dist\n\n......................................................."
     },
     {
-      "id": "NI-002",
-      "description": "No test, example, or default SDK path may require a running sidecar service."
+      "invariant_id": "NI-002",
+      "description": "No test, example, or default SDK path may require a running sidecar service.",
+      "verification_method": "custom_command",
+      "verification_command": "php examples/runtime/durable-sidecar-handoff.php",
+      "result": "confirmed_absent",
+      "evidence": "Command exited 0: {\n    \"composer_run\": {\n        \"run_id\": \"d11b518b09e6023a\",\n        \"status\": \"completed\",\n        \"answer\": \"SKU-1 is ready for sidecar handoff.\"\n    },\n    \"durable_store\": {\n        \"loaded\": tru"
     },
     {
-      "id": "NI-003",
-      "description": "This mission must not physically split Composer packages."
+      "invariant_id": "NI-003",
+      "description": "This mission must not physically split Composer packages.",
+      "verification_method": "grep_absence",
+      "verification_command": "find . -maxdepth 3 -name composer.json -not -path './vendor/*' -print",
+      "result": "confirmed_absent",
+      "evidence": "grep found zero matches"
     }
   ]
 }

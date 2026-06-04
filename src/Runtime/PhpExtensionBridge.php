@@ -9,11 +9,11 @@ use Throwable;
 
 final readonly class PhpExtensionBridge implements NativeRuntime
 {
-    /** @var null|callable(string, array<string, mixed>): array<string, mixed> */
+    /** @var null|callable(string, array<string, mixed>): mixed */
     private mixed $invoker;
 
     /**
-     * @param null|callable(string, array<string, mixed>): array<string, mixed> $invoker
+     * @param null|callable(string, array<string, mixed>): mixed $invoker
      */
     public function __construct(
         private string $extensionName = 'purple_native',
@@ -63,7 +63,13 @@ final readonly class PhpExtensionBridge implements NativeRuntime
     private function callInvoker(string $operation, array $payload): array
     {
         if ($this->invoker !== null) {
-            return ($this->invoker)($operation, $payload);
+            $response = ($this->invoker)($operation, $payload);
+
+            if (! is_array($response) || ($response !== [] && array_is_list($response))) {
+                throw new RuntimeException('Native runtime response must be an associative array.');
+            }
+
+            return $this->stringKeyedArray($response, 'Native runtime response');
         }
 
         if (function_exists('purple_native_invoke')) {

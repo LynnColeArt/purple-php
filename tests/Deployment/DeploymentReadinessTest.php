@@ -30,4 +30,25 @@ final class DeploymentReadinessTest extends TestCase
         $this->assertSame('sidecar', $descriptions[1]['mode']);
         $this->assertSame('native_extension', $descriptions[2]['mode']);
     }
+
+    public function testComposerProfileHasNoRuntimeInfrastructureRequirement(): void
+    {
+        $composer = DeploymentReadiness::profiles()[0];
+
+        $this->assertSame(DeploymentMode::Composer, $composer->mode);
+        $this->assertSame(['PHP 8.2+', 'Composer autoload'], $composer->requirements);
+        $this->assertNotContains('sidecar_protocol', $composer->capabilities);
+        $this->assertNotContains('durable_agent_runs', $composer->capabilities);
+        $this->assertNotContains('php_extension_bridge', $composer->capabilities);
+        $this->assertNotContains('runtime_metrics', $composer->capabilities);
+    }
+
+    public function testRuntimeGeneratedPathsStayIgnored(): void
+    {
+        $ignore = file_get_contents(__DIR__ . '/../../.gitignore');
+
+        $this->assertIsString($ignore);
+        $this->assertStringContainsString('var/audit/', $ignore);
+        $this->assertStringContainsString('var/runtime/', $ignore);
+    }
 }

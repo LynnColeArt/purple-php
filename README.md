@@ -24,6 +24,8 @@ The current SDK includes:
 
 The first milestone was smart functions. Phases 2, 3, 4, and 5 are now represented in the Composer-first SDK as chat, CLI, tools, looping agents, approvals, runtime hooks, retry behavior, run state, replayable tool logs, enterprise policy, secret adapters, cloud provider adapters, sidecar brokerage, observability export, and optional native/runtime readiness contracts.
 
+Phase 5.1 continues that runtime work as Composer-safe contracts: native acceptance, sidecar resume, and package-split decisions stay testable through PHP fixtures, fake providers, injectable transports, and ignored local runtime paths. A normal Composer install still does not require a native extension, a sidecar process, cloud SDK dependencies, or live network services.
+
 ## Quick Start
 
 ```bash
@@ -108,6 +110,8 @@ The SDK should be:
 * CMS-agnostic
 * ecommerce-aware
 * optional-native, not native-required
+
+Runtime continuation is executable only where teams opt into it. Composer mode remains the default baseline for local development, tests, examples, and package adoption.
 
 Policy is enforcement. Hooks are extension points.
 

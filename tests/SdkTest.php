@@ -70,6 +70,24 @@ JSON;
         $this->assertCount(1, $provider->requests());
     }
 
+    public function testFakeSdkFactoryKeepsComposerBaselineIndependentOfRuntimeServices(): void
+    {
+        $provider = FakeProvider::replying('{"summary":"Composer baseline."}');
+        $sdk = Sdk::fake(
+            provider: $provider,
+            auditLog: new FileAuditLog(sys_get_temp_dir() . '/purple-sdk-composer-baseline-' . bin2hex(random_bytes(4)) . '.jsonl'),
+        );
+
+        $function = $sdk->smartFunction(
+            name: 'catalog.summary',
+            prompt: 'Summarize {{ title }} as JSON.',
+            outputSchema: self::SUMMARY_SCHEMA,
+        );
+
+        $this->assertSame(['summary' => 'Composer baseline.'], $function->run(['title' => 'Merino cardigan']));
+        $this->assertCount(1, $provider->requests());
+    }
+
     public function testCreatesOpenAISdkFromProviderProfile(): void
     {
         $capturedHeaders = [];

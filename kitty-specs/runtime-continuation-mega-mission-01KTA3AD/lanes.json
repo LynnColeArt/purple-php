@@ -21,7 +21,9 @@
         "tests/Runtime/NativeRuntimeReadinessTest.php",
         "tests/Runtime/PhpExtensionBridgeTest.php"
       ],
-      "predicted_surfaces": [],
+      "predicted_surfaces": [
+        "api"
+      ],
       "depends_on_lanes": [],
       "parallel_group": 0
     },
@@ -40,7 +42,9 @@
         "tests/Runtime/Durable/**",
         "tests/Runtime/Sidecar/**"
       ],
-      "predicted_surfaces": [],
+      "predicted_surfaces": [
+        "api"
+      ],
       "depends_on_lanes": [
         "lane-a"
       ],
@@ -54,7 +58,9 @@
       "write_scope": [
         "docs/architecture/001-enterprise-adapter-split.md"
       ],
-      "predicted_surfaces": [],
+      "predicted_surfaces": [
+        "api"
+      ],
       "depends_on_lanes": [
         "lane-a",
         "lane-b"
@@ -78,7 +84,9 @@
         "tests/Deployment/DeploymentReadinessTest.php",
         "tests/SdkTest.php"
       ],
-      "predicted_surfaces": [],
+      "predicted_surfaces": [
+        "api"
+      ],
       "depends_on_lanes": [
         "lane-a",
         "lane-b",
@@ -87,7 +95,7 @@
       "parallel_group": 3
     }
   ],
-  "computed_at": "2026-06-04T20:02:27.474984+00:00",
+  "computed_at": "2026-06-04T22:01:30.056445+00:00",
   "computed_from": "dependency_graph+ownership",
   "planning_artifact_wps": []
 }
