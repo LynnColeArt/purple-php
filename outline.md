@@ -700,7 +700,13 @@ The product should treat legacy PHP estates as terrain, not trash.
 
 ## 15. Immediate Next Steps
 
-1. Specify the first native extension acceptance test separately from the Composer SDK.
-2. Decide which enterprise adapter package should be split out first.
-3. Add a sidecar transport contract for durable run resume requests.
-4. Keep Composer mode as the stable adoption baseline while native work remains optional.
+Active mission: `kitty-specs/runtime-continuation-mega-mission-01KTA3AD/`
+
+This Phase 5.1 mega-mission packages the next runtime-continuation work into four reviewable work packages:
+
+1. Native extension acceptance boundary.
+2. Sidecar durable-run resume contract.
+3. Enterprise adapter split decision.
+4. Composer baseline guardrails.
+
+Composer mode remains the stable adoption baseline while native and sidecar runtime work stays optional.
