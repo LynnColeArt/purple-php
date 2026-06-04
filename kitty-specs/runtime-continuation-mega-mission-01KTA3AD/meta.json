@@ -9,5 +9,7 @@
   "purpose_context": "This mission advances runtime continuation mega mission on main so stakeholders can track the work from mission creation onward.",
   "purpose_tldr": "runtime continuation mega mission",
   "slug": "runtime-continuation-mega-mission-01KTA3AD",
-  "target_branch": "main"
+  "target_branch": "main",
+  "vcs": "git",
+  "vcs_locked_at": "2026-06-04T21:28:44.639186+00:00"
 }
