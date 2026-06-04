@@ -99,3 +99,4 @@ php examples/runtime/durable-sidecar-handoff.php
 ## Activity Log
 
 - 2026-06-04T21:44:24Z – codex – shell_pid=3377003 – WP02 implemented in lane-b commit 2aff89e. Validation: vendor/bin/phpunit -c phpunit.xml.dist tests/Runtime/Sidecar passed (7 tests, 23 assertions); php examples/runtime/durable-sidecar-resume.php passed; php examples/runtime/durable-sidecar-handoff.php passed; composer check passed (105 tests, 416 assertions, PHPStan clean, php-cs-fixer dry-run clean); git diff --check passed.
+- 2026-06-04T21:45:17Z – codex – shell_pid=3377003 – Review passed for rebased lane-b commit fc09d5e. Diff is limited to the WP02 sidecar durable resume contract, fake transport, durable-store resumer, tests, example, and docs. Validation after rebase: composer check passed (105 tests, 416 assertions, PHPStan clean, php-cs-fixer dry-run clean).
