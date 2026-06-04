@@ -11,13 +11,17 @@ tracker_refs: []
 planning_base_branch: main
 merge_target_branch: main
 branch_strategy: Planning artifacts for this mission were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
+base_branch: kitty/mission-runtime-continuation-mega-mission-01KTA3AD
+base_commit: 569b6c190143ce664d521cb1eb30fc576bab33af
+created_at: '2026-06-04T21:46:14.420287+00:00'
 subtasks:
 - T001
 - T002
 - T003
 - T004
 assignee: codex
-agent: codex
+agent: "codex"
+shell_pid: '3377003'
 history: []
 agent_profile: implementer-ivan
 authoritative_surface: docs/architecture/001-enterprise-adapter-split.md
@@ -75,3 +79,7 @@ Files: `docs/architecture/001-enterprise-adapter-split.md`
 ```bash
 rg -n "adapter split|package split|Composer-first|optional-native" README.md outline.md docs
 ```
+
+## Activity Log
+
+- 2026-06-04T21:48:45Z – codex – shell_pid=3377003 – WP03 implemented in lane-c commit 5788b88. Decision record chooses purple-php/provider-bedrock as the first enterprise adapter package split, documents candidate inventory, package ownership, future file movement, deferred extraction rationale, and roadmap alignment. Validation: rg -n "adapter split|package split|Composer-first|optional-native" README.md outline.md docs passed; git diff --check passed.
