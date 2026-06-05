@@ -81,3 +81,4 @@ Do not move `BedrockProvider` in this WP. Do not add AWS SDK dependencies. Do no
 ## Activity Log
 
 - 2026-06-05T00:19:29Z – codex – shell_pid=3377003 – WP01 implementation committed on lane-a as cc8074a; validation: composer validate --working-dir=packages/provider-bedrock --strict, composer install --working-dir=packages/provider-bedrock --no-interaction, composer check.
+- 2026-06-05T00:21:29Z – codex – shell_pid=3377003 – Approved WP01 package skeleton. Evidence: composer validate --working-dir=packages/provider-bedrock --strict; composer install --working-dir=packages/provider-bedrock --no-interaction; composer check; git diff --check main..HEAD.
