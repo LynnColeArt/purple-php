@@ -9,5 +9,7 @@
   "purpose_context": "Build a local, opt-in sidecar runtime service prototype around the existing purple.sidecar.v1 durable-resume envelope so future deployments can validate the runtime boundary without requiring sidecar infrastructure for normal Composer installs or composer check.",
   "purpose_tldr": "Prototype an optional sidecar runtime service that speaks Purple PHP's durable-resume contract.",
   "slug": "sidecar-runtime-service-prototype-01KTAQ1M",
-  "target_branch": "main"
+  "target_branch": "main",
+  "vcs": "git",
+  "vcs_locked_at": "2026-06-05T01:46:50.823875+00:00"
 }
