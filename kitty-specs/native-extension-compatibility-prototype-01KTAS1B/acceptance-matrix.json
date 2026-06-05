@@ -89,8 +89,10 @@
     {
       "invariant_id": "NI-001",
       "description": "No compiled extension, FFI binding, daemon, network service, cloud SDK, AWS credentials, or live service is required by root validation.",
-      "evidence": "composer check; docs/enterprise/native-runtime-acceptance.md; docs/enterprise/README.md",
-      "pass_fail": "pass"
+      "verification_method": "custom_command",
+      "verification_command": "composer check",
+      "result": "confirmed_absent",
+      "evidence": "Command exited 0 in lane-c: PHPUnit 130 tests, PHPStan no errors, php-cs-fixer dry-run no changed files; no native extension was installed."
     }
   ]
 }
