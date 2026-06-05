@@ -22,7 +22,7 @@ subtasks:
 - T005
 phase: Phase 2 - Provider Extraction
 assignee: ''
-agent: codex
+agent: "codex"
 shell_pid: '3377003'
 history:
 - timestamp: '2026-06-05T00:10:00Z'
@@ -79,3 +79,7 @@ T005: Ensure package tests do not rely on root test namespaces unless explicitly
 ## Guardrails
 
 Do not modify root `Sdk.php` in this WP except for file movement conflicts that cannot be avoided; root decoupling belongs to WP03. Do not add live AWS calls or AWS SDK dependencies.
+
+## Activity Log
+
+- 2026-06-05T00:25:45Z – codex – shell_pid=3377003 – WP02 implementation committed on lane-b as 04c0901; validation: composer install --working-dir=packages/provider-bedrock --no-interaction; composer check --working-dir=packages/provider-bedrock; composer validate --working-dir=packages/provider-bedrock --strict.
