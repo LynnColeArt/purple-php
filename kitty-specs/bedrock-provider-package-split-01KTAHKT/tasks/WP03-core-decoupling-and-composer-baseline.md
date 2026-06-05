@@ -20,7 +20,8 @@ subtasks:
 - T004
 phase: Phase 3 - Core Decoupling
 assignee: ''
-agent: codex
+agent: "codex"
+shell_pid: '3377003'
 history:
 - timestamp: '2026-06-05T00:10:00Z'
   agent: system
@@ -77,3 +78,7 @@ T004: Prove root Composer validation passes without root requiring `purple-php/p
 ## Guardrails
 
 Do not remove provider contracts or `Sdk::fromProvider()`. Do not add the provider package to root `require` or `require-dev` unless the mission plan is updated to explain why root validation still proves optionality.
+
+## Activity Log
+
+- 2026-06-05T00:30:01Z – codex – shell_pid=3377003 – Implemented core decoupling in lane-c commit 69c9ee2: removed root Sdk::bedrock factory and root Bedrock provider references while preserving package-local BedrockSdk. Evidence: root composer check passed, package composer check passed, rg confirms Bedrock references are package-local.
