@@ -17,7 +17,7 @@
   "created_at": "2026-06-05T00:59:23.941730+00:00",
   "friendly_name": "Provider Bedrock Release Readiness",
   "mission_id": "01KTAMNFD59B8HGVZQE57WG9WQ",
-  "mission_number": null,
+  "mission_number": 3,
   "mission_slug": "provider-bedrock-release-readiness-01ktan01-01KTAMNF",
   "mission_type": "software-dev",
   "purpose_context": "This mission follows the completed Bedrock package split by documenting and validating the release path for purple-php/provider-bedrock: versioning, Packagist publication planning, CI coverage, and release notes while keeping the core SDK Composer-first.",
