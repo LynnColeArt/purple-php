@@ -22,7 +22,8 @@ subtasks:
 - T005
 phase: Phase 4 - Docs And Evidence
 assignee: ''
-agent: codex
+agent: "codex"
+shell_pid: '3377003'
 history:
 - timestamp: '2026-06-05T00:10:00Z'
   agent: system
@@ -79,3 +80,7 @@ T005: Add `issue-matrix.md` with fixed rows for package skeleton, extraction/fac
 ## Guardrails
 
 Keep docs honest: do not imply Packagist publication, a separate GitHub repository, AWS SDK support, live AWS signing, or runtime/native package extraction.
+
+## Activity Log
+
+- 2026-06-05T00:37:07Z – codex – shell_pid=3377003 – Implemented docs and mission evidence in lane-d commit 42308ca: updated README, enterprise docs, ADR 001, outline, acceptance matrix, and issue matrix. Evidence: composer check passed, composer check --working-dir=packages/provider-bedrock passed, acceptance-matrix.json parses, git diff --check passed, guardrail search found only intentional migration/history references.
