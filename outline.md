@@ -623,9 +623,9 @@ MVP 1 should deliberately defer:
 
 ## 13. Enterprise Roadmap
 
-Current status as of 2026-06-05: Phases 1, 2, 3, 4, 5, 5.1, 5.2, 5.3, and 5.4 are implemented in the Composer-first SDK and covered by the local validation suite. The Bedrock provider package split is implemented as the first optional enterprise provider package in the monorepo, and its release-readiness path is documented with package notes, publication checklist, and CI validation. Phase 5 is represented as optional native/runtime readiness contracts; Composer mode remains the stable adoption baseline.
+Current status as of 2026-06-05: Phases 1, 2, 3, 4, 5, 5.1, 5.2, 5.3, 5.4, and 5.5 are implemented in the Composer-first SDK and covered by the local validation suite. The Bedrock provider package split is implemented as the first optional enterprise provider package in the monorepo, and its release-readiness path is documented with package notes, publication checklist, and CI validation. Phase 5 is represented as optional native/runtime readiness contracts; Composer mode remains the stable adoption baseline.
 
-Phase 5.1 extends the runtime-continuation path without reversing that boundary. Native acceptance, sidecar resume, package-split planning, and baseline guardrails are executable through Composer-safe tests, fake providers, injectable transports, and ignored local runtime state. Phase 5.4 turns the sidecar resume contract into a local runtime service prototype that can be exercised from `bin/purple` without a daemon or network service. The Bedrock package split carries the same pattern into provider packaging: root SDK validation remains provider-neutral, and Bedrock validation runs from `packages/provider-bedrock`.
+Phase 5.1 extends the runtime-continuation path without reversing that boundary. Native acceptance, sidecar resume, package-split planning, and baseline guardrails are executable through Composer-safe tests, fake providers, injectable transports, and ignored local runtime state. Phase 5.4 turns the sidecar resume contract into a local runtime service prototype that can be exercised from `bin/purple` without a daemon or network service. Phase 5.5 turns the native acceptance boundary into a compatibility prototype with fixture and extension CLI modes. The Bedrock package split carries the same pattern into provider packaging: root SDK validation remains provider-neutral, and Bedrock validation runs from `packages/provider-bedrock`.
 
 ### Phase 1: SDK Foundation (Complete)
 
@@ -716,6 +716,15 @@ Phase 5.1 extends the runtime-continuation path without reversing that boundary.
 * Runtime and CLI tests cover accepted resumes, missing runs, unsupported actions, malformed envelopes, and CLI usage/output
 * Roadmap and mission evidence keep the sidecar runtime prototype separate from native extension compatibility, provider package publication, and future provider splits
 
+### Phase 5.5: Native Extension Compatibility Prototype (Complete)
+
+* `NativeRuntimeCompatibility` runs the native acceptance ping against any `NativeRuntime` implementation and returns a structured compatibility report
+* `NativeRuntimeCompatibilityReport` normalizes `compatible`, `incompatible`, and `unavailable` outcomes with payload, metrics, and message fields
+* `bin/purple native check fixture` exercises the acceptance path without a compiled extension
+* `bin/purple native check extension [extension-name]` lets platform teams deliberately test an installed native extension and reports `unavailable` when it is absent
+* Runtime and CLI tests cover compatible fixtures, malformed/incompatible responses, missing extensions, CLI output, and usage errors
+* Roadmap and mission evidence keep native compatibility separate from compiled extension implementation, Bedrock publication, provider splits, and sidecar daemon/HTTP transport work
+
 ## 14. Design Principles
 
 Purple PHP should be:
@@ -742,12 +751,13 @@ Completed missions:
 * `kitty-specs/bedrock-provider-package-split-01KTAHKT/`
 * `kitty-specs/provider-bedrock-release-readiness-01ktan01-01KTAMNF/`
 * `kitty-specs/sidecar-runtime-service-prototype-01KTAQ1M/`
+* `kitty-specs/native-extension-compatibility-prototype-01KTAS1B/`
 
-Phase 5.1 is complete and recorded through the mission issue matrix, mission review report, and retrospective record. The Bedrock provider package split and release-readiness follow-up are the active package-track completion markers and record evidence in their mission `acceptance-matrix.json` plus `issue-matrix.md` files. Phase 5.4 closes the first sidecar runtime prototype slice with service/CLI coverage and mission evidence.
+Phase 5.1 is complete and recorded through the mission issue matrix, mission review report, and retrospective record. The Bedrock provider package split and release-readiness follow-up are the active package-track completion markers and record evidence in their mission `acceptance-matrix.json` plus `issue-matrix.md` files. Phase 5.4 closes the first sidecar runtime prototype slice with service/CLI coverage and mission evidence. Phase 5.5 closes the native compatibility prototype with a Composer-safe fixture check, explicit extension check, runtime/CLI tests, and mission evidence.
 
 Candidate follow-up missions:
 
 1. Execute the Bedrock provider public release after Packagist ownership, version tag, and repository URL are explicitly approved.
-2. Native extension compatibility prototype that runs the native acceptance suite.
-3. Next optional provider split using the Bedrock package as the pattern.
-4. Sidecar daemon or HTTP transport prototype after the local service boundary has deployment requirements.
+2. Next optional provider split using the Bedrock package as the pattern.
+3. Sidecar daemon or HTTP transport prototype after the local service boundary has deployment requirements.
+4. Compiled native extension implementation spike only after platform requirements and install targets are explicit.

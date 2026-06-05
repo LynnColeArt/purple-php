@@ -30,6 +30,8 @@ Phase 5.3 makes the Bedrock provider package release-ready without publishing it
 
 Phase 5.4 adds a local sidecar runtime service prototype for durable resume. It accepts the same `purple.sidecar.v1` resume envelope used by the PHP contract tests, reads a local durable run store, and returns deterministic accepted/rejected response envelopes without requiring a sidecar daemon, socket listener, native extension, cloud SDK, or live network service.
 
+Phase 5.5 adds a native extension compatibility prototype. `NativeRuntimeCompatibility` runs the native acceptance ping against any `NativeRuntime`, `bin/purple native check fixture` proves the path with Composer-safe PHP, and `bin/purple native check extension [extension-name]` lets platform teams check an installed extension deliberately.
+
 ## Quick Start
 
 ```bash
@@ -41,6 +43,7 @@ php examples/agents/catalog-agent.php
 php examples/runtime/durable-sidecar-handoff.php
 php examples/runtime/durable-sidecar-resume.php
 php bin/purple sidecar resume var/runtime/runs run-resume-example
+php bin/purple native check fixture
 php bin/purple demo smart-function
 php bin/purple demo chat
 php bin/purple demo agent
@@ -88,6 +91,7 @@ vendor/bin/purple demo chat
 vendor/bin/purple demo agent
 vendor/bin/purple provider check openai
 vendor/bin/purple sidecar resume var/runtime/runs run-resume-example
+vendor/bin/purple native check fixture
 ```
 
 ## Provider Security
@@ -166,3 +170,4 @@ Spec Kitty mission packages:
 * Bedrock provider package split: [kitty-specs/bedrock-provider-package-split-01KTAHKT](kitty-specs/bedrock-provider-package-split-01KTAHKT/spec.md)
 * Bedrock provider release readiness: [kitty-specs/provider-bedrock-release-readiness-01ktan01-01KTAMNF](kitty-specs/provider-bedrock-release-readiness-01ktan01-01KTAMNF/spec.md)
 * Sidecar runtime service prototype: [kitty-specs/sidecar-runtime-service-prototype-01KTAQ1M](kitty-specs/sidecar-runtime-service-prototype-01KTAQ1M/spec.md)
+* Native extension compatibility prototype: [kitty-specs/native-extension-compatibility-prototype-01KTAS1B](kitty-specs/native-extension-compatibility-prototype-01KTAS1B/spec.md)

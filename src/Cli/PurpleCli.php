@@ -19,6 +19,9 @@ use Purple\ProviderProfile;
 use Purple\Policy\BasicPolicyEngine;
 use Purple\Prompt\StringPromptTemplate;
 use Purple\Runtime\Durable\FileDurableRunStore;
+use Purple\Runtime\NativeRuntimeCompatibility;
+use Purple\Runtime\NativeRuntimeCompatibilityReport;
+use Purple\Runtime\PhpExtensionBridge;
 use Purple\Runtime\Sidecar\SidecarProtocol;
 use Purple\Runtime\Sidecar\SidecarResumeRequest;
 use Purple\Runtime\Sidecar\SidecarResumeResponse;
@@ -53,6 +56,7 @@ final readonly class PurpleCli
                 'audit' => $this->audit(array_slice($args, 1), $writer),
                 'provider' => $this->provider(array_slice($args, 1), $writer),
                 'sidecar' => $this->sidecar(array_slice($args, 1), $writer),
+                'native' => $this->native(array_slice($args, 1), $writer),
                 'diagnostics' => $this->diagnostics($writer),
                 default => $this->error(sprintf('Unknown command "%s".', $command), $writer),
             };
@@ -76,6 +80,8 @@ final readonly class PurpleCli
             '  provider check fake',
             '  provider check openai [secret-name]',
             '  sidecar resume <run-store-dir> <run-id> [node-id]',
+            '  native check fixture',
+            '  native check extension [extension-name]',
             '  diagnostics',
             '',
         ]));
@@ -123,6 +129,66 @@ final readonly class PurpleCli
         ], $write);
 
         return $response->status === 'accepted' ? 0 : 1;
+    }
+
+    /**
+     * @param list<string> $args
+     * @param callable(string): void $write
+     */
+    private function native(array $args, callable $write): int
+    {
+        if (($args[0] ?? '') !== 'check' || ! isset($args[1])) {
+            return $this->error('Usage: purple native check <fixture|extension> [extension-name]', $write);
+        }
+
+        return match ($args[1]) {
+            'fixture' => $this->checkNativeFixture($write),
+            'extension' => $this->checkNativeExtension($args[2] ?? 'purple_native', $write),
+            default => $this->error('Usage: purple native check <fixture|extension> [extension-name]', $write),
+        };
+    }
+
+    /**
+     * @param callable(string): void $write
+     */
+    private function checkNativeFixture(callable $write): int
+    {
+        $report = (new NativeRuntimeCompatibility())->check(new PhpExtensionBridge(
+            invoker: NativeRuntimeCompatibility::compatibleFixtureInvoker(),
+        ));
+
+        return $this->writeNativeCompatibilityReport('fixture', 'php-fixture', $report, $write);
+    }
+
+    /**
+     * @param callable(string): void $write
+     */
+    private function checkNativeExtension(string $extensionName, callable $write): int
+    {
+        $report = (new NativeRuntimeCompatibility())->check(new PhpExtensionBridge(
+            extensionName: $extensionName,
+        ));
+
+        return $this->writeNativeCompatibilityReport('extension', $extensionName, $report, $write);
+    }
+
+    /**
+     * @param callable(string): void $write
+     */
+    private function writeNativeCompatibilityReport(
+        string $mode,
+        string $target,
+        NativeRuntimeCompatibilityReport $report,
+        callable $write,
+    ): int {
+        $this->writeJson([
+            'prototype' => 'native-extension-compatibility',
+            'mode' => $mode,
+            'target' => $target,
+            'report' => $report->toArray(),
+        ], $write);
+
+        return $report->compatible ? 0 : 1;
     }
 
     /**

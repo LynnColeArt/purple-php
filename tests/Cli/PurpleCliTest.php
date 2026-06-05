@@ -7,6 +7,7 @@ namespace Purple\Tests\Cli;
 use Purple\Cli\PurpleCli;
 use Purple\Runtime\Durable\DurableRunRecord;
 use Purple\Runtime\Durable\FileDurableRunStore;
+use Purple\Runtime\NativeRuntimeCompatibility;
 use Purple\Tests\Testing\TestCase;
 
 final class PurpleCliTest extends TestCase
@@ -153,6 +154,65 @@ final class PurpleCliTest extends TestCase
 
         $this->assertSame(1, $exit);
         $this->assertStringContainsString('Usage: purple sidecar resume', $output);
+    }
+
+    public function testRunsNativeFixtureCompatibilityCheck(): void
+    {
+        $cli = new PurpleCli();
+        $output = '';
+
+        $exit = $cli->run(['purple', 'native', 'check', 'fixture'], static function (string $chunk) use (&$output): void {
+            $output .= $chunk;
+        });
+        $payload = $this->decodeObject($output);
+        $report = $payload['report'] ?? null;
+
+        $this->assertSame(0, $exit);
+        $this->assertSame('native-extension-compatibility', $payload['prototype']);
+        $this->assertSame('fixture', $payload['mode']);
+        $this->assertSame('php-fixture', $payload['target']);
+        $this->assertIsArray($report);
+        $this->assertTrue($report['compatible'] ?? false);
+        $this->assertSame('compatible', $report['status'] ?? null);
+        $this->assertSame(NativeRuntimeCompatibility::OPERATION, $report['operation'] ?? null);
+    }
+
+    public function testNativeExtensionCompatibilityReportsMissingExtension(): void
+    {
+        $cli = new PurpleCli();
+        $output = '';
+
+        $exit = $cli->run(
+            ['purple', 'native', 'check', 'extension', 'definitely_missing_purple_native_extension'],
+            static function (string $chunk) use (&$output): void {
+                $output .= $chunk;
+            },
+        );
+        $payload = $this->decodeObject($output);
+        $report = $payload['report'] ?? null;
+
+        $this->assertSame(1, $exit);
+        $this->assertSame('native-extension-compatibility', $payload['prototype']);
+        $this->assertSame('extension', $payload['mode']);
+        $this->assertSame('definitely_missing_purple_native_extension', $payload['target']);
+        $this->assertIsArray($report);
+        $this->assertFalse($report['compatible'] ?? true);
+        $this->assertSame('unavailable', $report['status'] ?? null);
+        $this->assertIsString($report['message'] ?? null);
+        $this->assertStringContainsString('not available', $report['message']);
+    }
+
+    public function testNativeCompatibilityReportsUsageErrors(): void
+    {
+        $cli = new PurpleCli();
+        $output = '';
+
+        $exit = $cli->run(['purple', 'native', 'check'], static function (string $chunk) use (&$output): void {
+            $output .= $chunk;
+        });
+
+        $this->assertSame(1, $exit);
+        $this->assertStringContainsString('Usage: purple native check', $output);
     }
 
     public function testOpenAIProviderCheckReportsMissingSecret(): void

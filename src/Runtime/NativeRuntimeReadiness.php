@@ -21,6 +21,13 @@ final readonly class NativeRuntimeReadiness
                 'default_extension' => 'purple_native',
                 'status' => 'optional_bridge',
             ],
+            'compatibility' => [
+                'checker' => NativeRuntimeCompatibility::class,
+                'operation' => NativeRuntimeCompatibility::OPERATION,
+                'fixture_mode' => true,
+                'extension_mode' => true,
+                'status' => 'prototype',
+            ],
             'sidecar_protocol' => [
                 'version' => SidecarProtocol::VERSION,
                 'encoding' => 'json_envelope',

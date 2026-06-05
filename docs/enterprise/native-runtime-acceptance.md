@@ -38,6 +38,46 @@ The normalized result is `Purple\Runtime\NativeRuntimeResult`:
 
 The current Composer-mode implementation uses `PhpExtensionBridge` with an injected invoker. This proves the contract without loading a native extension.
 
+`Purple\Runtime\NativeRuntimeCompatibility` is the product-facing compatibility harness for the same boundary. It invokes `runtime.acceptance.ping`, checks for `ok` status, the `native-compatible` answer payload, and non-negative `RuntimeMetrics`, then returns a `NativeRuntimeCompatibilityReport` with one of three statuses:
+
+- `compatible` when the runtime satisfies the acceptance ping.
+- `incompatible` when a runtime responds but violates the contract.
+- `unavailable` when the optional extension path is not installed or loaded.
+
+## CLI Prototype
+
+The CLI exposes the compatibility prototype deliberately, not as a default install requirement:
+
+```bash
+bin/purple native check fixture
+bin/purple native check extension definitely_missing_purple_native_extension
+```
+
+Fixture mode uses a PHP invoker through `PhpExtensionBridge`, so it runs under Composer mode with no compiled extension. Extension mode attempts the named extension or compatible `purple_native_invoke` path and reports `unavailable` when no runtime is installed.
+
+The output is stable JSON:
+
+```json
+{
+  "prototype": "native-extension-compatibility",
+  "mode": "fixture",
+  "target": "php-fixture",
+  "report": {
+    "compatible": true,
+    "status": "compatible",
+    "operation": "runtime.acceptance.ping",
+    "payload": {
+      "answer": "native-compatible"
+    },
+    "metrics": {
+      "duration_ms": 1.0,
+      "memory_delta_bytes": 0
+    },
+    "message": "Native runtime satisfies the compatibility check."
+  }
+}
+```
+
 ## Required Failure Semantics
 
 The bridge must reject:
@@ -52,4 +92,4 @@ The bridge must reject:
 
 ## Composer Baseline
 
-The native acceptance tests must run under `composer check` with no native extension installed. Native runtime adoption is a deployment choice, not an SDK installation requirement.
+The native acceptance tests and `native check fixture` must run under `composer check` with no native extension installed. Native runtime adoption is a deployment choice, not an SDK installation requirement. Extension mode is an opt-in platform-team check for environments that have deliberately installed a compatible runtime.
