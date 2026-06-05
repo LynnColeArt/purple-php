@@ -13,6 +13,7 @@
   "accepted_at": "2026-06-05T02:03:41.979399+00:00",
   "accepted_by": "codex",
   "accepted_from_commit": "e16050dd6b64a0c40571a1f45e1e9715b707728d",
+  "baseline_merge_commit": "4422a3978da33948e6d25a74cc552550474acb27",
   "coordination_branch": "kitty/mission-sidecar-runtime-service-prototype-01KTAQ1M",
   "created_at": "2026-06-05T01:40:59.785542+00:00",
   "friendly_name": "Sidecar Runtime Service Prototype",
