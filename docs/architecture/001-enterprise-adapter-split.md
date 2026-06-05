@@ -16,7 +16,7 @@ The first enterprise adapter package split is `purple-php/provider-bedrock`.
 
 This package should own the AWS Bedrock runtime provider adapter and any future Bedrock-specific authentication, signing, endpoint routing, region handling, retry classification, and integration tests. The core SDK should keep the provider contracts, provider request/response value objects, policy/audit contracts, fake provider, and Composer-first SDK entry point.
 
-The package exists in this monorepo at `packages/provider-bedrock`. It has its own Composer metadata, package-local test/static-analysis/fixer configuration, PSR-4 autoloading for `Purple\Provider\Bedrock\`, and a path repository back to the root `purple-php/sdk` package for local validation. It is not yet a separate repository or Packagist publication.
+The package exists in this monorepo at `packages/provider-bedrock` and is published from the standalone `LynnColeArt/purple-php-provider-bedrock` repository for Packagist consumption. It has its own Composer metadata, package-local test/static-analysis/fixer configuration, PSR-4 autoloading for `Purple\Provider\Bedrock\`, and a path repository back to the root `purple-php/sdk` package for local validation.
 
 ## Candidate Inventory
 
@@ -81,7 +81,7 @@ The package split includes:
 - Root `Sdk.php` decoupling from `Purple\Provider\Bedrock\BedrockProvider`.
 - Root and provider-package validation evidence captured in `kitty-specs/bedrock-provider-package-split-01KTAHKT/acceptance-matrix.json`.
 
-The remaining deferred work is packaging and production transport maturity: Packagist publication execution, real AWS signing or SDK integration, credential discovery, live integration tests, and any separate-repository split. Release-readiness documentation and CI are now prepared for `purple-php/provider-bedrock`, but the package is not published yet.
+The remaining deferred work is production transport maturity: real AWS signing or SDK integration, credential discovery, live integration tests, and repeatable automation for future provider splits. Release-readiness documentation, CI, standalone repository publication, Packagist publication, and install verification are complete for `purple-php/provider-bedrock`.
 
 ## Roadmap Alignment
 
@@ -89,7 +89,7 @@ The packaging track is no longer an implicit broad refactor. Its first milestone
 
 1. Preserve Composer-first core validation without requiring Bedrock.
 2. Keep `purple-php/provider-bedrock` as an optional monorepo package with package-local validation.
-3. Keep release readiness for `purple-php/provider-bedrock` explicit: package docs, changelog, release checklist, CI, and validation evidence are complete before any Packagist publication.
+3. Keep release readiness for future provider packages explicit: package docs, changelog, release checklist, CI, and validation evidence should be complete before Packagist publication.
 4. Use the Bedrock package split as the repeatable pattern for future provider packages.
 5. Revisit Azure, OpenAI, sidecar provider, secrets, audit exporters, and real CMS/ecommerce adapters after this package boundary has publication follow-through.
 

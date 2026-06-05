@@ -65,7 +65,7 @@ Local validation is package-scoped:
 composer check --working-dir=packages/provider-bedrock
 ```
 
-This package is a local monorepo package boundary, not a Packagist publication promise. It still uses injectable transports by default; live AWS signing, credential discovery, AWS SDK integration, and production Bedrock transport policy are future opt-in surfaces.
+This package is a local monorepo package boundary and a published optional package. It still uses injectable transports by default; live AWS signing, credential discovery, AWS SDK integration, and production Bedrock transport policy are future opt-in surfaces.
 
 ## Audit Export Shape
 
@@ -125,7 +125,7 @@ Phase 5.1 makes runtime continuation more executable without changing the adopti
 
 ## Provider Package Release Readiness
 
-The Bedrock provider package is published as a standalone GitHub release at `LynnColeArt/purple-php-provider-bedrock`. The release-readiness track documents the `purple-php/provider-bedrock` `0.1.x` package line, package-local changelog, Packagist handoff checklist, and CI validation.
+The Bedrock provider package is published on Packagist from the standalone GitHub release repository `LynnColeArt/purple-php-provider-bedrock`. The release-readiness track documents the `purple-php/provider-bedrock` `0.1.x` package line, package-local changelog, Packagist verification checklist, and CI validation.
 
 Provider package validation is separate from the core Composer baseline:
 
