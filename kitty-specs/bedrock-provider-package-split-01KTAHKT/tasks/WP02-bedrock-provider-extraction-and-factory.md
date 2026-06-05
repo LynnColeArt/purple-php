@@ -11,6 +11,9 @@ tracker_refs: []
 planning_base_branch: main
 merge_target_branch: main
 branch_strategy: Planning artifacts for this mission were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
+base_branch: kitty/mission-bedrock-provider-package-split-01KTAHKT-lane-a
+base_commit: 65403b95dd6d54065f36f97e4c8eead14690f92e
+created_at: '2026-06-05T00:22:26.962552+00:00'
 subtasks:
 - T001
 - T002
@@ -20,6 +23,7 @@ subtasks:
 phase: Phase 2 - Provider Extraction
 assignee: ''
 agent: codex
+shell_pid: '3377003'
 history:
 - timestamp: '2026-06-05T00:10:00Z'
   agent: system
