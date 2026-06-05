@@ -2,88 +2,95 @@
   "mission_slug": "native-extension-compatibility-prototype-01KTAS1B",
   "mission_number": "",
   "mission_type": "software-dev",
-  "overall_verdict": "pending",
+  "overall_verdict": "passed",
   "criteria": [
     {
       "criterion_id": "FR-001",
-      "description": "Verify FR-001 is satisfied",
+      "description": "Reusable native compatibility harness runs the acceptance ping against a NativeRuntime and returns a structured verdict.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "tests/Runtime/NativeRuntimeCompatibilityTest.php::testReportsCompatibleFixtureRuntime",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T02:36:00Z",
+      "notes": "NativeRuntimeCompatibility checks a PhpExtensionBridge fixture and returns a NativeRuntimeCompatibilityReport."
     },
     {
       "criterion_id": "FR-002",
-      "description": "Verify FR-002 is satisfied",
+      "description": "Acceptance contract preserves operation, ok status, native-compatible answer, and runtime metrics.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "tests/Runtime/NativeRuntimeCompatibilityTest.php::testReportsCompatibleFixtureRuntime; tests/Runtime/NativeAcceptance/NativeRuntimeAcceptanceTest.php::testCompatibilityFixtureSatisfiesReusableNativeRuntimeContract",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T02:36:00Z",
+      "notes": "Tests assert the acceptance operation, payload answer, report shape, and metrics."
     },
     {
       "criterion_id": "FR-003",
-      "description": "Verify FR-003 is satisfied",
+      "description": "Unavailable and incompatible runtimes normalize to reports instead of uncaught CLI failures.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "tests/Runtime/NativeRuntimeCompatibilityTest.php::testReportsIncompatibleMalformedBridgeResponse; tests/Runtime/NativeRuntimeCompatibilityTest.php::testReportsUnavailableMissingExtension",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T02:36:00Z",
+      "notes": "Malformed bridge responses produce incompatible reports; missing extensions produce unavailable reports."
     },
     {
       "criterion_id": "FR-004",
-      "description": "Verify FR-004 is satisfied",
+      "description": "CLI exposes fixture and extension compatibility checks without interactive input or external services.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "tests/Cli/PurpleCliTest.php::testRunsNativeFixtureCompatibilityCheck; tests/Cli/PurpleCliTest.php::testNativeExtensionCompatibilityReportsMissingExtension",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T02:36:00Z",
+      "notes": "bin/purple native check fixture exits 0; missing extension check exits 1 with unavailable JSON."
     },
     {
       "criterion_id": "FR-005",
-      "description": "Verify FR-005 is satisfied",
+      "description": "Runtime and CLI tests cover fixture success, incompatible payloads, unavailable extensions, and usage errors.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "vendor/bin/phpunit -c phpunit.xml.dist tests/Runtime/NativeRuntimeCompatibilityTest.php tests/Runtime/NativeAcceptance/NativeRuntimeAcceptanceTest.php; vendor/bin/phpunit -c phpunit.xml.dist tests/Cli/PurpleCliTest.php",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T02:36:00Z",
+      "notes": "Focused runtime and CLI suites passed in the WP lanes."
     },
     {
       "criterion_id": "FR-006",
-      "description": "Verify FR-006 is satisfied",
-      "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "description": "Native runtime docs explain compatibility command, output shape, fixture mode, extension mode, and guardrails.",
+      "proof_type": "documentation_review",
+      "evidence": "docs/enterprise/native-runtime-acceptance.md; docs/enterprise/README.md; README.md",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T02:36:00Z",
+      "notes": "Docs include command examples and explain Composer-safe fixture checks versus opt-in extension checks."
     },
     {
       "criterion_id": "FR-007",
-      "description": "Verify FR-007 is satisfied",
-      "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "description": "Roadmap and architecture docs mark native compatibility prototype complete and separate it from package and sidecar tracks.",
+      "proof_type": "documentation_review",
+      "evidence": "outline.md; docs/architecture/001-enterprise-adapter-split.md",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T02:36:00Z",
+      "notes": "Phase 5.5 is recorded as complete; follow-ups remain Bedrock release, provider split, sidecar transport, and compiled native spike."
     },
     {
       "criterion_id": "FR-008",
-      "description": "Verify FR-008 is satisfied",
+      "description": "Composer-mode root and provider-package validation remain free of native extension requirements.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "composer check; composer check --working-dir=packages/provider-bedrock; bin/purple native check fixture; bin/purple native check extension definitely_missing_purple_native_extension",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T02:36:00Z",
+      "notes": "Validation commands run with no native extension installed; extension check reports unavailable instead of becoming a dependency."
     }
   ],
-  "negative_invariants": []
+  "negative_invariants": [
+    {
+      "invariant_id": "NI-001",
+      "description": "No compiled extension, FFI binding, daemon, network service, cloud SDK, AWS credentials, or live service is required by root validation.",
+      "evidence": "composer check; docs/enterprise/native-runtime-acceptance.md; docs/enterprise/README.md",
+      "pass_fail": "pass"
+    }
+  ]
 }
