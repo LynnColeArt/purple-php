@@ -1,16 +1,16 @@
 {
-  "event_count": 16,
-  "last_event_id": "01KTAKE0CYN889X64TS2GM9KX0",
-  "materialized_at": "2026-06-05T00:37:50.622089+00:00",
+  "event_count": 20,
+  "last_event_id": "01KTAM6KN7MXC8JF87JTFR089Y",
+  "materialized_at": "2026-06-05T00:51:16.775589+00:00",
   "mission_number": "2",
   "mission_slug": "bedrock-provider-package-split-01KTAHKT",
   "mission_type": "software-dev",
   "summary": {
-    "approved": 4,
+    "approved": 0,
     "blocked": 0,
     "canceled": 0,
     "claimed": 0,
-    "done": 0,
+    "done": 4,
     "for_review": 0,
     "in_progress": 0,
     "in_review": 0,
@@ -18,32 +18,32 @@
   },
   "work_packages": {
     "WP01": {
-      "actor": "user",
+      "actor": "merge",
       "force_count": 2,
-      "lane": "approved",
-      "last_event_id": "01KTAJG0VWNKD60DWJEBG6W66C",
-      "last_transition_at": "2026-06-05T00:21:28.060321+00:00"
+      "lane": "done",
+      "last_event_id": "01KTAM6F7RMM40YMS0EG20XKN7",
+      "last_transition_at": "2026-06-05T00:51:12.248276+00:00"
     },
     "WP02": {
-      "actor": "user",
+      "actor": "merge",
       "force_count": 2,
-      "lane": "approved",
-      "last_event_id": "01KTAJS46WJA9WYYH38AD98BNN",
-      "last_transition_at": "2026-06-05T00:26:26.396312+00:00"
+      "lane": "done",
+      "last_event_id": "01KTAM6GPY3DJ55B571FG6QFCP",
+      "last_transition_at": "2026-06-05T00:51:13.758975+00:00"
     },
     "WP03": {
-      "actor": "user",
+      "actor": "merge",
       "force_count": 2,
-      "lane": "approved",
-      "last_event_id": "01KTAK1EEP6K1Z5PP8M6RP9GHA",
-      "last_transition_at": "2026-06-05T00:30:59.030275+00:00"
+      "lane": "done",
+      "last_event_id": "01KTAM6J63M9BTN60Q78NJ42AR",
+      "last_transition_at": "2026-06-05T00:51:15.267299+00:00"
     },
     "WP04": {
-      "actor": "user",
+      "actor": "merge",
       "force_count": 2,
-      "lane": "approved",
-      "last_event_id": "01KTAKE0CYN889X64TS2GM9KX0",
-      "last_transition_at": "2026-06-05T00:37:50.622089+00:00"
+      "lane": "done",
+      "last_event_id": "01KTAM6KN7MXC8JF87JTFR089Y",
+      "last_transition_at": "2026-06-05T00:51:16.775589+00:00"
     }
   }
 }
