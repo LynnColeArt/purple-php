@@ -1,7 +1,7 @@
 {
-  "event_count": 10,
-  "last_event_id": "01KTASZ4VERBZE2JJANWQ7KKMN",
-  "materialized_at": "2026-06-05T02:32:03.694287+00:00",
+  "event_count": 12,
+  "last_event_id": "01KTAT00EDPZA4AT8F8E1TMVF2",
+  "materialized_at": "2026-06-05T02:32:31.949260+00:00",
   "mission_number": "",
   "mission_slug": "native-extension-compatibility-prototype-01KTAS1B",
   "mission_type": "software-dev",
@@ -12,7 +12,7 @@
     "claimed": 0,
     "done": 0,
     "for_review": 0,
-    "in_progress": 0,
+    "in_progress": 1,
     "in_review": 0,
     "planned": 0
   },
@@ -30,6 +30,13 @@
       "lane": "approved",
       "last_event_id": "01KTASZ4VERBZE2JJANWQ7KKMN",
       "last_transition_at": "2026-06-05T02:32:03.694287+00:00"
+    },
+    "WP03": {
+      "actor": "implement-command",
+      "force_count": 0,
+      "lane": "in_progress",
+      "last_event_id": "01KTAT00EDPZA4AT8F8E1TMVF2",
+      "last_transition_at": "2026-06-05T02:32:31.949260+00:00"
     }
   }
 }
