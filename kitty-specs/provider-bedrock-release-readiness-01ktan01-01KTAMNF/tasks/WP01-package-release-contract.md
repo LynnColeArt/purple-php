@@ -10,6 +10,9 @@ tracker_refs: []
 planning_base_branch: main
 merge_target_branch: main
 branch_strategy: Planning artifacts for this mission were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
+base_branch: kitty/mission-provider-bedrock-release-readiness-01ktan01-01KTAMNF
+base_commit: 1ff7b42b1b1ee9f22f96da81198ec06fb7faa1c0
+created_at: '2026-06-05T01:05:56.006387+00:00'
 subtasks:
 - T001
 - T002
@@ -17,7 +20,8 @@ subtasks:
 - T004
 phase: Phase 1 - Release Contract
 assignee: ''
-agent: codex
+agent: "codex"
+shell_pid: "3377003"
 history:
 - timestamp: '2026-06-05T01:00:00Z'
   agent: system
@@ -68,3 +72,7 @@ T004: Ensure release docs do not imply publication has already happened.
 ## Guardrails
 
 Do not publish the package. Do not add AWS SDK dependencies. Do not add live AWS tests. Do not change provider runtime behavior in this WP.
+
+## Activity Log
+
+- 2026-06-05T01:08:07Z – codex – shell_pid=3377003 – Started review via action command
