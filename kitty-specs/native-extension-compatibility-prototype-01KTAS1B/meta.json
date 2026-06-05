@@ -17,7 +17,7 @@
   "created_at": "2026-06-05T02:15:47.490035+00:00",
   "friendly_name": "Native Extension Compatibility Prototype",
   "mission_id": "01KTAS1BH1ENYHVPZBWZYP83P4",
-  "mission_number": null,
+  "mission_number": 5,
   "mission_slug": "native-extension-compatibility-prototype-01KTAS1B",
   "mission_type": "software-dev",
   "purpose_context": "Build a Composer-safe native extension compatibility prototype around the existing PHP-level native bridge and acceptance fixtures so platform teams can validate native-runtime behavior without requiring a compiled extension for normal composer check.",
