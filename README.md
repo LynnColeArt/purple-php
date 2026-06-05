@@ -26,6 +26,8 @@ The first milestone was smart functions. Phases 2, 3, 4, and 5 are now represent
 
 Phase 5.1 makes that runtime work executable as Composer-safe contracts: native acceptance, sidecar resume, and package-split decisions stay testable through PHP fixtures, fake providers, injectable transports, and ignored local runtime paths. The Bedrock package split applies that same baseline to enterprise providers: a normal core Composer install still does not require Bedrock, a native extension, a sidecar process, cloud SDK dependencies, or live network services.
 
+Phase 5.3 makes the Bedrock provider package release-ready without publishing it yet: package docs, first-release notes, release checklist, and CI validation now describe how `purple-php/provider-bedrock` can ship later while preserving the Composer-first baseline.
+
 ## Quick Start
 
 ```bash
@@ -157,3 +159,4 @@ Spec Kitty mission packages:
 * Enterprise SDK foundation: [kitty-specs/001-purple-php-enterprise-ai-sdk](kitty-specs/001-purple-php-enterprise-ai-sdk/spec.md)
 * Runtime continuation Phase 5.1: [kitty-specs/runtime-continuation-mega-mission-01KTA3AD](kitty-specs/runtime-continuation-mega-mission-01KTA3AD/spec.md)
 * Bedrock provider package split: [kitty-specs/bedrock-provider-package-split-01KTAHKT](kitty-specs/bedrock-provider-package-split-01KTAHKT/spec.md)
+* Bedrock provider release readiness: [kitty-specs/provider-bedrock-release-readiness-01ktan01-01KTAMNF](kitty-specs/provider-bedrock-release-readiness-01ktan01-01KTAMNF/spec.md)
