@@ -1,7 +1,7 @@
 {
-  "event_count": 2,
-  "last_event_id": "01KTAS5NAS2WMTX7HQZD1PJMTK",
-  "materialized_at": "2026-06-05T02:18:08.601404+00:00",
+  "event_count": 3,
+  "last_event_id": "01KTAS5PSNN0EVZN7233X2YMJH",
+  "materialized_at": "2026-06-05T02:18:10.101516+00:00",
   "mission_number": "",
   "mission_slug": "native-extension-compatibility-prototype-01KTAS1B",
   "mission_type": "software-dev",
@@ -14,7 +14,7 @@
     "for_review": 0,
     "in_progress": 0,
     "in_review": 0,
-    "planned": 2
+    "planned": 3
   },
   "work_packages": {
     "WP01": {
@@ -30,6 +30,13 @@
       "lane": "planned",
       "last_event_id": "01KTAS5NAS2WMTX7HQZD1PJMTK",
       "last_transition_at": "2026-06-05T02:18:08.601404+00:00"
+    },
+    "WP03": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KTAS5PSNN0EVZN7233X2YMJH",
+      "last_transition_at": "2026-06-05T02:18:10.101516+00:00"
     }
   }
 }
