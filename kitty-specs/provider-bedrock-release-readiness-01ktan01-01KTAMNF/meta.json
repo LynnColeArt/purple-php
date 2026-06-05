@@ -1,4 +1,16 @@
 {
+  "acceptance_history": [
+    {
+      "acceptance_mode": "pr",
+      "accepted_at": "2026-06-05T01:28:18.230003+00:00",
+      "accepted_by": "codex",
+      "accepted_from_commit": "7f3f8062341d3809bdec40b2d0a0460facee783d"
+    }
+  ],
+  "acceptance_mode": "pr",
+  "accepted_at": "2026-06-05T01:28:18.230003+00:00",
+  "accepted_by": "codex",
+  "accepted_from_commit": "7f3f8062341d3809bdec40b2d0a0460facee783d",
   "coordination_branch": "kitty/mission-provider-bedrock-release-readiness-01ktan01-01KTAMNF",
   "created_at": "2026-06-05T00:59:23.941730+00:00",
   "friendly_name": "Provider Bedrock Release Readiness",
