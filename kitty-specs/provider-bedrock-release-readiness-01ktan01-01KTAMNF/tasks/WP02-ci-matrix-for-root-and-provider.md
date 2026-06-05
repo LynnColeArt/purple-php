@@ -10,6 +10,9 @@ tracker_refs: []
 planning_base_branch: main
 merge_target_branch: main
 branch_strategy: Planning artifacts for this mission were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
+base_branch: kitty/mission-provider-bedrock-release-readiness-01ktan01-01KTAMNF
+base_commit: 8fd2c0478bd2cb484f0aec08ebbcf1c60d381d37
+created_at: '2026-06-05T01:11:25.916926+00:00'
 subtasks:
 - T001
 - T002
@@ -17,7 +20,8 @@ subtasks:
 - T004
 phase: Phase 2 - CI Validation
 assignee: ''
-agent: codex
+agent: "codex"
+shell_pid: "3377003"
 history:
 - timestamp: '2026-06-05T01:00:00Z'
   agent: system
@@ -65,3 +69,7 @@ T004: Keep root and provider validation separate so the root SDK job does not re
 ## Guardrails
 
 Do not add publish tokens, Packagist credentials, deployment jobs, live AWS calls, or required secret configuration.
+
+## Activity Log
+
+- 2026-06-05T01:13:14Z – codex – shell_pid=3377003 – Started review via action command
