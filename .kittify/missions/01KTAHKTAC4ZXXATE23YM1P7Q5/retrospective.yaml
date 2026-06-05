@@ -1,0 +1,140 @@
+schema_version: 1
+mission_id: 01KTAHKTAC4ZXXATE23YM1P7Q5
+mission_slug: bedrock-provider-package-split-01KTAHKT
+mission_number: 2
+friendly_name: bedrock provider package split
+mission_type: software-dev
+target_branch: main
+created_at: '2026-06-05T00:53:30.165609+00:00'
+created_by:
+  kind: human
+  id: cli
+  display: spec-kitty retrospect
+provenance:
+  kind: explicit_create
+  invoked_at: '2026-06-05T00:53:30.165609+00:00'
+  policy_resolved_from:
+    enabled: <default>
+    timing: <default>
+    failure_policy: <default>
+    write_record: <default>
+    generate_proposals: <default>
+    apply_proposals: <default>
+    permissions.write_record: <default>
+    permissions.inspect_mission_artifacts: <default>
+    permissions.propose_glossary_changes: <default>
+    permissions.propose_drg_changes: <default>
+    permissions.propose_doctrine_changes: <default>
+    permissions.apply_low_risk_changes: <default>
+    permissions.apply_structural_changes: <default>
+    precedence: <default>
+    generator: <default>
+  command: spec-kitty retrospect create
+policy_source:
+  enabled: <default>
+  timing: <default>
+  failure_policy: <default>
+  write_record: <default>
+  generate_proposals: <default>
+  apply_proposals: <default>
+  permissions.write_record: <default>
+  permissions.inspect_mission_artifacts: <default>
+  permissions.propose_glossary_changes: <default>
+  permissions.propose_drg_changes: <default>
+  permissions.propose_doctrine_changes: <default>
+  permissions.apply_low_risk_changes: <default>
+  permissions.apply_structural_changes: <default>
+  precedence: <default>
+  generator: <default>
+findings_status: has_findings
+helped: []
+not_helpful:
+- id: n-001
+  category: process
+  summary: WP01 required 2 --force override(s) during workflow
+  evidence_refs:
+  - e-010
+  details: WP WP01 required 2 operator-driven --force lane transition(s). Force overrides typically indicate the runtime
+    guard failed or the operator routed around it; investigate the underlying cause.
+- id: n-002
+  category: process
+  summary: WP02 required 2 --force override(s) during workflow
+  evidence_refs:
+  - e-011
+  details: WP WP02 required 2 operator-driven --force lane transition(s). Force overrides typically indicate the runtime
+    guard failed or the operator routed around it; investigate the underlying cause.
+- id: n-003
+  category: process
+  summary: WP03 required 2 --force override(s) during workflow
+  evidence_refs:
+  - e-012
+  details: WP WP03 required 2 operator-driven --force lane transition(s). Force overrides typically indicate the runtime
+    guard failed or the operator routed around it; investigate the underlying cause.
+- id: n-004
+  category: process
+  summary: WP04 required 2 --force override(s) during workflow
+  evidence_refs:
+  - e-013
+  details: WP WP04 required 2 operator-driven --force lane transition(s). Force overrides typically indicate the runtime
+    guard failed or the operator routed around it; investigate the underlying cause.
+gaps:
+- id: g-002
+  category: doc
+  summary: data-model.md absent
+  evidence_refs:
+  - e-002
+  details: spec.md is present but data-model.md is missing. A data model document clarifies domain entity relationships.
+- id: g-001
+  category: doc
+  summary: research.md absent
+  evidence_refs:
+  - e-002
+  details: spec.md is present but research.md is missing. Research artifacts help future maintainers understand design 
+    decisions.
+proposals: []
+evidence_refs:
+- id: e-001
+  kind: file
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/meta.json
+- id: e-002
+  kind: file
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/spec.md
+- id: e-003
+  kind: file
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/plan.md
+- id: e-004
+  kind: file
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/tasks.md
+- id: e-005
+  kind: file
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/tasks/WP01-provider-package-skeleton.md
+- id: e-006
+  kind: file
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/tasks/WP02-bedrock-provider-extraction-and-factory.md
+- id: e-007
+  kind: file
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/tasks/WP03-core-decoupling-and-composer-baseline.md
+- id: e-008
+  kind: file
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/tasks/WP04-docs-and-mission-evidence.md
+- id: e-009
+  kind: file
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/status.events.jsonl
+- id: e-010
+  kind: event_range
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/status.events.jsonl
+  range: 01KTAJCBVJNG5DNK7CQY2ET1MJ..01KTAJG0VWNKD60DWJEBG6W66C
+- id: e-011
+  kind: event_range
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/status.events.jsonl
+  range: 01KTAJQV0XP5YDCW5M86A0FX40..01KTAJS46WJA9WYYH38AD98BNN
+- id: e-012
+  kind: event_range
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/status.events.jsonl
+  range: 01KTAJZN1RN7SX212VNQ5BT1TP..01KTAK1EEP6K1Z5PP8M6RP9GHA
+- id: e-013
+  kind: event_range
+  path: kitty-specs/bedrock-provider-package-split-01KTAHKT/status.events.jsonl
+  range: 01KTAKCNM8D1H96EE595K8RCHJ..01KTAKE0CYN889X64TS2GM9KX0
+generator_version: '1.0'
+provenance_history: []
