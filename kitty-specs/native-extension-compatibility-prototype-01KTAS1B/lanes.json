@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "mission_slug": "native-extension-compatibility-prototype-01KTAS1B",
+  "mission_id": "01KTAS1BH1ENYHVPZBWZYP83P4",
+  "mission_branch": "kitty/mission-native-extension-compatibility-prototype-01KTAS1B",
+  "target_branch": "main",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01"
+      ],
+      "write_scope": [
+        "src/Runtime/NativeRuntimeCompatibility.php",
+        "src/Runtime/NativeRuntimeCompatibilityReport.php",
+        "src/Runtime/NativeRuntimeReadiness.php",
+        "tests/Runtime/NativeAcceptance/NativeRuntimeAcceptanceTest.php",
+        "tests/Runtime/NativeRuntimeCompatibilityTest.php"
+      ],
+      "predicted_surfaces": [],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-b",
+      "wp_ids": [
+        "WP02"
+      ],
+      "write_scope": [
+        "src/Cli/PurpleCli.php",
+        "tests/Cli/PurpleCliTest.php"
+      ],
+      "predicted_surfaces": [],
+      "depends_on_lanes": [
+        "lane-a"
+      ],
+      "parallel_group": 1
+    },
+    {
+      "lane_id": "lane-c",
+      "wp_ids": [
+        "WP03"
+      ],
+      "write_scope": [
+        "README.md",
+        "docs/architecture/001-enterprise-adapter-split.md",
+        "docs/enterprise/README.md",
+        "docs/enterprise/native-runtime-acceptance.md",
+        "outline.md"
+      ],
+      "predicted_surfaces": [
+        "legacy-cleanup"
+      ],
+      "depends_on_lanes": [
+        "lane-a",
+        "lane-b"
+      ],
+      "parallel_group": 2
+    }
+  ],
+  "computed_at": "2026-06-05T02:18:11.028744+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": []
+}
