@@ -2,7 +2,7 @@
   "mission_slug": "native-extension-compatibility-prototype-01KTAS1B",
   "mission_number": "",
   "mission_type": "software-dev",
-  "overall_verdict": "passed",
+  "overall_verdict": "pass",
   "criteria": [
     {
       "criterion_id": "FR-001",
@@ -92,7 +92,7 @@
       "verification_method": "custom_command",
       "verification_command": "composer check",
       "result": "confirmed_absent",
-      "evidence": "Command exited 0 in lane-c: PHPUnit 130 tests, PHPStan no errors, php-cs-fixer dry-run no changed files; no native extension was installed."
+      "evidence": "Command exited 0: PHPUnit 11.5.55 by Sebastian Bergmann and contributors.\n\nRuntime:       PHP 8.3.6\nConfiguration: /home/lynn/projects/php-agent/phpunit.xml.dist\n\n......................................................."
     }
   ]
 }
