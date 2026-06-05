@@ -82,3 +82,4 @@ Do not remove provider contracts or `Sdk::fromProvider()`. Do not add the provid
 ## Activity Log
 
 - 2026-06-05T00:30:01Z – codex – shell_pid=3377003 – Implemented core decoupling in lane-c commit 69c9ee2: removed root Sdk::bedrock factory and root Bedrock provider references while preserving package-local BedrockSdk. Evidence: root composer check passed, package composer check passed, rg confirms Bedrock references are package-local.
+- 2026-06-05T00:31:00Z – codex – shell_pid=3377003 – Approved WP03 at 69c9ee2. Review evidence: diff limited to src/Sdk.php and tests/SdkTest.php; root Bedrock provider references removed; ProviderProfile::bedrock and Sdk::fromProvider preserved; root composer validate --strict, targeted SDK/Profile PHPUnit, full root composer check, package composer check, and root dependency check passed.
