@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Purple\Tests\Cli;
 
 use Purple\Cli\PurpleCli;
+use Purple\Runtime\Durable\DurableRunRecord;
+use Purple\Runtime\Durable\FileDurableRunStore;
 use Purple\Tests\Testing\TestCase;
 
 final class PurpleCliTest extends TestCase
@@ -97,6 +99,60 @@ final class PurpleCliTest extends TestCase
         $this->assertSame(0, $diagnosticsExit);
         $this->assertTrue($diagnosticsPayload['composer_mode']);
         $this->assertFalse($diagnosticsPayload['native_runtime_required']);
+    }
+
+    public function testRunsSidecarResumePrototype(): void
+    {
+        $directory = sys_get_temp_dir() . '/purple-cli-sidecar-' . bin2hex(random_bytes(4));
+        (new FileDurableRunStore($directory))->save(new DurableRunRecord('run-123', 'paused'));
+        $cli = new PurpleCli();
+        $output = '';
+
+        $exit = $cli->run(['purple', 'sidecar', 'resume', $directory, 'run-123', 'cli-sidecar'], static function (string $chunk) use (&$output): void {
+            $output .= $chunk;
+        });
+        $payload = $this->decodeObject($output);
+        $metadata = $payload['metadata'] ?? null;
+
+        $this->assertSame(0, $exit);
+        $this->assertSame('sidecar-runtime-service', $payload['prototype']);
+        $this->assertSame('run-123', $payload['run_id']);
+        $this->assertSame('accepted', $payload['status']);
+        $this->assertIsArray($metadata);
+        $this->assertSame('cli-sidecar', $metadata['sidecar_node'] ?? null);
+        $this->assertSame('accepted', $metadata['reason'] ?? null);
+    }
+
+    public function testSidecarResumePrototypeReportsMissingRun(): void
+    {
+        $directory = sys_get_temp_dir() . '/purple-cli-sidecar-' . bin2hex(random_bytes(4));
+        $cli = new PurpleCli();
+        $output = '';
+
+        $exit = $cli->run(['purple', 'sidecar', 'resume', $directory, 'missing-run'], static function (string $chunk) use (&$output): void {
+            $output .= $chunk;
+        });
+        $payload = $this->decodeObject($output);
+        $metadata = $payload['metadata'] ?? null;
+
+        $this->assertSame(1, $exit);
+        $this->assertSame('missing-run', $payload['run_id']);
+        $this->assertSame('rejected', $payload['status']);
+        $this->assertIsArray($metadata);
+        $this->assertSame('missing_run', $metadata['reason'] ?? null);
+    }
+
+    public function testSidecarResumePrototypeReportsUsageErrors(): void
+    {
+        $cli = new PurpleCli();
+        $output = '';
+
+        $exit = $cli->run(['purple', 'sidecar', 'resume'], static function (string $chunk) use (&$output): void {
+            $output .= $chunk;
+        });
+
+        $this->assertSame(1, $exit);
+        $this->assertStringContainsString('Usage: purple sidecar resume', $output);
     }
 
     public function testOpenAIProviderCheckReportsMissingSecret(): void

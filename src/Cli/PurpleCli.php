@@ -18,6 +18,11 @@ use Purple\Contracts\Provider\ProviderResponse;
 use Purple\ProviderProfile;
 use Purple\Policy\BasicPolicyEngine;
 use Purple\Prompt\StringPromptTemplate;
+use Purple\Runtime\Durable\FileDurableRunStore;
+use Purple\Runtime\Sidecar\SidecarProtocol;
+use Purple\Runtime\Sidecar\SidecarResumeRequest;
+use Purple\Runtime\Sidecar\SidecarResumeResponse;
+use Purple\Runtime\Sidecar\SidecarRuntimeService;
 use Purple\Schema\JsonSchemaValidator;
 use Purple\Security\EnvironmentSecretResolver;
 use Purple\SmartFunction\SmartFunctionDefinition;
@@ -47,6 +52,7 @@ final readonly class PurpleCli
                 'demo' => $this->demo(array_slice($args, 1), $writer),
                 'audit' => $this->audit(array_slice($args, 1), $writer),
                 'provider' => $this->provider(array_slice($args, 1), $writer),
+                'sidecar' => $this->sidecar(array_slice($args, 1), $writer),
                 'diagnostics' => $this->diagnostics($writer),
                 default => $this->error(sprintf('Unknown command "%s".', $command), $writer),
             };
@@ -69,11 +75,54 @@ final readonly class PurpleCli
             '  audit inspect <audit-path>',
             '  provider check fake',
             '  provider check openai [secret-name]',
+            '  sidecar resume <run-store-dir> <run-id> [node-id]',
             '  diagnostics',
             '',
         ]));
 
         return 0;
+    }
+
+    /**
+     * @param list<string> $args
+     * @param callable(string): void $write
+     */
+    private function sidecar(array $args, callable $write): int
+    {
+        if (($args[0] ?? '') !== 'resume' || ! isset($args[1], $args[2])) {
+            return $this->error('Usage: purple sidecar resume <run-store-dir> <run-id> [node-id]', $write);
+        }
+
+        return $this->resumeSidecarRun(
+            storeDirectory: $args[1],
+            runId: $args[2],
+            nodeId: $args[3] ?? 'local-sidecar',
+            write: $write,
+        );
+    }
+
+    /**
+     * @param callable(string): void $write
+     */
+    private function resumeSidecarRun(string $storeDirectory, string $runId, string $nodeId, callable $write): int
+    {
+        $protocol = new SidecarProtocol();
+        $rawResponse = (new SidecarRuntimeService(
+            runs: new FileDurableRunStore($storeDirectory),
+            nodeId: $nodeId,
+            protocol: $protocol,
+        ))->handle($protocol->encode((new SidecarResumeRequest($runId))->toEnvelope()));
+        $response = SidecarResumeResponse::fromEnvelope($protocol->decode($rawResponse));
+
+        $this->writeJson([
+            'prototype' => 'sidecar-runtime-service',
+            'run_id' => $response->runId,
+            'status' => $response->status,
+            'message' => $response->message,
+            'metadata' => $response->metadata,
+        ], $write);
+
+        return $response->status === 'accepted' ? 0 : 1;
     }
 
     /**
