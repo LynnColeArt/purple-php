@@ -2,7 +2,7 @@
   "event_count": 18,
   "last_event_id": "01KTAPJEVFBWK8XVAFMN4QS7FM",
   "materialized_at": "2026-06-05T01:32:42.223656+00:00",
-  "mission_number": "",
+  "mission_number": "3",
   "mission_slug": "provider-bedrock-release-readiness-01ktan01-01KTAMNF",
   "mission_type": "software-dev",
   "summary": {
