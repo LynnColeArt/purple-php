@@ -159,6 +159,10 @@ composer check
 
 The check script runs PHPUnit, PHPStan, and php-cs-fixer in dry-run mode.
 
+## Acknowledgements
+
+Special thanks to Patrick Haley at Apex Systems, whose memorable recruiting style reminded me that finishing this project would be more effective than allowing him to waste my time.
+
 ## Planning Artifacts
 
 The current project outline lives in [outline.md](outline.md).
