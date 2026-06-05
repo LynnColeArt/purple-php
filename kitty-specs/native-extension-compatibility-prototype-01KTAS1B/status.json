@@ -1,16 +1,16 @@
 {
-  "event_count": 16,
-  "last_event_id": "01KTAV2NRW1WPG9VGCT52YCQ4Z",
-  "materialized_at": "2026-06-05T02:51:27.900404+00:00",
+  "event_count": 17,
+  "last_event_id": "01KTAV3538GTHJG1963AB080A6",
+  "materialized_at": "2026-06-05T02:51:43.592841+00:00",
   "mission_number": "5",
   "mission_slug": "native-extension-compatibility-prototype-01KTAS1B",
   "mission_type": "software-dev",
   "summary": {
-    "approved": 2,
+    "approved": 1,
     "blocked": 0,
     "canceled": 0,
     "claimed": 0,
-    "done": 1,
+    "done": 2,
     "for_review": 0,
     "in_progress": 0,
     "in_review": 0,
@@ -26,10 +26,10 @@
     },
     "WP02": {
       "actor": "user",
-      "force_count": 0,
-      "lane": "approved",
-      "last_event_id": "01KTASZ4VERBZE2JJANWQ7KKMN",
-      "last_transition_at": "2026-06-05T02:32:03.694287+00:00"
+      "force_count": 1,
+      "lane": "done",
+      "last_event_id": "01KTAV3538GTHJG1963AB080A6",
+      "last_transition_at": "2026-06-05T02:51:43.592841+00:00"
     },
     "WP03": {
       "actor": "user",
