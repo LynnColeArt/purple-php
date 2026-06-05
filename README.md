@@ -17,7 +17,7 @@ The current SDK includes:
 * Tool contracts: named, schema-validated tools with input/output schemas and side-effect levels.
 * Looping agents: goal-driven runners that can call tools under limits, hooks, policy, audit, retries, replay logs, and approvals.
 * Runtime hooks: extension points around provider requests, tool calls, and agent lifecycle events.
-* CLI support: a `purple` command for demos, diagnostics, provider checks, and audit inspection.
+* CLI support: a `purple` command for demos, diagnostics, provider checks, sidecar resume prototyping, and audit inspection.
 * Enterprise workflow ports: CMS-agnostic content, catalog, order, support, approval, and audit adapters.
 * Enterprise hardening: tenant/data-residency policy metadata, advanced policy rules, PII redaction, contextual/Vault/cloud secret lookup, Azure and sidecar providers, optional Bedrock provider package, and SIEM/observability export.
 * Optional runtime readiness: native bridge contracts, sidecar envelopes, sandboxed tool execution, durable run storage, runtime metrics, and on-prem deployment metadata.
@@ -28,6 +28,8 @@ Phase 5.1 makes that runtime work executable as Composer-safe contracts: native 
 
 Phase 5.3 makes the Bedrock provider package release-ready without publishing it yet: package docs, first-release notes, release checklist, and CI validation now describe how `purple-php/provider-bedrock` can ship later while preserving the Composer-first baseline.
 
+Phase 5.4 adds a local sidecar runtime service prototype for durable resume. It accepts the same `purple.sidecar.v1` resume envelope used by the PHP contract tests, reads a local durable run store, and returns deterministic accepted/rejected response envelopes without requiring a sidecar daemon, socket listener, native extension, cloud SDK, or live network service.
+
 ## Quick Start
 
 ```bash
@@ -37,6 +39,8 @@ php examples/smart-functions/catalog-summary.php
 php examples/chat/fake-chat.php
 php examples/agents/catalog-agent.php
 php examples/runtime/durable-sidecar-handoff.php
+php examples/runtime/durable-sidecar-resume.php
+php bin/purple sidecar resume var/runtime/runs run-resume-example
 php bin/purple demo smart-function
 php bin/purple demo chat
 php bin/purple demo agent
@@ -83,6 +87,7 @@ vendor/bin/purple audit inspect var/audit/catalog.jsonl
 vendor/bin/purple demo chat
 vendor/bin/purple demo agent
 vendor/bin/purple provider check openai
+vendor/bin/purple sidecar resume var/runtime/runs run-resume-example
 ```
 
 ## Provider Security
@@ -160,3 +165,4 @@ Spec Kitty mission packages:
 * Runtime continuation Phase 5.1: [kitty-specs/runtime-continuation-mega-mission-01KTA3AD](kitty-specs/runtime-continuation-mega-mission-01KTA3AD/spec.md)
 * Bedrock provider package split: [kitty-specs/bedrock-provider-package-split-01KTAHKT](kitty-specs/bedrock-provider-package-split-01KTAHKT/spec.md)
 * Bedrock provider release readiness: [kitty-specs/provider-bedrock-release-readiness-01ktan01-01KTAMNF](kitty-specs/provider-bedrock-release-readiness-01ktan01-01KTAMNF/spec.md)
+* Sidecar runtime service prototype: [kitty-specs/sidecar-runtime-service-prototype-01KTAQ1M](kitty-specs/sidecar-runtime-service-prototype-01KTAQ1M/spec.md)

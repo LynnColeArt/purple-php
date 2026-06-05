@@ -54,6 +54,27 @@ The response is represented by `SidecarResumeResponse`.
 
 `SidecarDurableRunResumer` demonstrates durable-store integration by loading a `DurableRunRecord`, creating a resume request, and sending it through a `SidecarResumeClient`.
 
+## Local Runtime Service Prototype
+
+`SidecarRuntimeService` is the local service-boundary prototype for the same contract. It accepts encoded `purple.sidecar.v1` resume request JSON, decodes it with `SidecarProtocol`, loads the run through `DurableRunStore`, and returns an encoded response envelope.
+
+The prototype returns deterministic outcomes:
+
+- `accepted` when the durable run exists and the action is `continue`.
+- `rejected` with `reason: missing_run` when the run is absent.
+- `rejected` with `reason: unsupported_action` when the action is not supported.
+
+The CLI can exercise the same boundary without starting a daemon:
+
+```bash
+php examples/runtime/durable-sidecar-resume.php
+php bin/purple sidecar resume var/runtime/runs run-resume-example local-dev
+```
+
+The first command creates a local durable run fixture under `var/runtime/runs`. The second command sends a generated resume request through `SidecarRuntimeService` and writes JSON output with `run_id`, `status`, `message`, and response `metadata`.
+
+This is not a production sidecar daemon. It does not open sockets, supervise processes, add HTTP dependencies, or require a sidecar listener.
+
 ## Composer Baseline
 
-The test suite uses `CallbackSidecarTransport`, so durable resume behavior is covered without a running sidecar service or network dependency.
+The test suite uses `CallbackSidecarTransport` and the local `SidecarRuntimeService`, so durable resume behavior is covered without a required running sidecar process or network dependency.

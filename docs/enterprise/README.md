@@ -112,9 +112,11 @@ Composer mode remains the stable baseline; these surfaces let on-prem or managed
 
 The runtime handoff example at `examples/runtime/durable-sidecar-handoff.php` shows a Composer-mode agent run being saved through the durable run store and wrapped in a versioned sidecar envelope for later sidecar orchestration.
 
+The sidecar runtime service prototype adds a local service boundary for durable resume. `SidecarRuntimeService` handles encoded `purple.sidecar.v1` resume envelopes against a `DurableRunStore`, and `bin/purple sidecar resume <run-store-dir> <run-id> [node-id]` exercises that path without starting a daemon.
+
 ## Composer Baseline Guardrail
 
-Phase 5.1 makes runtime continuation more executable without changing the adoption baseline. Native acceptance checks must run through PHP-level contract fixtures unless a platform team explicitly installs a compatible native runtime. Sidecar resume and handoff examples must use fake or injectable transports by default and write generated run state under ignored `var/runtime/` paths.
+Phase 5.1 makes runtime continuation more executable without changing the adoption baseline. Native acceptance checks must run through PHP-level contract fixtures unless a platform team explicitly installs a compatible native runtime. Sidecar resume and handoff examples must use fake or injectable transports by default and write generated run state under ignored `var/runtime/` paths. Phase 5.4 keeps the same guardrail: the sidecar runtime service prototype is local and opt-in, not a required process for SDK installation or validation.
 
 `composer check` remains the core baseline validation command. It must not require native extensions, sidecar services, optional provider packages, cloud SDK packages, AWS credentials, Vault credentials, or live network access.
 
