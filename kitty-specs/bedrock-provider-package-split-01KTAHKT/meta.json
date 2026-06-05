@@ -9,5 +9,7 @@
   "purpose_context": "This mission advances bedrock provider package split on main so stakeholders can track the work from mission creation onward.",
   "purpose_tldr": "bedrock provider package split",
   "slug": "bedrock-provider-package-split-01KTAHKT",
-  "target_branch": "main"
+  "target_branch": "main",
+  "vcs": "git",
+  "vcs_locked_at": "2026-06-05T00:16:17.464727+00:00"
 }
