@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Purple\Tests\Runtime\NativeAcceptance;
 
+use Purple\Runtime\NativeRuntimeCompatibility;
 use Purple\Runtime\PhpExtensionBridge;
 use Purple\Runtime\RuntimeException;
 use Purple\Runtime\RuntimeMetrics;
@@ -14,6 +15,13 @@ final class NativeRuntimeAcceptanceTest extends TestCase
     public function testPhpExtensionBridgeSatisfiesReusableNativeRuntimeContract(): void
     {
         $bridge = new PhpExtensionBridge(invoker: NativeRuntimeContractAssertions::compatibleInvoker());
+
+        NativeRuntimeContractAssertions::assertPingCompatible($bridge);
+    }
+
+    public function testCompatibilityFixtureSatisfiesReusableNativeRuntimeContract(): void
+    {
+        $bridge = new PhpExtensionBridge(invoker: NativeRuntimeCompatibility::compatibleFixtureInvoker());
 
         NativeRuntimeContractAssertions::assertPingCompatible($bridge);
     }
