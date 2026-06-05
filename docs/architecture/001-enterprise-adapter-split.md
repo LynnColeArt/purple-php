@@ -24,7 +24,7 @@ The package exists in this monorepo at `packages/provider-bedrock`. It has its o
 | --- | --- | --- | --- |
 | Provider adapters | `src/Provider/OpenAI/**`, `src/Provider/Azure/**`, `packages/provider-bedrock/**`, `src/Provider/Sidecar/**`, provider tests, related SDK factories | `purple-php/provider-bedrock`, then `purple-php/provider-azure`, `purple-php/provider-openai`, and `purple-php/provider-sidecar` | Bedrock is split first. It is the clearest enterprise cloud boundary and the most likely to grow optional AWS-specific dependency or signing behavior. |
 | Domain workflow ports | `src/Domain/Workflow/**`, `src/Domain/InMemory/**`, `src/Domain/EnterpriseContext.php`, domain examples and tests | `purple-php/domain-workflows` or platform-specific CMS/ecommerce adapter packages | Keep workflow ports and DTOs in core for now. Concrete CMS/ecommerce adapters can split after there is a real platform adapter beyond the in-memory fixture. |
-| Sidecar and native runtime | `src/Runtime/Sidecar/**`, `src/Runtime/Durable/**`, `src/Runtime/PhpExtensionBridge.php`, runtime tests and examples | `purple-php/runtime-sidecar`, `purple-php/native` | Defer. Phase 5.1 is still defining contract compatibility, so splitting now would freeze unstable runtime package boundaries too early. |
+| Sidecar and native runtime | `src/Runtime/Sidecar/**`, `src/Runtime/Durable/**`, `src/Runtime/PhpExtensionBridge.php`, runtime tests and examples | `purple-php/runtime-sidecar`, `purple-php/native` | Defer package extraction. Phase 5.4 now proves a local sidecar runtime service boundary, but daemon/HTTP transport and native compatibility work should mature before package boundaries are frozen. |
 | Security resolvers | `src/Security/VaultSecretResolver.php`, `src/Security/CloudSecretResolver.php`, `src/Security/ContextualSecretResolver.php`, resolver contracts and tests | `purple-php/secrets-vault`, `purple-php/secrets-cloud` | Defer until resolver implementations need provider SDKs or tenant-specific backend clients. Core should retain contracts and environment/contextual composition. |
 | Audit exporters | `src/Audit/FileAuditExporter.php`, `src/Audit/WebhookAuditExporter.php`, `src/Domain/Audit/AuditExportRecord.php`, audit tests | `purple-php/audit-exporters` or specific SIEM exporters | Defer. The current exporters are small, dependency-light, and help prove enterprise audit behavior inside Composer mode. |
 
@@ -67,7 +67,7 @@ Provider package responsibilities after the split:
 
 Bedrock is the right first package split because it is enterprise-shaped but not core-shaped. It has a distinct cloud provider boundary, region and runtime endpoint concerns, and a natural path toward optional AWS dependencies. Extracting it first protects the Composer-first SDK from cloud-specific dependency growth while preserving provider-neutral core behavior.
 
-Provider adapters are also easier to split safely than runtime contracts. The provider contract is already stable, while sidecar and optional-native work is still being made executable through Phase 5.1. Domain workflow adapters should wait until Purple PHP has at least one real CMS or ecommerce adapter package; splitting only the in-memory fixture would create package churn without product value.
+Provider adapters are also easier to split safely than runtime contracts. The provider contract is already stable, while sidecar and optional-native work is still being made executable through Phase 5.1 and Phase 5.4. Domain workflow adapters should wait until Purple PHP has at least one real CMS or ecommerce adapter package; splitting only the in-memory fixture would create package churn without product value.
 
 ## Extraction Record
 
@@ -93,4 +93,4 @@ The packaging track is no longer an implicit broad refactor. Its first milestone
 4. Use the Bedrock package split as the repeatable pattern for future provider packages.
 5. Revisit Azure, OpenAI, sidecar provider, secrets, audit exporters, and real CMS/ecommerce adapters after this package boundary has publication follow-through.
 
-This keeps optional-native and optional-sidecar runtime work separate from provider package extraction. Runtime continuation remains a contract track; provider package extraction becomes a packaging track.
+This keeps optional-native and optional-sidecar runtime work separate from provider package extraction. Runtime continuation remains a contract track; the sidecar runtime service prototype proves the local service boundary without creating a production daemon or package split. Provider package extraction remains the packaging track.
