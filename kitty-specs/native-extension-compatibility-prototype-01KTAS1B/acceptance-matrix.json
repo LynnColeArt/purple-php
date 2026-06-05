@@ -2,7 +2,7 @@
   "mission_slug": "native-extension-compatibility-prototype-01KTAS1B",
   "mission_number": "",
   "mission_type": "software-dev",
-  "overall_verdict": "passed",
+  "overall_verdict": "pass",
   "criteria": [
     {
       "criterion_id": "FR-001",
@@ -89,8 +89,10 @@
     {
       "invariant_id": "NI-001",
       "description": "No compiled extension, FFI binding, daemon, network service, cloud SDK, AWS credentials, or live service is required by root validation.",
-      "evidence": "composer check; docs/enterprise/native-runtime-acceptance.md; docs/enterprise/README.md",
-      "pass_fail": "pass"
+      "verification_method": "custom_command",
+      "verification_command": "composer check",
+      "result": "confirmed_absent",
+      "evidence": "Command exited 0: PHPUnit 11.5.55 by Sebastian Bergmann and contributors.\n\nRuntime:       PHP 8.3.6\nConfiguration: /home/lynn/projects/php-agent/phpunit.xml.dist\n\n......................................................."
     }
   ]
 }
