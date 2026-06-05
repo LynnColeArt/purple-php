@@ -1,9 +1,9 @@
 {
-  "event_count": 3,
-  "last_event_id": "01KTAQ85VPTV6G0QSB9QNEJ2TE",
-  "materialized_at": "2026-06-05T01:44:33.910783+00:00",
+  "event_count": 0,
+  "last_event_id": null,
+  "materialized_at": "",
   "mission_number": "",
-  "mission_slug": "sidecar-runtime-service-prototype-01KTAQ1M",
+  "mission_slug": "",
   "mission_type": "software-dev",
   "summary": {
     "approved": 0,
@@ -14,29 +14,7 @@
     "for_review": 0,
     "in_progress": 0,
     "in_review": 0,
-    "planned": 3
+    "planned": 0
   },
-  "work_packages": {
-    "WP01": {
-      "actor": "finalize-tasks",
-      "force_count": 1,
-      "lane": "planned",
-      "last_event_id": "01KTAQ82Y4C0VFXSX5SEEPF4TT",
-      "last_transition_at": "2026-06-05T01:44:30.916031+00:00"
-    },
-    "WP02": {
-      "actor": "finalize-tasks",
-      "force_count": 1,
-      "lane": "planned",
-      "last_event_id": "01KTAQ84DM2N23Y2NQMADYNR0R",
-      "last_transition_at": "2026-06-05T01:44:32.436958+00:00"
-    },
-    "WP03": {
-      "actor": "finalize-tasks",
-      "force_count": 1,
-      "lane": "planned",
-      "last_event_id": "01KTAQ85VPTV6G0QSB9QNEJ2TE",
-      "last_transition_at": "2026-06-05T01:44:33.910783+00:00"
-    }
-  }
+  "work_packages": {}
 }
