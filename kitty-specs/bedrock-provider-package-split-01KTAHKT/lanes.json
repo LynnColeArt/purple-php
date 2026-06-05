@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "mission_slug": "bedrock-provider-package-split-01KTAHKT",
+  "mission_id": "01KTAHKTAC4ZXXATE23YM1P7Q5",
+  "mission_branch": "kitty/mission-bedrock-provider-package-split-01KTAHKT",
+  "target_branch": "main",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01"
+      ],
+      "write_scope": [
+        "packages/provider-bedrock/.php-cs-fixer.dist.php",
+        "packages/provider-bedrock/README.md",
+        "packages/provider-bedrock/composer.json",
+        "packages/provider-bedrock/phpstan.neon.dist",
+        "packages/provider-bedrock/phpunit.xml.dist"
+      ],
+      "predicted_surfaces": [],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-b",
+      "wp_ids": [
+        "WP02"
+      ],
+      "write_scope": [
+        "packages/provider-bedrock/src/**",
+        "packages/provider-bedrock/tests/**",
+        "src/Provider/Bedrock/BedrockProvider.php",
+        "tests/Provider/Bedrock/BedrockProviderTest.php"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-a"
+      ],
+      "parallel_group": 1
+    },
+    {
+      "lane_id": "lane-c",
+      "wp_ids": [
+        "WP03"
+      ],
+      "write_scope": [
+        "composer.json",
+        "src/ProviderProfile.php",
+        "src/Sdk.php",
+        "tests/ProviderProfileTest.php",
+        "tests/SdkTest.php"
+      ],
+      "predicted_surfaces": [
+        "legacy-cleanup"
+      ],
+      "depends_on_lanes": [
+        "lane-a",
+        "lane-b"
+      ],
+      "parallel_group": 2
+    },
+    {
+      "lane_id": "lane-d",
+      "wp_ids": [
+        "WP04"
+      ],
+      "write_scope": [
+        "README.md",
+        "docs/architecture/001-enterprise-adapter-split.md",
+        "docs/enterprise/README.md",
+        "outline.md"
+      ],
+      "predicted_surfaces": [
+        "api"
+      ],
+      "depends_on_lanes": [
+        "lane-a",
+        "lane-b",
+        "lane-c"
+      ],
+      "parallel_group": 3
+    }
+  ],
+  "computed_at": "2026-06-05T00:14:15.293381+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": []
+}

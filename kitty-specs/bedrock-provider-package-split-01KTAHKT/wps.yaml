@@ -1,0 +1,63 @@
+work_packages:
+  - id: WP01
+    title: "Provider Package Skeleton"
+    dependencies: []
+    owned_files:
+      - "packages/provider-bedrock/composer.json"
+      - "packages/provider-bedrock/phpunit.xml.dist"
+      - "packages/provider-bedrock/phpstan.neon.dist"
+      - "packages/provider-bedrock/.php-cs-fixer.dist.php"
+      - "packages/provider-bedrock/README.md"
+    requirement_refs: ["FR-001", "FR-003", "FR-006"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP01-provider-package-skeleton.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP02
+    title: "Bedrock Provider Extraction And Factory"
+    dependencies: ["WP01"]
+    owned_files:
+      - "src/Provider/Bedrock/BedrockProvider.php"
+      - "tests/Provider/Bedrock/BedrockProviderTest.php"
+      - "packages/provider-bedrock/src/**"
+      - "packages/provider-bedrock/tests/**"
+    requirement_refs: ["FR-002", "FR-005", "FR-007"]
+    subtasks: ["T001", "T002", "T003", "T004", "T005"]
+    prompt_file: "tasks/WP02-bedrock-provider-extraction-and-factory.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP03
+    title: "Core Decoupling And Composer Baseline"
+    dependencies: ["WP01", "WP02"]
+    owned_files:
+      - "src/Sdk.php"
+      - "src/ProviderProfile.php"
+      - "tests/SdkTest.php"
+      - "tests/ProviderProfileTest.php"
+      - "composer.json"
+    requirement_refs: ["FR-003", "FR-004", "FR-006", "FR-007"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP03-core-decoupling-and-composer-baseline.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP04
+    title: "Docs And Mission Evidence"
+    dependencies: ["WP01", "WP02", "WP03"]
+    owned_files:
+      - "README.md"
+      - "outline.md"
+      - "docs/architecture/001-enterprise-adapter-split.md"
+      - "docs/enterprise/README.md"
+    requirement_refs: ["FR-008", "FR-009", "FR-006", "FR-007"]
+    subtasks: ["T001", "T002", "T003", "T004", "T005"]
+    prompt_file: "tasks/WP04-docs-and-mission-evidence.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
