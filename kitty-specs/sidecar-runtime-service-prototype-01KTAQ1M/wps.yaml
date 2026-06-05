@@ -1,0 +1,43 @@
+work_packages:
+  - id: WP01
+    title: "Sidecar Runtime Service Handler"
+    dependencies: []
+    owned_files:
+      - "src/Runtime/Sidecar/SidecarRuntimeService.php"
+      - "tests/Runtime/Sidecar/SidecarRuntimeServiceTest.php"
+    requirement_refs: ["FR-001", "FR-002", "FR-004"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP01-sidecar-runtime-service-handler.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP02
+    title: "CLI Prototype Command"
+    dependencies: ["WP01"]
+    owned_files:
+      - "src/Cli/PurpleCli.php"
+      - "tests/Cli/PurpleCliTest.php"
+    requirement_refs: ["FR-003", "FR-004"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP02-cli-prototype-command.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP03
+    title: "Sidecar Docs And Mission Evidence"
+    dependencies: ["WP01", "WP02"]
+    owned_files:
+      - "README.md"
+      - "outline.md"
+      - "docs/enterprise/README.md"
+      - "docs/enterprise/sidecar-durable-resume.md"
+      - "docs/architecture/001-enterprise-adapter-split.md"
+    requirement_refs: ["FR-005", "FR-006", "FR-007"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP03-sidecar-docs-and-mission-evidence.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""

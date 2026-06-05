@@ -1,0 +1,13 @@
+{
+  "coordination_branch": "kitty/mission-sidecar-runtime-service-prototype-01KTAQ1M",
+  "created_at": "2026-06-05T01:40:59.785542+00:00",
+  "friendly_name": "Sidecar Runtime Service Prototype",
+  "mission_id": "01KTAQ1MR9JFPN6W784Z03KT4H",
+  "mission_number": null,
+  "mission_slug": "sidecar-runtime-service-prototype-01KTAQ1M",
+  "mission_type": "software-dev",
+  "purpose_context": "Build a local, opt-in sidecar runtime service prototype around the existing purple.sidecar.v1 durable-resume envelope so future deployments can validate the runtime boundary without requiring sidecar infrastructure for normal Composer installs or composer check.",
+  "purpose_tldr": "Prototype an optional sidecar runtime service that speaks Purple PHP's durable-resume contract.",
+  "slug": "sidecar-runtime-service-prototype-01KTAQ1M",
+  "target_branch": "main"
+}
