@@ -1,0 +1,13 @@
+{
+  "coordination_branch": "kitty/mission-bedrock-provider-package-split-01KTAHKT",
+  "created_at": "2026-06-05T00:06:03.852826+00:00",
+  "friendly_name": "bedrock provider package split",
+  "mission_id": "01KTAHKTAC4ZXXATE23YM1P7Q5",
+  "mission_number": null,
+  "mission_slug": "bedrock-provider-package-split-01KTAHKT",
+  "mission_type": "software-dev",
+  "purpose_context": "This mission advances bedrock provider package split on main so stakeholders can track the work from mission creation onward.",
+  "purpose_tldr": "bedrock provider package split",
+  "slug": "bedrock-provider-package-split-01KTAHKT",
+  "target_branch": "main"
+}
