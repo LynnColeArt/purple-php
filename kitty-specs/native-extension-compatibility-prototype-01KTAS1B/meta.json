@@ -13,6 +13,7 @@
   "accepted_at": "2026-06-05T02:44:38.850915+00:00",
   "accepted_by": "lynn",
   "accepted_from_commit": "ea2c8a33fd9e16b2ca495a67ba95acded4a7393d",
+  "baseline_merge_commit": "cdf6913e74fabb5b8dbf4fc93b1cd0e8378e9b4c",
   "coordination_branch": "kitty/mission-native-extension-compatibility-prototype-01KTAS1B",
   "created_at": "2026-06-05T02:15:47.490035+00:00",
   "friendly_name": "Native Extension Compatibility Prototype",
