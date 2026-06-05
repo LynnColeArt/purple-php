@@ -623,7 +623,7 @@ MVP 1 should deliberately defer:
 
 ## 13. Enterprise Roadmap
 
-Current status as of 2026-06-05: Phases 1, 2, 3, 4, 5, and 5.1 are implemented in the Composer-first SDK and covered by the local validation suite. The Bedrock provider package split is implemented as the first optional enterprise provider package in the monorepo. Phase 5 is represented as optional native/runtime readiness contracts; Composer mode remains the stable adoption baseline.
+Current status as of 2026-06-05: Phases 1, 2, 3, 4, 5, 5.1, 5.2, and 5.3 are implemented in the Composer-first SDK and covered by the local validation suite. The Bedrock provider package split is implemented as the first optional enterprise provider package in the monorepo, and its release-readiness path is documented with package notes, publication checklist, and CI validation. Phase 5 is represented as optional native/runtime readiness contracts; Composer mode remains the stable adoption baseline.
 
 Phase 5.1 extends the runtime-continuation path without reversing that boundary. Native acceptance, sidecar resume, package-split planning, and baseline guardrails are executable through Composer-safe tests, fake providers, injectable transports, and ignored local runtime state. The Bedrock package split carries the same pattern into provider packaging: root SDK validation remains provider-neutral, and Bedrock validation runs from `packages/provider-bedrock`.
 
@@ -700,6 +700,14 @@ Phase 5.1 extends the runtime-continuation path without reversing that boundary.
 * Root SDK decoupled from `Purple\Provider\Bedrock\BedrockProvider` and `Sdk::bedrock()`
 * Root Composer validation remains free of Bedrock, AWS SDK, native, sidecar, and live-network requirements
 
+### Phase 5.3: Bedrock Provider Release Readiness (Complete)
+
+* Package README documents unpublished status, intended `0.1.x` release line, install shape, and package-local validation
+* Package changelog records first-release notes and migration guidance from removed root `Sdk::bedrock()` usage to `BedrockSdk::create()`
+* Release checklist documents Packagist publication prerequisites, validation commands, release sequence, and rollback notes
+* CI matrix validates root SDK and Bedrock provider package separately across PHP versions
+* Roadmap and mission evidence keep provider release readiness separate from future provider splits and from sidecar/native runtime work
+
 ## 14. Design Principles
 
 Purple PHP should be:
@@ -724,12 +732,13 @@ Completed missions:
 
 * `kitty-specs/runtime-continuation-mega-mission-01KTA3AD/`
 * `kitty-specs/bedrock-provider-package-split-01KTAHKT/`
+* `kitty-specs/provider-bedrock-release-readiness-01ktan01-01KTAMNF/`
 
-Phase 5.1 is complete and recorded through the mission issue matrix, mission review report, and retrospective record. The Bedrock provider package split is the active package-track completion marker and records its evidence in `acceptance-matrix.json` plus `issue-matrix.md`.
+Phase 5.1 is complete and recorded through the mission issue matrix, mission review report, and retrospective record. The Bedrock provider package split and release-readiness follow-up are the active package-track completion markers and record evidence in their mission `acceptance-matrix.json` plus `issue-matrix.md` files.
 
 Candidate follow-up missions:
 
-1. Provider package release readiness: Packagist publication plan, versioning, CI matrix, and release notes for `purple-php/provider-bedrock`.
+1. Execute the Bedrock provider public release after Packagist ownership, version tag, and repository URL are explicitly approved.
 2. Sidecar runtime service prototype that speaks the durable-resume contract.
 3. Native extension compatibility prototype that runs the native acceptance suite.
 4. Next optional provider split using the Bedrock package as the pattern.

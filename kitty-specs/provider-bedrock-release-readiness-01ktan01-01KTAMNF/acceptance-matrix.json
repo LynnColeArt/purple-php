@@ -1,0 +1,79 @@
+{
+  "mission_slug": "provider-bedrock-release-readiness-01ktan01-01KTAMNF",
+  "mission_number": "",
+  "mission_type": "software-dev",
+  "overall_verdict": "pass",
+  "criteria": [
+    {
+      "criterion_id": "FR-001",
+      "description": "Provider package release contract documents package name, version line, dependency shape, install shape, and unpublished status.",
+      "proof_type": "documentation_review",
+      "evidence": "packages/provider-bedrock/README.md; docs/release/provider-bedrock.md",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:20:00Z",
+      "notes": "README and release docs state purple-php/provider-bedrock, intended 0.1.x line, future composer require command, and not-yet-published Packagist status."
+    },
+    {
+      "criterion_id": "FR-002",
+      "description": "Package-local release notes cover first release and migration from root Sdk::bedrock().",
+      "proof_type": "documentation_review",
+      "evidence": "packages/provider-bedrock/CHANGELOG.md",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:20:00Z",
+      "notes": "Changelog records 0.1.0 - Unreleased, first-release scope, and migration to Purple\\Provider\\Bedrock\\BedrockSdk::create()."
+    },
+    {
+      "criterion_id": "FR-003",
+      "description": "CI validates root SDK and Bedrock provider package separately.",
+      "proof_type": "configuration_review",
+      "evidence": ".github/workflows/ci.yml",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:20:00Z",
+      "notes": "Workflow has separate root-sdk and provider-bedrock jobs; command grep found composer check and package working-dir commands."
+    },
+    {
+      "criterion_id": "FR-004",
+      "description": "Default validation preserves no-AWS, no-live-service, no-sidecar, and no-native baseline.",
+      "proof_type": "configuration_review",
+      "evidence": ".github/workflows/ci.yml; packages/provider-bedrock/README.md; docs/release/provider-bedrock.md; docs/enterprise/README.md",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:20:00Z",
+      "notes": "CI does not configure secrets or publish steps; docs state default validation requires no AWS credentials, live calls, SDK dependency, sidecar service, or native extension."
+    },
+    {
+      "criterion_id": "FR-005",
+      "description": "Packagist publication checklist and release sequence are documented for later use.",
+      "proof_type": "documentation_review",
+      "evidence": "docs/release/provider-bedrock.md",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:20:00Z",
+      "notes": "Release doc includes release sequence, Packagist checklist, validation commands, and rollback notes without publishing."
+    },
+    {
+      "criterion_id": "FR-006",
+      "description": "Roadmap and architecture docs represent release readiness as packaging-track completion after Phase 5.2.",
+      "proof_type": "documentation_review",
+      "evidence": "README.md; outline.md; docs/architecture/001-enterprise-adapter-split.md; docs/enterprise/README.md",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:20:00Z",
+      "notes": "Docs add Phase 5.3 release-readiness language and keep next optional provider split as a later candidate."
+    },
+    {
+      "criterion_id": "FR-007",
+      "description": "Mission records evidence for docs, CI, and Composer validation.",
+      "proof_type": "validation_evidence",
+      "evidence": "kitty-specs/provider-bedrock-release-readiness-01ktan01-01KTAMNF/acceptance-matrix.json; kitty-specs/provider-bedrock-release-readiness-01ktan01-01KTAMNF/issue-matrix.md; composer check; composer check --working-dir=packages/provider-bedrock",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:20:00Z",
+      "notes": "Acceptance and issue matrices capture evidence; final WP verification runs root and provider package Composer checks."
+    }
+  ],
+  "negative_invariants": []
+}

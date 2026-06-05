@@ -1,0 +1,42 @@
+work_packages:
+  - id: WP01
+    title: "Package Release Contract"
+    dependencies: []
+    owned_files:
+      - "packages/provider-bedrock/README.md"
+      - "packages/provider-bedrock/CHANGELOG.md"
+      - "docs/release/provider-bedrock.md"
+    requirement_refs: ["FR-001", "FR-002", "FR-005"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP01-package-release-contract.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP02
+    title: "CI Matrix For Root And Provider"
+    dependencies: ["WP01"]
+    owned_files:
+      - ".github/workflows/ci.yml"
+    requirement_refs: ["FR-003", "FR-004"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP02-ci-matrix-for-root-and-provider.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP03
+    title: "Roadmap And Mission Evidence"
+    dependencies: ["WP01", "WP02"]
+    owned_files:
+      - "README.md"
+      - "outline.md"
+      - "docs/architecture/001-enterprise-adapter-split.md"
+      - "docs/enterprise/README.md"
+    requirement_refs: ["FR-006", "FR-007"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP03-roadmap-and-mission-evidence.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""

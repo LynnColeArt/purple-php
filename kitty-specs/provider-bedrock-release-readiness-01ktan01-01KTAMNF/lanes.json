@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "mission_slug": "provider-bedrock-release-readiness-01ktan01-01KTAMNF",
+  "mission_id": "01KTAMNFD59B8HGVZQE57WG9WQ",
+  "mission_branch": "kitty/mission-provider-bedrock-release-readiness-01ktan01-01KTAMNF",
+  "target_branch": "main",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01"
+      ],
+      "write_scope": [
+        "docs/release/provider-bedrock.md",
+        "packages/provider-bedrock/CHANGELOG.md",
+        "packages/provider-bedrock/README.md"
+      ],
+      "predicted_surfaces": [],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-b",
+      "wp_ids": [
+        "WP02"
+      ],
+      "write_scope": [
+        ".github/workflows/ci.yml"
+      ],
+      "predicted_surfaces": [],
+      "depends_on_lanes": [
+        "lane-a"
+      ],
+      "parallel_group": 1
+    },
+    {
+      "lane_id": "lane-c",
+      "wp_ids": [
+        "WP03"
+      ],
+      "write_scope": [
+        "README.md",
+        "docs/architecture/001-enterprise-adapter-split.md",
+        "docs/enterprise/README.md",
+        "outline.md"
+      ],
+      "predicted_surfaces": [
+        "legacy-cleanup"
+      ],
+      "depends_on_lanes": [
+        "lane-a",
+        "lane-b"
+      ],
+      "parallel_group": 2
+    }
+  ],
+  "computed_at": "2026-06-05T01:02:50.434713+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": []
+}
