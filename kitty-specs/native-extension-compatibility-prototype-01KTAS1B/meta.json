@@ -1,0 +1,13 @@
+{
+  "coordination_branch": "kitty/mission-native-extension-compatibility-prototype-01KTAS1B",
+  "created_at": "2026-06-05T02:15:47.490035+00:00",
+  "friendly_name": "Native Extension Compatibility Prototype",
+  "mission_id": "01KTAS1BH1ENYHVPZBWZYP83P4",
+  "mission_number": null,
+  "mission_slug": "native-extension-compatibility-prototype-01KTAS1B",
+  "mission_type": "software-dev",
+  "purpose_context": "Build a Composer-safe native extension compatibility prototype around the existing PHP-level native bridge and acceptance fixtures so platform teams can validate native-runtime behavior without requiring a compiled extension for normal composer check.",
+  "purpose_tldr": "Prototype an optional native extension compatibility harness that runs the native acceptance suite.",
+  "slug": "native-extension-compatibility-prototype-01KTAS1B",
+  "target_branch": "main"
+}

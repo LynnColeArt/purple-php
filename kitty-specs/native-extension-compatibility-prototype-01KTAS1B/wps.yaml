@@ -1,0 +1,46 @@
+work_packages:
+  - id: WP01
+    title: "Native Compatibility Harness"
+    dependencies: []
+    owned_files:
+      - "src/Runtime/NativeRuntimeCompatibility.php"
+      - "src/Runtime/NativeRuntimeCompatibilityReport.php"
+      - "src/Runtime/NativeRuntimeReadiness.php"
+      - "tests/Runtime/NativeRuntimeCompatibilityTest.php"
+      - "tests/Runtime/NativeAcceptance/NativeRuntimeAcceptanceTest.php"
+    requirement_refs: ["FR-001", "FR-002", "FR-003", "FR-005"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP01-native-compatibility-harness.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP02
+    title: "CLI Native Compatibility Runner"
+    dependencies: ["WP01"]
+    owned_files:
+      - "src/Cli/PurpleCli.php"
+      - "tests/Cli/PurpleCliTest.php"
+    requirement_refs: ["FR-004", "FR-005"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP02-cli-native-compatibility-runner.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
+  - id: WP03
+    title: "Native Compatibility Docs And Mission Evidence"
+    dependencies: ["WP01", "WP02"]
+    owned_files:
+      - "README.md"
+      - "outline.md"
+      - "docs/enterprise/README.md"
+      - "docs/enterprise/native-runtime-acceptance.md"
+      - "docs/architecture/001-enterprise-adapter-split.md"
+    requirement_refs: ["FR-006", "FR-007", "FR-008"]
+    subtasks: ["T001", "T002", "T003", "T004"]
+    prompt_file: "tasks/WP03-native-compatibility-docs-and-mission-evidence.md"
+    agent_profile: "implementer-ivan"
+    role: "implementer"
+    agent: "codex"
+    model: ""
