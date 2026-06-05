@@ -11,8 +11,8 @@ planning_base_branch: main
 merge_target_branch: main
 branch_strategy: Planning artifacts for this mission were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
 subtasks: []
-agent: "codex"
-shell_pid: "3377003"
+agent: codex
+shell_pid: ''
 history: []
 agent_profile: implementer-ivan
 authoritative_surface: src/Cli/
@@ -61,7 +61,3 @@ T004: Add CLI tests for fixture success, unavailable extension output, and usage
 ## Guardrails
 
 Do not create a separate binary, read secrets, use STDIN interactivity, open network sockets, require sidecar state, or make default Composer validation depend on an installed native extension.
-
-## Activity Log
-
-- 2026-06-05T02:31:05Z – codex – shell_pid=3377003 – Started review via action command
