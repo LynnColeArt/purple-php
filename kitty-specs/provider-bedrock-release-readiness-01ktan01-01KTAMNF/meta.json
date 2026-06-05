@@ -9,5 +9,7 @@
   "purpose_context": "This mission follows the completed Bedrock package split by documenting and validating the release path for purple-php/provider-bedrock: versioning, Packagist publication planning, CI coverage, and release notes while keeping the core SDK Composer-first.",
   "purpose_tldr": "Prepare the optional Bedrock provider package for release.",
   "slug": "provider-bedrock-release-readiness-01ktan01-01KTAMNF",
-  "target_branch": "main"
+  "target_branch": "main",
+  "vcs": "git",
+  "vcs_locked_at": "2026-06-05T01:05:55.922144+00:00"
 }
