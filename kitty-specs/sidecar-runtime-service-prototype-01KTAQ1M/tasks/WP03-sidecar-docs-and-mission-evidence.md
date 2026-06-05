@@ -76,3 +76,4 @@ Do not claim a production daemon exists. Do not publish packages. Do not remove 
 
 - 2026-06-05T01:56:53Z – codex – shell_pid=3377003 – Updated sidecar prototype docs and roadmap; docs grep and git diff --check passed in lane-c.
 - 2026-06-05T01:56:56Z – codex – shell_pid=3377003 – Approved after docs diff review, roadmap grep, and git diff --check in lane-c.
+- 2026-06-05T02:05:53Z – codex – shell_pid=3377003 – Marked done after accepted mission squash merge into main at 339d6cd.

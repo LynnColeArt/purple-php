@@ -64,3 +64,4 @@ Do not create a separate binary, require a long-running service, read secrets, o
 
 - 2026-06-05T01:53:17Z – codex – shell_pid=3377003 – Implemented sidecar resume CLI prototype; focused CLI tests and composer check passed in lane-b.
 - 2026-06-05T01:53:19Z – codex – shell_pid=3377003 – Approved after diff review, focused PHPUnit, composer check, and git diff --check in lane-b.
+- 2026-06-05T02:05:51Z – codex – shell_pid=3377003 – Marked done after accepted mission squash merge into main at 339d6cd.
