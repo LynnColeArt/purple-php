@@ -83,3 +83,4 @@ Do not modify root `Sdk.php` in this WP except for file movement conflicts that 
 ## Activity Log
 
 - 2026-06-05T00:25:45Z – codex – shell_pid=3377003 – WP02 implementation committed on lane-b as 04c0901; validation: composer install --working-dir=packages/provider-bedrock --no-interaction; composer check --working-dir=packages/provider-bedrock; composer validate --working-dir=packages/provider-bedrock --strict.
+- 2026-06-05T00:26:27Z – codex – shell_pid=3377003 – Approved WP02 extraction and factory. Evidence: composer validate --working-dir=packages/provider-bedrock --strict; composer check --working-dir=packages/provider-bedrock; git diff --check lane-a..lane-b.
