@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Purple\Tests\Provider\Bedrock;
+namespace Purple\Provider\Bedrock\Tests;
 
 use Purple\Contracts\Provider\ProviderRequest;
 use Purple\Provider\Bedrock\BedrockProvider;
-use Purple\Tests\Testing\TestCase;
+use PHPUnit\Framework\TestCase;
 
 final class BedrockProviderTest extends TestCase
 {

@@ -19,12 +19,12 @@ The current SDK includes:
 * Runtime hooks: extension points around provider requests, tool calls, and agent lifecycle events.
 * CLI support: a `purple` command for demos, diagnostics, provider checks, and audit inspection.
 * Enterprise workflow ports: CMS-agnostic content, catalog, order, support, approval, and audit adapters.
-* Enterprise hardening: tenant/data-residency policy metadata, advanced policy rules, PII redaction, contextual/Vault/cloud secret lookup, Azure/Bedrock/sidecar providers, and SIEM/observability export.
+* Enterprise hardening: tenant/data-residency policy metadata, advanced policy rules, PII redaction, contextual/Vault/cloud secret lookup, Azure and sidecar providers, optional Bedrock provider package, and SIEM/observability export.
 * Optional runtime readiness: native bridge contracts, sidecar envelopes, sandboxed tool execution, durable run storage, runtime metrics, and on-prem deployment metadata.
 
 The first milestone was smart functions. Phases 2, 3, 4, and 5 are now represented in the Composer-first SDK as chat, CLI, tools, looping agents, approvals, runtime hooks, retry behavior, run state, replayable tool logs, enterprise policy, secret adapters, cloud provider adapters, sidecar brokerage, observability export, and optional native/runtime readiness contracts.
 
-Phase 5.1 makes that runtime work executable as Composer-safe contracts: native acceptance, sidecar resume, and package-split decisions stay testable through PHP fixtures, fake providers, injectable transports, and ignored local runtime paths. A normal Composer install still does not require a native extension, a sidecar process, cloud SDK dependencies, or live network services.
+Phase 5.1 makes that runtime work executable as Composer-safe contracts: native acceptance, sidecar resume, and package-split decisions stay testable through PHP fixtures, fake providers, injectable transports, and ignored local runtime paths. The Bedrock package split applies that same baseline to enterprise providers: a normal core Composer install still does not require Bedrock, a native extension, a sidecar process, cloud SDK dependencies, or live network services.
 
 ## Quick Start
 
@@ -96,6 +96,31 @@ vendor/bin/purple provider check openai
 
 Tests and local examples can use `FakeProvider` to avoid external provider calls.
 
+## Optional Bedrock Provider
+
+AWS Bedrock support lives in the optional monorepo package `purple-php/provider-bedrock` under [packages/provider-bedrock](packages/provider-bedrock/). It is not required by the root `purple-php/sdk` package and is not assumed to be published on Packagist yet.
+
+Local monorepo validation uses the package working directory:
+
+```bash
+composer install --working-dir=packages/provider-bedrock
+composer check --working-dir=packages/provider-bedrock
+```
+
+Applications that install the Bedrock package can use the package-local factory instead of the former root `Sdk::bedrock()` convenience method:
+
+```php
+use Purple\Provider\Bedrock\BedrockSdk;
+use Purple\ProviderProfile;
+
+$sdk = BedrockSdk::create(
+    profile: ProviderProfile::bedrock(model: 'anthropic.model'),
+    region: 'us-east-1',
+);
+```
+
+The package currently uses injectable transports and fixtures for validation. Real AWS signing, credential discovery, AWS SDK integrations, and live Bedrock calls remain future opt-in work.
+
 ## Enterprise Principles
 
 Purple PHP treats existing PHP estates as valuable terrain.
@@ -131,3 +156,4 @@ Spec Kitty mission packages:
 
 * Enterprise SDK foundation: [kitty-specs/001-purple-php-enterprise-ai-sdk](kitty-specs/001-purple-php-enterprise-ai-sdk/spec.md)
 * Runtime continuation Phase 5.1: [kitty-specs/runtime-continuation-mega-mission-01KTA3AD](kitty-specs/runtime-continuation-mega-mission-01KTA3AD/spec.md)
+* Bedrock provider package split: [kitty-specs/bedrock-provider-package-split-01KTAHKT](kitty-specs/bedrock-provider-package-split-01KTAHKT/spec.md)

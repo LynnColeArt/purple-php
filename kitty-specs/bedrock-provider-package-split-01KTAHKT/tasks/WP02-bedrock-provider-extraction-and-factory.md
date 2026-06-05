@@ -11,9 +11,6 @@ tracker_refs: []
 planning_base_branch: main
 merge_target_branch: main
 branch_strategy: Planning artifacts for this mission were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
-base_branch: kitty/mission-bedrock-provider-package-split-01KTAHKT-lane-a
-base_commit: 65403b95dd6d54065f36f97e4c8eead14690f92e
-created_at: '2026-06-05T00:22:26.962552+00:00'
 subtasks:
 - T001
 - T002
@@ -22,7 +19,7 @@ subtasks:
 - T005
 phase: Phase 2 - Provider Extraction
 assignee: ''
-agent: "codex"
+agent: codex
 shell_pid: '3377003'
 history:
 - timestamp: '2026-06-05T00:10:00Z'
@@ -79,8 +76,3 @@ T005: Ensure package tests do not rely on root test namespaces unless explicitly
 ## Guardrails
 
 Do not modify root `Sdk.php` in this WP except for file movement conflicts that cannot be avoided; root decoupling belongs to WP03. Do not add live AWS calls or AWS SDK dependencies.
-
-## Activity Log
-
-- 2026-06-05T00:25:45Z – codex – shell_pid=3377003 – WP02 implementation committed on lane-b as 04c0901; validation: composer install --working-dir=packages/provider-bedrock --no-interaction; composer check --working-dir=packages/provider-bedrock; composer validate --working-dir=packages/provider-bedrock --strict.
-- 2026-06-05T00:26:27Z – codex – shell_pid=3377003 – Approved WP02 extraction and factory. Evidence: composer validate --working-dir=packages/provider-bedrock --strict; composer check --working-dir=packages/provider-bedrock; git diff --check lane-a..lane-b.

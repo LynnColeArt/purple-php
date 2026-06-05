@@ -623,9 +623,9 @@ MVP 1 should deliberately defer:
 
 ## 13. Enterprise Roadmap
 
-Current status as of 2026-06-04: Phases 1, 2, 3, 4, 5, and 5.1 are implemented in the Composer-first SDK and covered by the local validation suite. Phase 5 is represented as optional native/runtime readiness contracts; Composer mode remains the stable adoption baseline.
+Current status as of 2026-06-05: Phases 1, 2, 3, 4, 5, and 5.1 are implemented in the Composer-first SDK and covered by the local validation suite. The Bedrock provider package split is implemented as the first optional enterprise provider package in the monorepo. Phase 5 is represented as optional native/runtime readiness contracts; Composer mode remains the stable adoption baseline.
 
-Phase 5.1 extends the runtime-continuation path without reversing that boundary. Native acceptance, sidecar resume, package-split planning, and baseline guardrails are executable through Composer-safe tests, fake providers, injectable transports, and ignored local runtime state.
+Phase 5.1 extends the runtime-continuation path without reversing that boundary. Native acceptance, sidecar resume, package-split planning, and baseline guardrails are executable through Composer-safe tests, fake providers, injectable transports, and ignored local runtime state. The Bedrock package split carries the same pattern into provider packaging: root SDK validation remains provider-neutral, and Bedrock validation runs from `packages/provider-bedrock`.
 
 ### Phase 1: SDK Foundation (Complete)
 
@@ -688,8 +688,17 @@ Phase 5.1 extends the runtime-continuation path without reversing that boundary.
 * PHP-level native compatibility fixtures
 * Sidecar durable-run resume contract
 * Fake/injectable sidecar resume example
-* Enterprise adapter split decision: `purple-php/provider-bedrock` first, extraction deferred
+* Enterprise adapter split decision: `purple-php/provider-bedrock` first
 * Composer baseline guardrails for optional-native and optional-sidecar validation
+
+### Phase 5.2: Bedrock Provider Package Split (Complete)
+
+* Optional `purple-php/provider-bedrock` monorepo package
+* Package-local Composer metadata, PHPUnit, PHPStan, and php-cs-fixer configuration
+* Bedrock provider source and tests moved out of root core
+* Package-local `BedrockSdk::create()` construction path through `Sdk::fromProvider()`
+* Root SDK decoupled from `Purple\Provider\Bedrock\BedrockProvider` and `Sdk::bedrock()`
+* Root Composer validation remains free of Bedrock, AWS SDK, native, sidecar, and live-network requirements
 
 ## 14. Design Principles
 
@@ -711,14 +720,16 @@ The product should treat legacy PHP estates as terrain, not trash.
 
 ## 15. Immediate Next Steps
 
-Completed mission: `kitty-specs/runtime-continuation-mega-mission-01KTA3AD/`
+Completed missions:
 
-Phase 5.1 is complete and recorded through the mission issue matrix, mission review report, and retrospective record.
+* `kitty-specs/runtime-continuation-mega-mission-01KTA3AD/`
+* `kitty-specs/bedrock-provider-package-split-01KTAHKT/`
 
-Recommended next mission: split the Bedrock provider into the first optional enterprise adapter package, `purple-php/provider-bedrock`, while keeping core SDK provider contracts and Composer-first validation in this repository.
+Phase 5.1 is complete and recorded through the mission issue matrix, mission review report, and retrospective record. The Bedrock provider package split is the active package-track completion marker and records its evidence in `acceptance-matrix.json` plus `issue-matrix.md`.
 
 Candidate follow-up missions:
 
-1. Bedrock provider package split with Composer path-repository validation, package metadata, and dependency isolation.
+1. Provider package release readiness: Packagist publication plan, versioning, CI matrix, and release notes for `purple-php/provider-bedrock`.
 2. Sidecar runtime service prototype that speaks the durable-resume contract.
 3. Native extension compatibility prototype that runs the native acceptance suite.
+4. Next optional provider split using the Bedrock package as the pattern.

@@ -133,7 +133,7 @@ JSON;
         Sdk::openAI(profile: ProviderProfile::fake());
     }
 
-    public function testCreatesAzureBedrockAndSidecarSdks(): void
+    public function testCreatesAzureAndSidecarSdks(): void
     {
         $azure = Sdk::azureOpenAI(
             resource: 'purple-resource',
@@ -148,19 +148,6 @@ JSON;
             transport: static fn (): array => [
                 'choices' => [
                     ['message' => ['content' => '{"summary":"Azure SDK."}']],
-                ],
-            ],
-        );
-        $bedrock = Sdk::bedrock(
-            profile: ProviderProfile::bedrock(model: 'anthropic.model'),
-            auditLog: new FileAuditLog(sys_get_temp_dir() . '/purple-sdk-bedrock-' . bin2hex(random_bytes(4)) . '.jsonl'),
-            transport: static fn (): array => [
-                'output' => [
-                    'message' => [
-                        'content' => [
-                            ['text' => '{"summary":"Bedrock SDK."}'],
-                        ],
-                    ],
                 ],
             ],
         );
@@ -180,11 +167,9 @@ JSON;
         );
 
         $azureFunction = $azure->smartFunction('catalog.summary', 'Summarize {{ title }}.', self::SUMMARY_SCHEMA);
-        $bedrockFunction = $bedrock->smartFunction('catalog.summary', 'Summarize {{ title }}.', self::SUMMARY_SCHEMA);
         $sidecarFunction = $sidecar->smartFunction('catalog.summary', 'Summarize {{ title }}.', self::SUMMARY_SCHEMA);
 
         $this->assertSame(['summary' => 'Azure SDK.'], $azureFunction->run(['title' => 'Hat']));
-        $this->assertSame(['summary' => 'Bedrock SDK.'], $bedrockFunction->run(['title' => 'Hat']));
         $this->assertSame(['summary' => 'Sidecar SDK.'], $sidecarFunction->run(['title' => 'Hat']));
     }
 

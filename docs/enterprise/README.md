@@ -45,7 +45,27 @@ Policy engines can inspect this metadata before provider requests or tool calls.
 
 ## Provider and Sidecar Adapters
 
-Composer mode now includes testable provider adapters for OpenAI, Azure OpenAI, Bedrock runtime, and a brokered sidecar provider. The Bedrock and sidecar paths keep signing, routing, and platform-specific transport in injectable transports so the core SDK does not require cloud SDK dependencies.
+Composer mode includes testable core adapters for OpenAI, Azure OpenAI, and a brokered sidecar provider. AWS Bedrock now lives in the optional monorepo package `purple-php/provider-bedrock` at `packages/provider-bedrock`, so the root SDK keeps provider contracts and `Sdk::fromProvider()` without importing or constructing the Bedrock adapter.
+
+The Bedrock package provides `Purple\Provider\Bedrock\BedrockProvider` plus `Purple\Provider\Bedrock\BedrockSdk::create()` for teams that opt into the package:
+
+```php
+use Purple\Provider\Bedrock\BedrockSdk;
+use Purple\ProviderProfile;
+
+$sdk = BedrockSdk::create(
+    profile: ProviderProfile::bedrock(model: 'anthropic.model'),
+    region: 'us-east-1',
+);
+```
+
+Local validation is package-scoped:
+
+```bash
+composer check --working-dir=packages/provider-bedrock
+```
+
+This package is a local monorepo package boundary, not a Packagist publication promise. It still uses injectable transports by default; live AWS signing, credential discovery, AWS SDK integration, and production Bedrock transport policy are future opt-in surfaces.
 
 ## Audit Export Shape
 
@@ -96,4 +116,4 @@ The runtime handoff example at `examples/runtime/durable-sidecar-handoff.php` sh
 
 Phase 5.1 makes runtime continuation more executable without changing the adoption baseline. Native acceptance checks must run through PHP-level contract fixtures unless a platform team explicitly installs a compatible native runtime. Sidecar resume and handoff examples must use fake or injectable transports by default and write generated run state under ignored `var/runtime/` paths.
 
-`composer check` remains the baseline validation command. It must not require native extensions, sidecar services, cloud SDK packages, AWS credentials, Vault credentials, or live network access.
+`composer check` remains the core baseline validation command. It must not require native extensions, sidecar services, optional provider packages, cloud SDK packages, AWS credentials, Vault credentials, or live network access.

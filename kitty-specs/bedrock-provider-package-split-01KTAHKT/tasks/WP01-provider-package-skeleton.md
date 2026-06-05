@@ -10,9 +10,6 @@ tracker_refs: []
 planning_base_branch: main
 merge_target_branch: main
 branch_strategy: Planning artifacts for this mission were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
-base_branch: kitty/mission-bedrock-provider-package-split-01KTAHKT
-base_commit: 28b5ef22bfab3004c7e2c9e0ba49daf05a1f2e76
-created_at: '2026-06-05T00:16:17.544945+00:00'
 subtasks:
 - T001
 - T002
@@ -20,7 +17,7 @@ subtasks:
 - T004
 phase: Phase 1 - Package Setup
 assignee: ''
-agent: "codex"
+agent: codex
 shell_pid: '3377003'
 history:
 - timestamp: '2026-06-05T00:10:00Z'
@@ -77,8 +74,3 @@ T004: Add a short package README describing that this is an optional Bedrock pro
 ## Guardrails
 
 Do not move `BedrockProvider` in this WP. Do not add AWS SDK dependencies. Do not change root SDK provider behavior yet.
-
-## Activity Log
-
-- 2026-06-05T00:19:29Z – codex – shell_pid=3377003 – WP01 implementation committed on lane-a as cc8074a; validation: composer validate --working-dir=packages/provider-bedrock --strict, composer install --working-dir=packages/provider-bedrock --no-interaction, composer check.
-- 2026-06-05T00:21:29Z – codex – shell_pid=3377003 – Approved WP01 package skeleton. Evidence: composer validate --working-dir=packages/provider-bedrock --strict; composer install --working-dir=packages/provider-bedrock --no-interaction; composer check; git diff --check main..HEAD.

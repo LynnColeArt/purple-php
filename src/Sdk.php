@@ -17,7 +17,6 @@ use Purple\Contracts\Security\SecretResolver;
 use Purple\Policy\BasicPolicyEngine;
 use Purple\Prompt\StringPromptTemplate;
 use Purple\Provider\Azure\AzureOpenAIProvider;
-use Purple\Provider\Bedrock\BedrockProvider;
 use Purple\Provider\OpenAI\OpenAIProvider;
 use Purple\Provider\Sidecar\SidecarProvider;
 use Purple\Schema\JsonSchemaValidator;
@@ -146,32 +145,6 @@ final readonly class Sdk
                 deployment: $profile->model,
                 secretName: $profile->secretName,
                 apiVersion: $apiVersion,
-                transport: $transport,
-            ),
-            profile: $profile,
-            auditLog: $auditLog,
-            policy: $policy,
-            validator: $validator,
-        );
-    }
-
-    /**
-     * @param null|callable(string, string, array<string, string>, array<string, mixed>): array<string, mixed> $transport
-     */
-    public static function bedrock(
-        ?ProviderProfile $profile = null,
-        ?AuditLog $auditLog = null,
-        ?PolicyEngine $policy = null,
-        ?SchemaValidator $validator = null,
-        ?callable $transport = null,
-        string $region = 'us-east-1',
-    ): self {
-        $profile ??= ProviderProfile::bedrock();
-        self::assertProfileProvider($profile, 'bedrock', 'Bedrock');
-
-        return self::fromProvider(
-            provider: new BedrockProvider(
-                region: $region,
                 transport: $transport,
             ),
             profile: $profile,

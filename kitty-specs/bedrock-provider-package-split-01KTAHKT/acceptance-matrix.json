@@ -2,98 +2,123 @@
   "mission_slug": "bedrock-provider-package-split-01KTAHKT",
   "mission_number": "",
   "mission_type": "software-dev",
-  "overall_verdict": "pending",
+  "overall_verdict": "pass",
   "criteria": [
     {
       "criterion_id": "FR-001",
-      "description": "Verify FR-001 is satisfied",
+      "description": "Provider package skeleton exists as purple-php/provider-bedrock with package-local autoload, dev autoload, tests, and Composer scripts.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "WP01 approved at 65403b9. Evidence: packages/provider-bedrock/composer.json, phpunit.xml.dist, phpstan.neon.dist, .php-cs-fixer.dist.php, and README.md; composer validate --working-dir=packages/provider-bedrock --strict and composer install --working-dir=packages/provider-bedrock --no-interaction passed.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T00:31:00Z",
+      "notes": "Local monorepo path repository maps purple-php/sdk to the repository root."
     },
     {
       "criterion_id": "FR-002",
-      "description": "Verify FR-002 is satisfied",
-      "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "description": "Bedrock provider implementation and provider-specific tests moved out of root core into the provider package.",
+      "proof_type": "code_review",
+      "evidence": "WP02 approved at 04c0901. Evidence: packages/provider-bedrock/src/BedrockProvider.php and packages/provider-bedrock/tests/BedrockProviderTest.php; former root src/Provider/Bedrock and tests/Provider/Bedrock paths are absent on the dependency lane.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T00:31:00Z",
+      "notes": "Namespace Purple\\Provider\\Bedrock is preserved under package-local PSR-4 autoload."
     },
     {
       "criterion_id": "FR-003",
-      "description": "Verify FR-003 is satisfied",
+      "description": "Core retains provider contracts, ProviderProfile::bedrock(), and Sdk::fromProvider() for optional provider composition.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "WP03 approved at 69c9ee2. Evidence: src/Sdk.php keeps Sdk::fromProvider(), src/ProviderProfile.php keeps ProviderProfile::bedrock(), root composer check passed, and targeted PHPUnit for tests/SdkTest.php plus tests/ProviderProfileTest.php passed.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T00:31:00Z",
+      "notes": "Core composition remains provider-neutral."
     },
     {
       "criterion_id": "FR-004",
-      "description": "Verify FR-004 is satisfied",
-      "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "description": "Core SDK runtime imports and convenience factory code no longer require the Bedrock provider package to be installed.",
+      "proof_type": "custom_command",
+      "evidence": "WP03 approved at 69c9ee2. Evidence: rg -n \"BedrockProvider|Provider\\\\Bedrock|Sdk::bedrock\" src tests composer.json packages/provider-bedrock returns only package-local references under packages/provider-bedrock.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T00:31:00Z",
+      "notes": "Root Sdk::bedrock() was removed; package adopters use BedrockSdk::create()."
     },
     {
       "criterion_id": "FR-005",
-      "description": "Verify FR-005 is satisfied",
+      "description": "Provider package exposes an ergonomic Bedrock SDK factory/helper through core contracts.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "WP02 approved at 04c0901. Evidence: packages/provider-bedrock/src/BedrockSdk.php creates a Purple\\Sdk through Sdk::fromProvider(new BedrockProvider(...)); packages/provider-bedrock/tests/BedrockSdkTest.php proves the helper and rejects non-Bedrock profiles.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T00:31:00Z",
+      "notes": "The helper accepts profile, audit, policy, schema validator, injectable transport, and region."
     },
     {
       "criterion_id": "FR-006",
-      "description": "Verify FR-006 is satisfied",
+      "description": "Core composer check passes without root requiring purple-php/provider-bedrock.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "WP03 review evidence plus WP04 lane-d rerun: root composer check passed with 113 tests and 437 assertions, PHPStan clean, php-cs-fixer dry-run clean; composer validate --strict passed; custom root composer.json dependency check confirmed purple-php/provider-bedrock is not in require or require-dev.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T00:36:23Z",
+      "notes": "Root validation still does not require AWS credentials, AWS SDK packages, sidecar services, native extensions, or live network access."
     },
     {
       "criterion_id": "FR-007",
-      "description": "Verify FR-007 is satisfied",
+      "description": "Bedrock package validation passes without AWS credentials, live network calls, or AWS SDK dependencies by using injectable transports.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "WP02/WP03 review evidence plus WP04 lane-d rerun: composer check --working-dir=packages/provider-bedrock passed with 3 tests and 12 assertions, PHPStan clean, php-cs-fixer dry-run clean; tests use injectable transport fixtures in BedrockProviderTest and BedrockSdkTest.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T00:36:23Z",
+      "notes": "Package composer.json has no AWS SDK dependency."
     },
     {
       "criterion_id": "FR-008",
-      "description": "Verify FR-008 is satisfied",
-      "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "description": "Documentation explains the package split, installation shape, and migration path from root Sdk::bedrock() to the optional provider package.",
+      "proof_type": "documentation_review",
+      "evidence": "WP04 docs update. Evidence: README.md adds Optional Bedrock Provider instructions and BedrockSdk::create() migration sample; docs/enterprise/README.md describes package-scoped validation and future AWS work boundaries; docs/architecture/001-enterprise-adapter-split.md records the implemented extraction.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T00:31:00Z",
+      "notes": "Docs avoid Packagist publication, separate repository, AWS SDK support, live AWS signing, and native/runtime extraction claims."
     },
     {
       "criterion_id": "FR-009",
-      "description": "Verify FR-009 is satisfied",
-      "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "description": "Roadmap and enterprise docs represent Bedrock as the first optional provider package split, not as a required core dependency.",
+      "proof_type": "documentation_review",
+      "evidence": "WP04 docs update. Evidence: outline.md records Phase 5.2 Bedrock Provider Package Split as complete; README.md and docs/enterprise/README.md describe Bedrock as optional; ADR 001 marks Bedrock as the first implemented monorepo package split.",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T00:31:00Z",
+      "notes": "Core SDK remains provider-neutral in roadmap language."
     }
   ],
-  "negative_invariants": []
+  "negative_invariants": [
+    {
+      "invariant_id": "NI-001",
+      "description": "Root composer.json must not require purple-php/provider-bedrock.",
+      "verification_method": "custom_command",
+      "verification_command": "php -r '$json=json_decode(file_get_contents(\"composer.json\"), true); foreach ([\"require\",\"require-dev\"] as $section) { if (isset($json[$section][\"purple-php/provider-bedrock\"])) { fwrite(STDERR, \"found in $section\\n\"); exit(1); } } echo \"purple-php/provider-bedrock not required by root composer.json\\n\";'",
+      "result": "confirmed_absent",
+      "evidence": "Command exited 0: purple-php/provider-bedrock not required by root composer.json"
+    },
+    {
+      "invariant_id": "NI-002",
+      "description": "Root source and tests must not import the Bedrock provider implementation or call Sdk::bedrock().",
+      "verification_method": "grep_absence",
+      "verification_command": "rg -n \"BedrockProvider|Provider\\\\Bedrock|Sdk::bedrock\" src tests composer.json",
+      "result": "confirmed_absent",
+      "evidence": "grep found zero matches"
+    },
+    {
+      "invariant_id": "NI-003",
+      "description": "Documentation must not claim Packagist publication, separate repository extraction, required AWS SDK support, required live AWS signing, or runtime/native package extraction.",
+      "verification_method": "grep_absence",
+      "verification_command": "rg -n \"is published on Packagist|separate GitHub repository|requires AWS SDK|requires live AWS|ships as a native package|ships as a runtime package\" README.md docs/enterprise/README.md docs/architecture/001-enterprise-adapter-split.md outline.md",
+      "result": "confirmed_absent",
+      "evidence": "grep found zero matches"
+    }
+  ]
 }
