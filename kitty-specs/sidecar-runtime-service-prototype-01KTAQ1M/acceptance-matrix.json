@@ -2,77 +2,77 @@
   "mission_slug": "sidecar-runtime-service-prototype-01KTAQ1M",
   "mission_number": "",
   "mission_type": "software-dev",
-  "overall_verdict": "pending",
+  "overall_verdict": "pass",
   "criteria": [
     {
       "criterion_id": "FR-001",
-      "description": "Verify FR-001 is satisfied",
+      "description": "Reusable sidecar runtime service handler accepts raw purple.sidecar.v1 durable-resume request envelopes and returns encoded response envelopes.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "src/Runtime/Sidecar/SidecarRuntimeService.php; tests/Runtime/Sidecar/SidecarRuntimeServiceTest.php",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:57:51Z",
+      "notes": "SidecarRuntimeService::handle() decodes raw envelope JSON with SidecarProtocol and returns encoded SidecarResumeResponse envelopes."
     },
     {
       "criterion_id": "FR-002",
-      "description": "Verify FR-002 is satisfied",
+      "description": "Service handler loads durable run records through DurableRunStore and returns deterministic accepted/rejected responses.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "tests/Runtime/Sidecar/SidecarRuntimeServiceTest.php",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:57:51Z",
+      "notes": "Tests cover accepted existing runs, missing_run rejection, unsupported_action rejection, and malformed envelope failure."
     },
     {
       "criterion_id": "FR-003",
-      "description": "Verify FR-003 is satisfied",
+      "description": "Existing bin/purple CLI exposes a local sidecar resume prototype command.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "src/Cli/PurpleCli.php; tests/Cli/PurpleCliTest.php",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:57:51Z",
+      "notes": "Command shape is purple sidecar resume <run-store-dir> <run-id> [node-id], with JSON output and rejected-run exit status."
     },
     {
       "criterion_id": "FR-004",
-      "description": "Verify FR-004 is satisfied",
+      "description": "Runtime service and CLI prototype behavior are covered by tests.",
       "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "evidence": "vendor/bin/phpunit -c phpunit.xml.dist tests/Runtime/Sidecar/SidecarRuntimeServiceTest.php; vendor/bin/phpunit -c phpunit.xml.dist tests/Cli/PurpleCliTest.php; composer check",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:57:51Z",
+      "notes": "Focused WP tests and integrated composer check cover service behavior, CLI success, missing-run output, and CLI usage errors."
     },
     {
       "criterion_id": "FR-005",
-      "description": "Verify FR-005 is satisfied",
-      "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "description": "Sidecar runtime docs and examples explain the envelope contract, CLI command, and local-store expectations.",
+      "proof_type": "documentation_review",
+      "evidence": "README.md; docs/enterprise/README.md; docs/enterprise/sidecar-durable-resume.md",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:57:51Z",
+      "notes": "Docs describe SidecarRuntimeService, deterministic response outcomes, and the local durable store command sequence."
     },
     {
       "criterion_id": "FR-006",
-      "description": "Verify FR-006 is satisfied",
-      "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "description": "Roadmap and architecture docs represent Phase 5.4 as completed sidecar runtime prototype work.",
+      "proof_type": "documentation_review",
+      "evidence": "README.md; outline.md; docs/enterprise/README.md; docs/architecture/001-enterprise-adapter-split.md",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:57:51Z",
+      "notes": "Docs mark Phase 5.4 complete and keep native compatibility, provider publication, and future package splits separate."
     },
     {
       "criterion_id": "FR-007",
-      "description": "Verify FR-007 is satisfied",
-      "proof_type": "automated_test",
-      "evidence": null,
-      "pass_fail": "pending",
-      "verified_by": null,
-      "verified_at": null,
-      "notes": "TODO: replace with a real acceptance criterion"
+      "description": "Mission evidence proves Composer-mode root validation still passes without required sidecar, native, cloud SDK, AWS, or live network dependencies.",
+      "proof_type": "validation_evidence",
+      "evidence": "kitty-specs/sidecar-runtime-service-prototype-01KTAQ1M/acceptance-matrix.json; kitty-specs/sidecar-runtime-service-prototype-01KTAQ1M/issue-matrix.md; composer check; composer check --working-dir=packages/provider-bedrock; php examples/runtime/durable-sidecar-resume.php",
+      "pass_fail": "pass",
+      "verified_by": "codex",
+      "verified_at": "2026-06-05T01:57:51Z",
+      "notes": "Validation evidence keeps the sidecar prototype optional and local; no daemon, socket listener, native extension, cloud SDK, AWS credential, or live service is required."
     }
   ],
   "negative_invariants": []
