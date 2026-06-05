@@ -14,7 +14,9 @@
         "src/Runtime/Sidecar/SidecarRuntimeService.php",
         "tests/Runtime/Sidecar/SidecarRuntimeServiceTest.php"
       ],
-      "predicted_surfaces": [],
+      "predicted_surfaces": [
+        "api"
+      ],
       "depends_on_lanes": [],
       "parallel_group": 0
     },
@@ -27,7 +29,9 @@
         "src/Cli/PurpleCli.php",
         "tests/Cli/PurpleCliTest.php"
       ],
-      "predicted_surfaces": [],
+      "predicted_surfaces": [
+        "api"
+      ],
       "depends_on_lanes": [
         "lane-a"
       ],
@@ -46,6 +50,7 @@
         "outline.md"
       ],
       "predicted_surfaces": [
+        "api",
         "legacy-cleanup"
       ],
       "depends_on_lanes": [
@@ -55,7 +60,7 @@
       "parallel_group": 2
     }
   ],
-  "computed_at": "2026-06-05T01:44:34.853602+00:00",
+  "computed_at": "2026-06-05T02:00:28.650160+00:00",
   "computed_from": "dependency_graph+ownership",
   "planning_artifact_wps": []
 }

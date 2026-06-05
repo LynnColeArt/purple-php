@@ -1,12 +1,12 @@
 {
-  "event_count": 8,
-  "last_event_id": "01KTAQR63910FM0RXX00SRY110",
-  "materialized_at": "2026-06-05T01:53:18.441483+00:00",
+  "event_count": 12,
+  "last_event_id": "01KTAR86QT9F23NZDA3F0D6NAJ",
+  "materialized_at": "2026-06-05T02:02:03.386146+00:00",
   "mission_number": "",
   "mission_slug": "sidecar-runtime-service-prototype-01KTAQ1M",
   "mission_type": "software-dev",
   "summary": {
-    "approved": 2,
+    "approved": 3,
     "blocked": 0,
     "canceled": 0,
     "claimed": 0,
@@ -18,18 +18,25 @@
   },
   "work_packages": {
     "WP01": {
-      "actor": "user",
-      "force_count": 2,
+      "actor": "codex",
+      "force_count": 4,
       "lane": "approved",
-      "last_event_id": "01KTAQHYGE14PKFTCWJ2XC2ABD",
-      "last_transition_at": "2026-06-05T01:49:54.062366+00:00"
+      "last_event_id": "01KTAR7KJ4ZP0S0TJH60VRVGG7",
+      "last_transition_at": "2026-06-05T02:01:43.748532+00:00"
     },
     "WP02": {
-      "actor": "user",
-      "force_count": 2,
+      "actor": "codex",
+      "force_count": 4,
       "lane": "approved",
-      "last_event_id": "01KTAQR63910FM0RXX00SRY110",
-      "last_transition_at": "2026-06-05T01:53:18.441483+00:00"
+      "last_event_id": "01KTAR7XH9JB4H8Y1DVEQGVRAW",
+      "last_transition_at": "2026-06-05T02:01:53.961613+00:00"
+    },
+    "WP03": {
+      "actor": "codex",
+      "force_count": 4,
+      "lane": "approved",
+      "last_event_id": "01KTAR86QT9F23NZDA3F0D6NAJ",
+      "last_transition_at": "2026-06-05T02:02:03.386146+00:00"
     }
   }
 }
