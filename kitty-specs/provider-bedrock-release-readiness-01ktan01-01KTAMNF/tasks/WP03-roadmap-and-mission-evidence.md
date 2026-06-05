@@ -11,6 +11,9 @@ tracker_refs: []
 planning_base_branch: main
 merge_target_branch: main
 branch_strategy: Planning artifacts for this mission were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
+base_branch: kitty/mission-provider-bedrock-release-readiness-01ktan01-01KTAMNF
+base_commit: a26df166c2e767d85ede8d557535b1b842dacbc9
+created_at: '2026-06-05T01:14:29.650524+00:00'
 subtasks:
 - T001
 - T002
@@ -18,7 +21,8 @@ subtasks:
 - T004
 phase: Phase 3 - Evidence
 assignee: ''
-agent: codex
+agent: "codex"
+shell_pid: "3377003"
 history:
 - timestamp: '2026-06-05T01:00:00Z'
   agent: system
@@ -75,3 +79,7 @@ T004: Add an issue matrix capturing the release docs, CI, roadmap, and validatio
 ## Guardrails
 
 Do not claim the package is published. Do not remove the Bedrock package split evidence from Phase 5.2. Do not re-scope this mission into Azure, OpenAI, sidecar, or native package extraction.
+
+## Activity Log
+
+- 2026-06-05T01:19:32Z – codex – shell_pid=3377003 – Started review via action command
