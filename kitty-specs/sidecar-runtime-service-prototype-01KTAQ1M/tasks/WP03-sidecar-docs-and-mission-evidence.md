@@ -13,7 +13,8 @@ planning_base_branch: main
 merge_target_branch: main
 branch_strategy: Planning artifacts for this mission were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
 subtasks: []
-agent: codex
+agent: "codex"
+shell_pid: '3377003'
 history: []
 agent_profile: implementer-ivan
 authoritative_surface: docs/
@@ -70,3 +71,8 @@ T004: Add an issue matrix capturing service behavior, CLI behavior, docs, roadma
 ## Guardrails
 
 Do not claim a production daemon exists. Do not publish packages. Do not remove Composer-first validation language. Do not make sidecar, native, AWS, or provider-package dependencies mandatory.
+
+## Activity Log
+
+- 2026-06-05T01:56:53Z – codex – shell_pid=3377003 – Updated sidecar prototype docs and roadmap; docs grep and git diff --check passed in lane-c.
+- 2026-06-05T01:56:56Z – codex – shell_pid=3377003 – Approved after docs diff review, roadmap grep, and git diff --check in lane-c.
