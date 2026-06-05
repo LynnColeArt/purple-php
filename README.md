@@ -26,7 +26,7 @@ The first milestone was smart functions. Phases 2, 3, 4, and 5 are now represent
 
 Phase 5.1 makes that runtime work executable as Composer-safe contracts: native acceptance, sidecar resume, and package-split decisions stay testable through PHP fixtures, fake providers, injectable transports, and ignored local runtime paths. The Bedrock package split applies that same baseline to enterprise providers: a normal core Composer install still does not require Bedrock, a native extension, a sidecar process, cloud SDK dependencies, or live network services.
 
-Phase 5.3 makes the Bedrock provider package release-ready without publishing it yet: package docs, first-release notes, release checklist, and CI validation now describe how `purple-php/provider-bedrock` can ship later while preserving the Composer-first baseline.
+Phase 5.3 made the Bedrock provider package release-ready. The `0.1.0` GitHub release line now publishes the root SDK from `LynnColeArt/purple-php` and the optional Bedrock provider from `LynnColeArt/purple-php-provider-bedrock` while preserving the Composer-first baseline.
 
 Phase 5.4 adds a local sidecar runtime service prototype for durable resume. It accepts the same `purple.sidecar.v1` resume envelope used by the PHP contract tests, reads a local durable run store, and returns deterministic accepted/rejected response envelopes without requiring a sidecar daemon, socket listener, native extension, cloud SDK, or live network service.
 
@@ -109,7 +109,7 @@ Tests and local examples can use `FakeProvider` to avoid external provider calls
 
 ## Optional Bedrock Provider
 
-AWS Bedrock support lives in the optional monorepo package `purple-php/provider-bedrock` under [packages/provider-bedrock](packages/provider-bedrock/). It is not required by the root `purple-php/sdk` package and is not assumed to be published on Packagist yet.
+AWS Bedrock support lives in the optional package `purple-php/provider-bedrock` under [packages/provider-bedrock](packages/provider-bedrock/) in this monorepo and as the standalone public release repository `LynnColeArt/purple-php-provider-bedrock`. It is not required by the root `purple-php/sdk` package.
 
 Local monorepo validation uses the package working directory:
 

@@ -2,9 +2,9 @@
 
 All notable changes to `purple-php/provider-bedrock` are recorded here.
 
-## 0.1.0 - Unreleased
+## 0.1.0 - 2026-06-05
 
-First intended release for the optional AWS Bedrock provider package.
+First public GitHub release for the optional AWS Bedrock provider package.
 
 ### Added
 

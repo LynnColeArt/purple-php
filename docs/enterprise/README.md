@@ -125,7 +125,7 @@ Phase 5.1 makes runtime continuation more executable without changing the adopti
 
 ## Provider Package Release Readiness
 
-The Bedrock provider package is release-ready but not published to Packagist yet. The release-readiness track documents the intended `purple-php/provider-bedrock` `0.1.x` package line, package-local changelog, publication checklist, and CI validation.
+The Bedrock provider package is published as a standalone GitHub release at `LynnColeArt/purple-php-provider-bedrock`. The release-readiness track documents the `purple-php/provider-bedrock` `0.1.x` package line, package-local changelog, Packagist handoff checklist, and CI validation.
 
 Provider package validation is separate from the core Composer baseline:
 

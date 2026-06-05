@@ -6,11 +6,11 @@ This package is the opt-in home for Bedrock-specific provider behavior. The core
 
 ## Release Status
 
-`purple-php/provider-bedrock` is release-ready in the monorepo but is not yet published to Packagist.
+`purple-php/provider-bedrock` is published as a standalone GitHub release at `https://github.com/LynnColeArt/purple-php-provider-bedrock`.
 
-The first intended release line is `0.1.x`, beginning with `0.1.0`. Until publication, local development resolves `purple-php/sdk` through the path repository in this package's `composer.json`.
+The first release line is `0.1.x`, beginning with `0.1.0`. Packagist publication requires the maintainer's Packagist account to submit the standalone repository URL after GitHub release publication.
 
-After publication, package consumers should install the provider explicitly:
+After Packagist publication, package consumers should install the provider explicitly:
 
 ```bash
 composer require purple-php/provider-bedrock:^0.1

@@ -1,19 +1,19 @@
 # Bedrock Provider Release Readiness
 
-`purple-php/provider-bedrock` is the optional AWS Bedrock provider package for Purple PHP. It is prepared for a future public release from this monorepo, but it is not published to Packagist yet.
+`purple-php/provider-bedrock` is the optional AWS Bedrock provider package for Purple PHP. It is published as a standalone GitHub release from `https://github.com/LynnColeArt/purple-php-provider-bedrock`. Packagist publication requires the maintainer's Packagist account to submit that standalone repository URL.
 
 ## Release Contract
 
 | Field | Value |
 | --- | --- |
 | Package | `purple-php/provider-bedrock` |
-| First intended version | `0.1.0` |
+| First released version | `0.1.0` |
 | Version line | `0.1.x` |
-| Core dependency | `purple-php/sdk` `0.1.x-dev` during monorepo development |
+| Core dependency | `purple-php/sdk` `^0.1` |
 | Runtime baseline | Composer-first, optional provider package |
 | Default validation | No AWS credentials, live Bedrock calls, AWS SDK dependency, sidecar service, or native extension |
 
-After publication, the intended install command is:
+After Packagist publication, the intended install command is:
 
 ```bash
 composer require purple-php/provider-bedrock:^0.1
@@ -45,9 +45,10 @@ composer check --working-dir=packages/provider-bedrock
 
 4. Confirm `packages/provider-bedrock/CHANGELOG.md` has the final `0.1.0` release date.
 5. Confirm `packages/provider-bedrock/composer.json` metadata matches the published package name and dependency line.
-6. Create a signed release tag only after validation evidence is recorded.
-7. Publish to Packagist only after package ownership and repository URL are confirmed.
-8. Verify Packagist resolves `purple-php/provider-bedrock` and that a clean consumer project can install it with `composer require purple-php/provider-bedrock:^0.1`.
+6. Create the root SDK `v0.1.0` GitHub release from `LynnColeArt/purple-php`.
+7. Create the standalone provider repository `LynnColeArt/purple-php-provider-bedrock`, push the split package, and create the provider `v0.1.0` GitHub release.
+8. Publish to Packagist only after package ownership and repository URL are confirmed.
+9. Verify Packagist resolves `purple-php/sdk` and `purple-php/provider-bedrock`, then verify that a clean consumer project can install it with `composer require purple-php/provider-bedrock:^0.1`.
 
 ## Packagist Checklist
 
@@ -63,6 +64,6 @@ composer check --working-dir=packages/provider-bedrock
 
 ## Rollback Notes
 
-If publication is attempted later and the package metadata is wrong, do not re-couple Bedrock into the root SDK. Fix the provider package metadata, tag a corrected release, and document the correction in the package changelog.
+If Packagist publication is attempted later and the package metadata is wrong, do not re-couple Bedrock into the root SDK. Fix the provider package metadata, tag a corrected release, and document the correction in the package changelog.
 
 If a live AWS integration issue is found, keep it outside the default validation path. Live integration tests require a separate opt-in mission with explicit credential and network boundaries.
