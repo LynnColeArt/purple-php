@@ -81,7 +81,7 @@ The package split includes:
 - Root `Sdk.php` decoupling from `Purple\Provider\Bedrock\BedrockProvider`.
 - Root and provider-package validation evidence captured in `kitty-specs/bedrock-provider-package-split-01KTAHKT/acceptance-matrix.json`.
 
-The remaining deferred work is packaging and production transport maturity: Packagist publication, release automation, real AWS signing or SDK integration, credential discovery, live integration tests, and any separate-repository split.
+The remaining deferred work is packaging and production transport maturity: Packagist publication execution, real AWS signing or SDK integration, credential discovery, live integration tests, and any separate-repository split. Release-readiness documentation and CI are now prepared for `purple-php/provider-bedrock`, but the package is not published yet.
 
 ## Roadmap Alignment
 
@@ -89,7 +89,8 @@ The packaging track is no longer an implicit broad refactor. Its first milestone
 
 1. Preserve Composer-first core validation without requiring Bedrock.
 2. Keep `purple-php/provider-bedrock` as an optional monorepo package with package-local validation.
-3. Use the Bedrock package split as the repeatable pattern for future provider packages.
-4. Revisit Azure, OpenAI, sidecar provider, secrets, audit exporters, and real CMS/ecommerce adapters after this package boundary has release and publication follow-through.
+3. Keep release readiness for `purple-php/provider-bedrock` explicit: package docs, changelog, release checklist, CI, and validation evidence are complete before any Packagist publication.
+4. Use the Bedrock package split as the repeatable pattern for future provider packages.
+5. Revisit Azure, OpenAI, sidecar provider, secrets, audit exporters, and real CMS/ecommerce adapters after this package boundary has publication follow-through.
 
 This keeps optional-native and optional-sidecar runtime work separate from provider package extraction. Runtime continuation remains a contract track; provider package extraction becomes a packaging track.

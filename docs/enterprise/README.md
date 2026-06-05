@@ -117,3 +117,16 @@ The runtime handoff example at `examples/runtime/durable-sidecar-handoff.php` sh
 Phase 5.1 makes runtime continuation more executable without changing the adoption baseline. Native acceptance checks must run through PHP-level contract fixtures unless a platform team explicitly installs a compatible native runtime. Sidecar resume and handoff examples must use fake or injectable transports by default and write generated run state under ignored `var/runtime/` paths.
 
 `composer check` remains the core baseline validation command. It must not require native extensions, sidecar services, optional provider packages, cloud SDK packages, AWS credentials, Vault credentials, or live network access.
+
+## Provider Package Release Readiness
+
+The Bedrock provider package is release-ready but not published to Packagist yet. The release-readiness track documents the intended `purple-php/provider-bedrock` `0.1.x` package line, package-local changelog, publication checklist, and CI validation.
+
+Provider package validation is separate from the core Composer baseline:
+
+```bash
+composer check
+composer check --working-dir=packages/provider-bedrock
+```
+
+The provider package job must not require AWS credentials, live Bedrock calls, AWS SDK packages, sidecar services, or native extensions. Future publication, live integration tests, and real AWS signing remain explicit opt-in work.
